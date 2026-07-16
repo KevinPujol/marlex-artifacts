@@ -1,0 +1,1588 @@
+<title>HR onboarding &amp; sharing refactor — the decision record</title>
+<style>
+  :root {
+    --paper: #F7F8F6;
+    --surface: #FFFFFF;
+    --ink: #1C2321;
+    --ink-soft: #5A6661;
+    --accent: #0E6B5C;
+    --accent-soft: #0E6B5C1A;
+    --copper: #B4642A;
+    --copper-soft: #B4642A14;
+    --line: #DDE3DF;
+    --chip-adopted-bg: #0E6B5C14; --chip-adopted-fg: #0A5346;
+    --chip-limited-bg: #B4642A14; --chip-limited-fg: #8F4E1F;
+    --chip-rejected-bg: #8B283414; --chip-rejected-fg: #7A2430;
+    --chip-reframed-bg: #3D4F7A14; --chip-reframed-fg: #34436A;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #131917;
+      --surface: #1B2320;
+      --ink: #E8ECE9;
+      --ink-soft: #9BA8A2;
+      --accent: #3FA08D;
+      --accent-soft: #3FA08D22;
+      --copper: #D08A4F;
+      --copper-soft: #D08A4F1E;
+      --line: #2C3733;
+      --chip-adopted-bg: #3FA08D26; --chip-adopted-fg: #7BC8B8;
+      --chip-limited-bg: #D08A4F26; --chip-limited-fg: #E0AC7E;
+      --chip-rejected-bg: #C4556526; --chip-rejected-fg: #DE8F9A;
+      --chip-reframed-bg: #7C93C926; --chip-reframed-fg: #A9BBE2;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #131917; --surface: #1B2320; --ink: #E8ECE9; --ink-soft: #9BA8A2;
+    --accent: #3FA08D; --accent-soft: #3FA08D22; --copper: #D08A4F; --copper-soft: #D08A4F1E;
+    --line: #2C3733;
+    --chip-adopted-bg: #3FA08D26; --chip-adopted-fg: #7BC8B8;
+    --chip-limited-bg: #D08A4F26; --chip-limited-fg: #E0AC7E;
+    --chip-rejected-bg: #C4556526; --chip-rejected-fg: #DE8F9A;
+    --chip-reframed-bg: #7C93C926; --chip-reframed-fg: #A9BBE2;
+  }
+  :root[data-theme="light"] {
+    --paper: #F7F8F6; --surface: #FFFFFF; --ink: #1C2321; --ink-soft: #5A6661;
+    --accent: #0E6B5C; --accent-soft: #0E6B5C1A; --copper: #B4642A; --copper-soft: #B4642A14;
+    --line: #DDE3DF;
+    --chip-adopted-bg: #0E6B5C14; --chip-adopted-fg: #0A5346;
+    --chip-limited-bg: #B4642A14; --chip-limited-fg: #8F4E1F;
+    --chip-rejected-bg: #8B283414; --chip-rejected-fg: #7A2430;
+    --chip-reframed-bg: #3D4F7A14; --chip-reframed-fg: #34436A;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: Charter, "Bitstream Charter", Cambria, Georgia, serif;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+  }
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 0 1.5rem 6rem; }
+
+  h1, h2, h3, .eyebrow, .chip, .axis-name, .seq-title, .gate-title {
+    font-family: "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
+  }
+  h1 { font-size: clamp(2rem, 5vw, 2.9rem); line-height: 1.08; letter-spacing: -0.02em; font-weight: 700; margin: 0.4em 0 0.35em; text-wrap: balance; }
+  h2 { font-size: 1.45rem; letter-spacing: -0.01em; font-weight: 700; margin: 0 0 0.8rem; text-wrap: balance; }
+  h3 { font-size: 1.05rem; font-weight: 700; margin: 0 0 0.4rem; }
+  p { margin: 0 0 1rem; }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+  code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.86em; background: var(--accent-soft); padding: 0.1em 0.35em; border-radius: 3px; }
+
+  header.masthead { padding-top: 4rem; }
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.72rem; font-weight: 600;
+    color: var(--accent); margin: 0 0 0.5rem;
+  }
+  .subtitle { font-size: 1.2rem; color: var(--ink-soft); margin: 0 0 1.2rem; text-wrap: balance; }
+  .dateline { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 0.8rem; color: var(--ink-soft); letter-spacing: 0.04em; }
+
+  section { margin-top: 3.5rem; }
+  .section-eyebrow {
+    text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.72rem; font-weight: 600;
+    color: var(--ink-soft); margin: 0 0 0.35rem;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+
+  .bluf {
+    margin-top: 2.5rem; padding: 1.5rem 1.75rem;
+    background: var(--surface); border: 1px solid var(--line);
+    border-top: 3px solid var(--accent); border-radius: 6px;
+  }
+  .bluf p { margin: 0 0 0.75rem; }
+  .bluf p:last-child { margin: 0; }
+
+  .stat-row { display: flex; flex-wrap: wrap; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; margin: 1.5rem 0; }
+  .stat { flex: 1 1 10rem; background: var(--surface); padding: 1rem 1.2rem; }
+  .stat .n { display: block; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 1.7rem; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: var(--accent); line-height: 1.1; }
+  .stat .l { display: block; font-size: 0.85rem; color: var(--ink-soft); line-height: 1.4; margin-top: 0.3rem; }
+
+  .option { display: grid; grid-template-columns: 8.5rem 1fr; column-gap: 1.1rem; row-gap: 0.7rem; padding: 1.1rem 0; border-top: 1px solid var(--line); }
+  .option:last-child { border-bottom: 1px solid var(--line); }
+  .option-head { grid-column: 1; grid-row: 1; display: flex; flex-direction: column; gap: 0.45rem; align-items: flex-start; }
+  .option > :not(.option-head) { grid-column: 2; }
+  .option-name { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 700; font-size: 0.95rem; line-height: 1.3; }
+  .chip {
+    display: inline-block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 0.2em 0.65em; border-radius: 999px;
+  }
+  .chip.adopted { background: var(--chip-adopted-bg); color: var(--chip-adopted-fg); }
+  .chip.limited { background: var(--chip-limited-bg); color: var(--chip-limited-fg); }
+  .chip.rejected { background: var(--chip-rejected-bg); color: var(--chip-rejected-fg); }
+  .chip.reframed { background: var(--chip-reframed-bg); color: var(--chip-reframed-fg); }
+  .option p { margin: 0; font-size: 0.98rem; }
+  @media (max-width: 34rem) {
+    .option { grid-template-columns: 1fr; row-gap: 0.4rem; }
+    .option-head, .option > :not(.option-head) { grid-column: 1; }
+  }
+
+  .axes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem; margin: 1.4rem 0; }
+  .axis { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 1rem 1.1rem; }
+  .axis-name { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 0.4rem; }
+  .axis p { font-size: 0.9rem; margin: 0; color: var(--ink-soft); }
+  @media (max-width: 40rem) { .axes { grid-template-columns: 1fr; } }
+
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; margin-top: 1.4rem; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 1.2rem 1.3rem; }
+  .card.full { grid-column: 1 / -1; }
+  .card h3 { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; flex-wrap: wrap; }
+  .card .verdict { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
+  .card p { font-size: 0.95rem; margin: 0 0 0.6rem; }
+  .card p:last-child { margin: 0; }
+  .card .caveat { color: var(--copper); font-size: 0.9rem; }
+  @media (max-width: 40rem) { .cards { grid-template-columns: 1fr; } }
+
+  ol.seq { list-style: none; margin: 1.5rem 0 0; padding: 0; counter-reset: step; }
+  ol.seq li { counter-increment: step; position: relative; padding: 0 0 1.6rem 3.2rem; }
+  ol.seq li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 0.05rem;
+    width: 2rem; height: 2rem; border-radius: 50%;
+    background: var(--accent); color: var(--paper);
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 700; font-size: 0.95rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  ol.seq li:not(:last-child)::after {
+    content: ""; position: absolute; left: calc(1rem - 1px); top: 2.3rem; bottom: 0.2rem;
+    width: 2px; background: var(--line);
+  }
+  .seq-title { font-weight: 700; font-size: 1rem; display: block; margin-bottom: 0.15rem; }
+  ol.seq p { font-size: 0.95rem; margin: 0; color: var(--ink-soft); }
+
+  .gates { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem; margin-top: 1.4rem; }
+  .gate { border: 1px solid var(--line); border-left: 3px solid var(--copper); border-radius: 6px; padding: 1rem 1.1rem; background: var(--copper-soft); }
+  .gate-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.35rem; }
+  .gate p { font-size: 0.88rem; margin: 0; }
+  @media (max-width: 40rem) { .gates { grid-template-columns: 1fr; } }
+
+  .rule-note { border-left: 3px solid var(--accent); padding: 0.2rem 0 0.2rem 1.1rem; margin: 1.4rem 0; color: var(--ink-soft); font-size: 0.98rem; }
+
+  .tech {
+    margin-top: 0.7rem; padding: 0.7rem 0.9rem; border-radius: 5px;
+    background: var(--accent-soft); font-size: 0.86rem; line-height: 1.55;
+  }
+  .tech-label {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-transform: uppercase; letter-spacing: 0.09em; font-size: 0.62rem; font-weight: 700;
+    color: var(--accent); display: block; margin-bottom: 0.25rem;
+  }
+  .tech code { font-size: 0.85em; }
+
+  .questions { display: flex; flex-direction: column; gap: 0.9rem; margin-top: 1.4rem; }
+  .q { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; padding: 1.1rem 1.3rem; background: var(--surface); }
+  .q-head { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; }
+  .q p { margin: 0; font-size: 0.95rem; }
+  .q ul { margin: 0.5rem 0 0; }
+  .q li { font-size: 0.93rem; color: var(--ink-soft); }
+
+  footer { margin-top: 4.5rem; padding-top: 1.2rem; border-top: 1px solid var(--line); font-size: 0.85rem; color: var(--ink-soft); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+
+  ul { padding-left: 1.2rem; margin: 0 0 1rem; }
+  li { margin-bottom: 0.45rem; }
+  /* ---- shared nav (added for the multi-page set) ---- */
+  .sitenav { position: sticky; top: 0; z-index: 10; background: var(--paper); border-bottom: 1px solid var(--line);
+    margin: 0 -1.5rem 0; padding: 0.6rem 1.5rem; display: flex; flex-wrap: wrap; gap: 0.15rem 1.1rem; align-items: baseline;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 0.82rem; }
+  .sitenav .home { font-weight: 700; color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
+  .sitenav a { color: var(--ink-soft); text-decoration: none; padding: 0.15rem 0; border-bottom: 2px solid transparent; }
+  .sitenav a:hover { color: var(--accent); }
+  .sitenav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+  @media (prefers-reduced-motion: reduce) { .sitenav { position: static; } }
+
+  /* ---- hub cards linking to subpages ---- */
+  .hub { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.6rem 0; }
+  @media (max-width: 40rem) { .hub { grid-template-columns: 1fr; } }
+  a.hubcard { display: block; text-decoration: none; color: inherit; background: var(--surface);
+    border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; padding: 1.2rem 1.3rem; transition: border-color .12s; }
+  a.hubcard:hover { border-left-color: var(--copper); }
+  a.hubcard h3 { color: var(--accent); margin-bottom: 0.35rem; }
+  a.hubcard p { font-size: 0.92rem; color: var(--ink-soft); margin: 0; }
+  a.hubcard .meta { display: block; margin-top: 0.6rem; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--copper); }
+
+  /* ---- data tables ---- */
+  .tablewrap { overflow-x: auto; margin: 1.4rem 0; border: 1px solid var(--line); border-radius: 6px; }
+  table.data { border-collapse: collapse; width: 100%; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 0.85rem; }
+  table.data caption { text-align: left; font-size: 0.8rem; color: var(--ink-soft); padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--line); background: var(--surface); }
+  table.data th, table.data td { text-align: left; padding: 0.5rem 0.9rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.data th { background: var(--accent-soft); color: var(--ink); font-weight: 700; position: sticky; top: 0; }
+  table.data td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  table.data tr:last-child td { border-bottom: none; }
+  table.data td strong { color: var(--ink); }
+  .verdict-live { color: var(--chip-adopted-fg); font-weight: 700; }
+  .verdict-no { color: var(--chip-rejected-fg); font-weight: 700; }
+  .verdict-mid { color: var(--chip-limited-fg); font-weight: 700; }
+
+  /* ---- callout ---- */
+  .callout { border: 1px solid var(--line); border-left: 3px solid var(--copper); background: var(--copper-soft);
+    border-radius: 6px; padding: 1rem 1.2rem; margin: 1.4rem 0; font-size: 0.96rem; }
+  .callout.key { border-left-color: var(--accent); background: var(--accent-soft); }
+  .callout .lbl { display: block; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; text-transform: uppercase;
+    letter-spacing: 0.09em; font-size: 0.64rem; font-weight: 700; color: var(--copper); margin-bottom: 0.3rem; }
+  .callout.key .lbl { color: var(--accent); }
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* ---- inline SVG diagrams (theme-aware via currentColor + vars) ---- */
+  figure.diagram { margin: 1.6rem 0; padding: 1.3rem 1.2rem 1rem; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 6px; }
+  figure.diagram svg { display: block; width: 100%; height: auto; overflow: visible; }
+  figure.diagram figcaption { margin-top: 0.8rem; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 0.8rem; color: var(--ink-soft); line-height: 1.5; }
+  /* SVG primitives styled by class so they follow the theme */
+  .dg-box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+  .dg-box-accent { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+  .dg-box-copper { fill: var(--copper-soft); stroke: var(--copper); stroke-width: 1.5; }
+  .dg-box-mut { fill: var(--paper); stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 3; }
+  .dg-line { stroke: var(--line); stroke-width: 1.5; fill: none; }
+  .dg-arrow { stroke: var(--accent); stroke-width: 2; fill: none; }
+  .dg-arrow-copper { stroke: var(--copper); stroke-width: 2; fill: none; }
+  .dg-arrow-mut { stroke: var(--ink-soft); stroke-width: 1.5; fill: none; stroke-dasharray: 4 3; }
+  .dg-fill-accent { fill: var(--accent); }
+  .dg-fill-copper { fill: var(--copper); }
+  .dg-fill-line { fill: var(--line); }
+  text.dg-t { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; fill: var(--ink); }
+  text.dg-t-sm { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; fill: var(--ink-soft); }
+  text.dg-t-accent { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; fill: var(--accent); font-weight: 700; }
+  text.dg-t-copper { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; fill: var(--copper); font-weight: 700; }
+  text.dg-label { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 700; }
+
+
+  /* ---- decision-page template blocks ---- */
+  .tmpl { display: flex; flex-direction: column; gap: 0.5rem; margin: 1.4rem 0; }
+  .tmpl-step { display: grid; grid-template-columns: 9rem 1fr; column-gap: 1.1rem; align-items: start;
+    border-left: 3px solid var(--line); padding: 0.15rem 0 0.15rem 1.1rem; }
+  .tmpl-step .k { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 700;
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); padding-top: 0.15rem; }
+  @media (max-width: 34rem) { .tmpl-step { grid-template-columns: 1fr; row-gap: 0.15rem; } }
+  /* a "selected" marker chip reusing chip styling */
+  .decmap { display: flex; flex-direction: column; gap: 0.7rem; margin: 1.6rem 0; }
+  a.decrow { display: grid; grid-template-columns: 2.3rem 1fr auto; column-gap: 0.9rem; align-items: center;
+    text-decoration: none; color: inherit; background: var(--surface); border: 1px solid var(--line);
+    border-left: 3px solid var(--accent); border-radius: 6px; padding: 0.9rem 1.1rem; transition: border-color .12s; }
+  a.decrow:hover { border-left-color: var(--copper); }
+  a.decrow .num { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 700;
+    font-size: 1.2rem; color: var(--accent); font-variant-numeric: tabular-nums; }
+  a.decrow .body h3 { margin: 0 0 0.15rem; color: var(--ink); }
+  a.decrow .body p { margin: 0; font-size: 0.9rem; color: var(--ink-soft); }
+  a.decrow .pick { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 0.72rem;
+    font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--copper);
+    text-align: right; max-width: 9rem; line-height: 1.3; }
+  @media (max-width: 40rem) { a.decrow { grid-template-columns: 2rem 1fr; } a.decrow .pick { display: none; } }
+
+  /* ---- decision-quality: likelihood chips, legend, side-by-side outcome compare ---- */
+  /* likelihood chip — one calibrated scale, colour tracks how good/bad the outcome is */
+  .lk { display: inline-block; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 0.18em 0.6em; border-radius: 999px; white-space: nowrap; vertical-align: baseline; }
+  .lk.good { background: var(--chip-adopted-bg); color: var(--chip-adopted-fg); }
+  .lk.bad  { background: var(--chip-rejected-bg); color: var(--chip-rejected-fg); }
+  .lk.mid  { background: var(--chip-limited-bg); color: var(--chip-limited-fg); }
+  .lk.meas { background: var(--chip-reframed-bg); color: var(--chip-reframed-fg); }
+
+  /* compact one-line legend reused on every page */
+  .lk-legend { margin: 1.1rem 0 0; padding: 0.7rem 0.9rem; border-left: 3px solid var(--line);
+    background: var(--surface); border-radius: 5px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 0.78rem; color: var(--ink-soft); line-height: 1.7; }
+  .lk-legend strong { color: var(--ink); font-weight: 700; }
+  .lk-legend .term { color: var(--ink); font-weight: 700; }
+  /* full legend table (cutover only) */
+  .lk-scale { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem 0.9rem; margin: 1rem 0 0; }
+  .lk-scale div { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 0.8rem; color: var(--ink-soft); }
+  .lk-scale .term { color: var(--ink); font-weight: 700; }
+  @media (max-width: 34rem) { .lk-scale { grid-template-columns: 1fr 1fr; } }
+
+  /* side-by-side outcome compare: two option columns */
+  .dq { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; margin: 1.4rem 0; }
+  @media (max-width: 40rem) { .dq { grid-template-columns: 1fr; } }
+  .dq-col { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 1.1rem 1.2rem; }
+  .dq-col.chosen { border-left: 3px solid var(--accent); }
+  .dq-col.rejected { border-left: 3px solid var(--chip-rejected-fg); }
+  .dq-col > h4 { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 0.98rem; font-weight: 700;
+    margin: 0 0 0.15rem; display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
+  .dq-col .tag { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; white-space: nowrap; }
+  .dq-col.chosen .tag { color: var(--accent); }
+  .dq-col.rejected .tag { color: var(--chip-rejected-fg); }
+  .dq-col .head-note { font-size: 0.82rem; color: var(--ink-soft); margin: 0 0 0.7rem; }
+  /* outcome rows: text + trailing likelihood chip */
+  ul.dq-outcomes { list-style: none; margin: 0 0 0.8rem; padding: 0; }
+  ul.dq-outcomes li { display: grid; grid-template-columns: 1fr auto; column-gap: 0.6rem; align-items: baseline;
+    font-size: 0.9rem; margin-bottom: 0.5rem; line-height: 1.45; }
+  ul.dq-outcomes li:last-child { margin-bottom: 0; }
+  ul.dq-outcomes .lk { align-self: start; margin-top: 0.1rem; }
+  .dq-foot { border-top: 1px solid var(--line); padding-top: 0.6rem; margin-top: 0.2rem; }
+  .dq-foot p { font-size: 0.85rem; margin: 0 0 0.35rem; }
+  .dq-foot p:last-child { margin: 0; }
+  .dq-foot .lbl { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; text-transform: uppercase;
+    letter-spacing: 0.07em; font-size: 0.6rem; font-weight: 700; color: var(--ink-soft); }
+  .dq-verdict { margin: 1.2rem 0 0; padding: 1rem 1.2rem; border: 1px solid var(--line);
+    border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 6px; font-size: 0.96rem; }
+  .dq-verdict p:last-child { margin-bottom: 0; }
+
+  /* ---- data-model inventory subpage: tables, field blocks, origin badges ---- */
+  .tbl-scroll { overflow-x: auto; margin: 1.1rem 0; -webkit-overflow-scrolling: touch; }
+  table.dtbl { border-collapse: collapse; width: 100%; font-size: 0.86rem; min-width: 34rem; }
+  table.dtbl.compact { font-size: 0.8rem; min-width: 30rem; }
+  table.dtbl th, table.dtbl td { text-align: left; padding: 0.5rem 0.8rem; border-bottom: 1px solid var(--line);
+    vertical-align: top; }
+  table.dtbl thead th { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; text-transform: uppercase;
+    letter-spacing: 0.06em; font-size: 0.66rem; font-weight: 700; color: var(--ink-soft);
+    border-bottom: 2px solid var(--line); background: var(--surface); position: sticky; top: 0; }
+  table.dtbl td.num, table.dtbl th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  /* object table: proportional columns so the disposition column isn't a thin clipped ribbon */
+  table.objtbl { table-layout: fixed; }
+  table.objtbl col.c-obj { width: 26%; }
+  table.objtbl col.c-num { width: 12%; }
+  table.objtbl col.c-nat { width: 26%; }
+  table.objtbl col.c-disp { width: 24%; }
+  table.objtbl td { word-break: break-word; }
+  table.dtbl td code { font-size: 0.82em; background: var(--accent-soft); padding: 0.05em 0.35em; border-radius: 3px; }
+  table.dtbl tr.dropped td { color: var(--ink-soft); }
+  table.dtbl tr.dropped td:first-child { text-decoration: line-through; text-decoration-color: var(--line); }
+  table.dtbl tr.review td { background: var(--chip-limited-bg); }
+  table.dtbl tr.tbl-sep td { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; text-transform: uppercase;
+    letter-spacing: 0.06em; font-size: 0.62rem; font-weight: 700; color: var(--ink-soft);
+    background: var(--accent-soft); border-bottom: 1px solid var(--line); padding-top: 0.7rem; padding-bottom: 0.4rem; }
+  .tbl-note { font-size: 0.82rem; color: var(--ink-soft); margin: 0.4rem 0 0; }
+  details.obj-fields { border: 1px solid var(--line); border-radius: 6px; margin: 0.6rem 0; background: var(--surface); }
+  details.obj-fields > summary { cursor: pointer; padding: 0.7rem 1rem; list-style: none; display: flex;
+    justify-content: space-between; align-items: baseline; gap: 1rem; }
+  details.obj-fields > summary::-webkit-details-marker { display: none; }
+  details.obj-fields > summary::before { content: "\25B8"; color: var(--accent); margin-right: 0.5rem;
+    display: inline-block; transition: transform .12s; }
+  details.obj-fields[open] > summary::before { transform: rotate(90deg); }
+  details.obj-fields > summary .cnt { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 0.72rem; color: var(--ink-soft); font-weight: 400; white-space: nowrap; }
+  details.obj-fields .tbl-scroll { margin: 0 1rem 0.8rem; }
+  .origin-carry, .origin-rename, .origin-english { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 0.12em 0.5em; border-radius: 999px; white-space: nowrap; }
+  .origin-carry { background: var(--chip-adopted-bg); color: var(--chip-adopted-fg); }
+  .origin-rename { background: var(--chip-reframed-bg); color: var(--chip-reframed-fg); }
+  .origin-english { background: var(--chip-limited-bg); color: var(--chip-limited-fg); }
+  .callout { margin: 1.2rem 0; padding: 1rem 1.2rem; border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    background: var(--accent-soft); border-radius: 6px; }
+  .callout.warn { border-left-color: var(--copper); }
+  .callout .callout-h { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 700;
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-soft); margin: 0 0 0.5rem; }
+  .callout ul { margin: 0; padding-left: 1.1rem; }
+  .callout li { margin: 0.3rem 0; font-size: 0.9rem; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* ---- merged-artifact shell ---- */
+  .artifact-shell { display: grid; grid-template-columns: 17.5rem 1fr; align-items: start; }
+  .artifact-nav { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto;
+    border-right: 1px solid var(--line); background: var(--surface); padding: 1.5rem 1.1rem 2.5rem; }
+  .artifact-nav .brand { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 700;
+    font-size: 0.92rem; color: var(--ink); margin: 0 0 0.3rem; line-height: 1.3; }
+  .artifact-nav .brand-sub { font-size: 0.72rem; color: var(--ink-soft); margin: 0 0 1rem; line-height: 1.3; }
+  .artifact-nav .grp { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; text-transform: uppercase;
+    letter-spacing: 0.08em; font-size: 0.6rem; font-weight: 700; color: var(--ink-soft);
+    margin: 1.25rem 0 0.35rem; padding-left: 0.5rem; }
+  .artifact-nav a { display: grid; grid-template-columns: 1.5rem 1fr; align-items: baseline; text-decoration: none;
+    color: var(--ink-soft); font-size: 0.85rem; padding: 0.34rem 0.5rem; border-radius: 5px;
+    border-left: 2px solid transparent; line-height: 1.35; }
+  .artifact-nav a.nonum { grid-template-columns: 1fr; }
+  .artifact-nav a:hover { color: var(--ink); background: var(--accent-soft); }
+  .artifact-nav a.active { color: var(--accent); border-left-color: var(--accent); font-weight: 700; background: var(--accent-soft); }
+  .artifact-nav a .n { font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 700; }
+  .artifact-main { min-width: 0; }
+  .artifact-main .page-view { display: none; }
+  .artifact-main .page-view.active { display: block; }
+  .artifact-main .wrap-inner { max-width: 47rem; margin: 0 auto; padding: 2.4rem 2rem 4.5rem; }
+  @media (max-width: 52rem) {
+    .artifact-shell { grid-template-columns: 1fr; }
+    .artifact-nav { position: static; max-height: none; border-right: none; border-bottom: 1px solid var(--line); }
+    .artifact-main .wrap-inner { padding: 1.8rem 1.2rem 3.5rem; }
+  }
+
+</style>
+<div class="artifact-shell">
+<aside class="artifact-nav">
+  <p class="brand">HR onboarding &amp; sharing refactor</p>
+  <p class="brand-sub">The decision record · Marlex Salesforce programme</p>
+  <a class="navlink nonum" data-view="index" href="#view-index">Overview</a>
+  <p class="grp">The problem</p>
+  <a class="navlink nonum" data-view="the-requirement" href="#view-the-requirement">The requirement</a>
+  <a class="navlink nonum" data-view="role-hierarchy" href="#view-role-hierarchy">Today's role hierarchy</a>
+  <p class="grp">The design</p>
+  <a class="navlink" data-view="sharing-design" href="#view-sharing-design"><span class="n">1</span><span>Internal vs external</span></a>
+  <a class="navlink" data-view="what-we-build" href="#view-what-we-build"><span class="n">2</span><span>What we build for HR</span></a>
+  <a class="navlink" data-view="timing" href="#view-timing"><span class="n">3</span><span>When it lands</span></a>
+  <p class="grp">What's not settled</p>
+  <a class="navlink nonum" data-view="open-questions" href="#view-open-questions">Open questions</a>
+  <p class="grp">Related</p>
+  <a class="nonum" href="https://claude.ai/code/artifact/768ee2d2-c051-46d9-b2c4-dd2f8f74e814">↗ Rebuild record (see its Security page)</a>
+</aside>
+<main class="artifact-main">
+  <section class="page-view" id="view-index"><div class="wrap-inner">
+<header class="masthead">
+  <p class="eyebrow">
+    Marlex · Salesforce Programme · HR Rollout + Sharing-Model Refactor ·
+    Decision Record
+  </p>
+  <h1>
+    Onboarding the internal HR team — and the private access model it forces
+  </h1>
+  <p class="subtitle">
+    Bringing Marlex's internal HR team onto the recruitment platform to run
+    internal recruitment, and refactoring record-level access so their
+    confidential work is private — one initiative, because the two cannot be
+    separated. This record captures the decisions we can make now and is honest
+    about what still depends on HR's requirements.
+  </p>
+  <p class="dateline">
+    Solution decision record · draft for peer review · 16 July 2026
+  </p>
+</header>
+
+<div class="bluf">
+  <p>
+    <strong>What this is.</strong> The technical companion to the SHARE
+    initiative — the reasoning behind how the internal HR / talent-acquisition
+    team is stood up on the new native ATS, and how record-level access is
+    refactored so internal processes stay confidential while external hiring
+    keeps working exactly as it does today. It is a proposed solution for peer
+    review, not a settled plan; the HR team's detailed requirements are still
+    being gathered.
+  </p>
+  <p>
+    <strong>The core idea in one sentence.</strong> Mark every recruitment
+    record as internal or external at the data layer, keep external records open
+    to the whole recruitment population as they are now, make internal records
+    private and roll them up a
+    <strong>net-new internal role hierarchy</strong> so HR sees all internal
+    work and a manager sees only their own line — all built on the new custom
+    model, never on the packaged product being retired.
+  </p>
+  <p>
+    <strong>Why it is its own record.</strong> This is not part of the ATS
+    rebuild's reveal — the rebuild replaces the platform; this onboards a new
+    team and refactors access on top of it. It shares one decision with the
+    rebuild (the access model at cutover), which lives on the
+    <a
+      href="https://claude.ai/code/artifact/768ee2d2-c051-46d9-b2c4-dd2f8f74e814"
+      >rebuild record</a
+    >
+    (open it and go to its <em>Security &amp; sharing</em> page) rather than
+    being restated here. Everything else here is specific to HR onboarding.
+  </p>
+</div>
+
+<section>
+  <p class="section-eyebrow">The decision map</p>
+  <h2>The decisions, each on its own page</h2>
+  <p>
+    Read in the order the argument builds. Two pages frame the problem — what HR
+    actually asked for, and the role hierarchy that exists today. Three pages
+    hold the decisions we can make now — the internal/external access design,
+    what gets built for HR, and when it lands. The last page is the honest one:
+    what is still open until HR's requirements are in.
+  </p>
+  <div class="decmap">
+    <a class="decrow" href="#view-the-requirement">
+      <span class="num">▸</span>
+      <span class="body"
+        ><h3>
+          The requirement
+          <span
+            style="font-weight: 400; font-size: 0.8em; color: var(--ink-soft)"
+            >— the premise</span
+          >
+        </h3>
+        <p>
+          What the internal HR team asked for and why it is confidential by
+          nature — the director-replacing-a-director case that makes an open
+          model unacceptable for internal work.
+        </p></span
+      >
+      <span class="pick">Confidential internal recruitment</span>
+    </a>
+    <a class="decrow" href="#view-role-hierarchy">
+      <span class="num">▸</span>
+      <span class="body"
+        ><h3>
+          Today's role hierarchy
+          <span
+            style="font-weight: 400; font-size: 0.8em; color: var(--ink-soft)"
+            >— the starting point</span
+          >
+        </h3>
+        <p>
+          The 190-role geographic tree that exists now, why it has no place for
+          a corporate HR function, and why that makes the internal branch cheap
+          to build fresh.
+        </p></span
+      >
+      <span class="pick">Geographic · no HR branch</span>
+    </a>
+    <a class="decrow" href="#view-sharing-design">
+      <span class="num">1</span>
+      <span class="body"
+        ><h3>Internal vs external access</h3>
+        <p>
+          The access design: a data-layer internal/external flag drives sharing;
+          external stays open to everyone; internal is private and rolls up a
+          hierarchical internal role tree. Periphery records inherit the model.
+        </p></span
+      >
+      <span class="pick">Flag-driven · private internal · open external</span>
+    </a>
+    <a class="decrow" href="#view-what-we-build">
+      <span class="num">2</span>
+      <span class="body"
+        ><h3>What we build for HR</h3>
+        <p>
+          This is a build, not just a sharing flip: record types, the
+          internal/external flag, the net-new internal role hierarchy, HR
+          persona permission sets, and any onboarding-specific components — all
+          on the custom model.
+        </p></span
+      >
+      <span class="pick">Build on the custom model</span>
+    </a>
+    <a class="decrow" href="#view-timing">
+      <span class="num">3</span>
+      <span class="body"
+        ><h3>When it lands</h3>
+        <p>
+          The single business fork: onboard HR after the cutover (recommended,
+          keeps go-live clean) or at the cutover (forces the private model on
+          day one). The People lead owns this call.
+        </p></span
+      >
+      <span class="pick">After cutover — unless HR can't wait</span>
+    </a>
+    <a class="decrow" href="#view-open-questions">
+      <span class="num">▸</span>
+      <span class="body"
+        ><h3>
+          Open questions
+          <span
+            style="font-weight: 400; font-size: 0.8em; color: var(--ink-soft)"
+            >— what's not settled</span
+          >
+        </h3>
+        <p>
+          What we deliberately parked until the HR team confirms:
+          confidential-field list, reuse-vs-separate objects, onboarding
+          screens, the shape of the internal role tree, and the periphery-object
+          matrix.
+        </p></span
+      >
+      <span class="pick">Gather before build</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <p>
+    The access decision this shares with the platform rebuild lives on the
+    <a
+      href="https://claude.ai/code/artifact/768ee2d2-c051-46d9-b2c4-dd2f8f74e814"
+      >rebuild record</a
+    >
+    — open it and see its <em>Security &amp; sharing</em> page. Grounded in the
+    July 2026 production-org audit, the live role hierarchy, and the 2026-07-16
+    coordination meeting where the requirement was raised.
+  </p>
+</footer>
+  </div></section>
+  <section class="page-view" id="view-the-requirement"><div class="wrap-inner">
+<header class="masthead">
+  <p class="eyebrow">The premise</p>
+  <h1>What the internal HR team asked for</h1>
+  <p class="subtitle">
+    Marlex runs recruitment for external clients on the ATS. The internal HR
+    team wants the same platform for internal recruitment — with one hard
+    constraint: their processes are confidential and cannot be visible to the
+    wider business.
+  </p>
+  <p class="dateline">
+    Raised in the ATS-rebuild coordination meeting · 16 July 2026
+  </p>
+</header>
+
+<div class="bluf">
+  <p>
+    <strong>The ask.</strong> Bring the internal HR / talent-acquisition team
+    onto the ATS to run <strong>internal recruitment</strong> — backfills,
+    internal moves, onboarding — instead of third-party or home-grown tools.
+    Today they have no system for it; the recruitment platform already does
+    exactly this shape of work for external clients.
+  </p>
+  <p>
+    <strong>The constraint that shapes everything.</strong> Internal processes
+    are <strong>confidential</strong>. The current org is open — everyone sees
+    everything — which is fine for external hiring but unacceptable the moment a
+    confidential internal process exists. So onboarding HR is inseparable from
+    making the model private.
+  </p>
+</div>
+
+<section>
+  <p class="section-eyebrow">Why confidentiality is not optional</p>
+  <h2>The director-replacing-a-director case</h2>
+  <p>
+    The clearest example, raised directly in the meeting: a regional director
+    needs to open a process to <em>replace an area director</em>. If that
+    process is visible the way external processes are today, the area director
+    sees that their own role is being back-filled — that their job is at risk.
+    The whole point of bringing HR onto the platform is defeated if the platform
+    leaks the process to the person it concerns.
+  </p>
+  <p>So internal work needs three things the open model cannot give:</p>
+  <ul>
+    <li>
+      <strong>Privacy by default</strong> — an internal process is closed, not
+      visible to the whole recruitment population.
+    </li>
+    <li>
+      <strong>A hierarchical view</strong> — HR sees all internal processes; a
+      regional director sees only their own and those of the people below them;
+      nobody sees upward.
+    </li>
+    <li>
+      <strong>No public exposure</strong> — internal openings are never
+      published to the external job-board / offers portal; they live entirely on
+      the internal side.
+    </li>
+  </ul>
+</section>
+
+<section>
+  <p class="section-eyebrow">What stays the same</p>
+  <h2>External hiring must not change</h2>
+  <p>
+    The requirement is additive, not a redesign of what works. Every external
+    candidate and job must keep behaving exactly as today — visible to and
+    editable by the whole recruitment population. Whatever we do for internal
+    confidentiality must leave the external world untouched, including for every
+    record that already exists. That "don't break what works" constraint is what
+    drives the flag-based design on the
+    <a href="#view-sharing-design">access page</a>.
+  </p>
+  <div class="callout key">
+    <span class="lbl">The confidential set, as described so far</span>
+    <p>
+      The records HR flagged as sensitive are the internal processes themselves
+      plus HR-owned data: salaries, interview notes, clock-ins, and
+      internal-candidate applications. This list is indicative — pinning down
+      exactly which fields and objects are confidential is an
+      <a href="#view-open-questions">open question</a> for the HR team, not
+      something to assume.
+    </p>
+  </div>
+</section>
+
+<section>
+  <p class="section-eyebrow">Two framings the meeting surfaced</p>
+  <h2>Not just sharing — and not necessarily now</h2>
+  <p>Two points from the discussion shape the rest of this record:</p>
+  <div class="tmpl">
+    <div class="tmpl-step">
+      <span class="k">It is a build</span>
+      <p>
+        Onboarding a team is more than flipping sharing. HR needs their own kind
+        of record, a management structure, their own access profile, and
+        possibly onboarding-specific screens — all things that get
+        <em>built</em>. That is why this is the "HR rollout <em>and</em> sharing
+        refactor", covered on <a href="#view-what-we-build">what we build</a>.
+      </p>
+    </div>
+    <div class="tmpl-step">
+      <span class="k">Timing is a business call</span>
+      <p>
+        The meeting explicitly did not settle whether this is urgent enough to
+        do now or can wait for the rebuild. It was framed as "the least
+        important of the important things, but the most important of the least
+        important", and the People lead was named as the person who should
+        decide urgency — see <a href="#view-timing">when it lands</a>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>
+    Next: the
+    <a href="#view-role-hierarchy">role hierarchy that exists today</a>, and why
+    it has no place for HR yet. The access model this requirement forces is on
+    the rebuild record's
+    <a
+      href="https://claude.ai/code/artifact/768ee2d2-c051-46d9-b2c4-dd2f8f74e814"
+      >Security</a
+    >
+    page.
+  </p>
+</footer>
+  </div></section>
+  <section class="page-view" id="view-role-hierarchy"><div class="wrap-inner">
+<header class="masthead">
+  <p class="eyebrow">The starting point</p>
+  <h1>Today's role hierarchy — geographic, with no HR branch</h1>
+  <p class="subtitle">
+    The org has a single 190-role tree organised by geography. It has two
+    parallel branches under each region — sales and recruiting — and no branch
+    for a corporate HR function. That gap is exactly why the internal role tree
+    is cheap to build fresh.
+  </p>
+  <p class="dateline">
+    Read from the live production role metadata · July 2026
+  </p>
+</header>
+
+<div class="bluf">
+  <p>
+    <strong>What exists.</strong> One role hierarchy, 190 roles, rooted at a
+    single node, structured by geography: region → area → office. Under each
+    regional director sit two parallel branches — a commercial/sales branch and
+    a recruiting branch. Every role grants edit on the core objects, consistent
+    with today's open model.
+  </p>
+  <p>
+    <strong>What's missing.</strong> There is no internal-HR branch, because HR
+    is a corporate function, not a recruitment office. The internal hierarchy
+    the confidentiality model needs does not exist yet — and because there are
+    no internal HR users to migrate, it is <strong>built from scratch</strong>,
+    which is the easy case.
+  </p>
+</div>
+
+<section>
+  <p class="section-eyebrow">The shape</p>
+  <h2>Region → area → office, in two parallel branches</h2>
+  <div class="stat-row">
+    <div class="stat">
+      <span class="n">190</span
+      ><span class="l">roles in a single tree, rooted at one top node</span>
+    </div>
+    <div class="stat">
+      <span class="n">~10</span
+      ><span class="l"
+        >regional director roles, each splitting into a sales and a recruiting
+        branch</span
+      >
+    </div>
+    <div class="stat">
+      <span class="n">0</span
+      ><span class="l"
+        >roles for an internal-HR function today — the branch does not
+        exist</span
+      >
+    </div>
+  </div>
+  <p>Reconstructed from the parent-role links, the tree looks like this:</p>
+  <div class="tech">
+    <span class="tech-label">The live tree (role API names)</span>
+    <code>Marlex</code> (root)<br />
+    └─ executive layer — <code>Managing_Director_Executive</code> /
+    <code>[named-director role]</code> / <code>Director_de_negocio</code><br />
+    &nbsp;&nbsp;&nbsp;└─ <code>Regional_Sales_Director_[REGION]</code> — ~10
+    (MADRID, BARCELONA, GIRONA, LEVANTE, NORTE, SUR, CAT_CENTRE, CAT_SUD,
+    ARAGON, GLOBAL_SECTORS…)<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─
+    <code>Business_Area_Manager_[AREA]</code> — ~19, the
+    <strong>sales / commercial</strong> branch<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└─
+    <code>MARLEX_[OFFICE]</code> — ~71 office roles<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─
+    <code>Recruiting_Area_Manager_[AREA]</code> — ~19, the
+    <strong>recruiting</strong> branch<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─
+    <code>Recruiting_[OFFICE]</code> — ~56 office roles
+  </div>
+  <p>Two things matter for the HR design:</p>
+  <ul>
+    <li>
+      <strong>It is geographic, not functional.</strong> Access rolls up by
+      where you sit — office to area to region — not by what function you
+      perform. HR is a function that cuts across geography, so it does not fit
+      anywhere in this tree.
+    </li>
+    <li>
+      <strong>The recruiting branch is the closest analogue.</strong> The
+      internal HR branch will look structurally like the recruiting branch (a
+      manager over a team, rolling up), but it is a separate sub-tree for
+      internal work, not a re-use of the existing recruiting roles.
+    </li>
+  </ul>
+</section>
+
+<section>
+  <p class="section-eyebrow">Why the gap helps</p>
+  <h2>No internal users today means no migration</h2>
+  <p>
+    The absence of an HR branch is not a problem to solve — it is what makes the
+    build cheap. Standing up the internal hierarchy is net-new: new roles, new
+    users, new licences, with
+    <strong
+      >nothing to migrate and no existing behaviour to preserve on the internal
+      side</strong
+    >. Contrast the external side, where 190 roles and hundreds of users already
+    depend on the open model and must be left exactly as they are. The risk in
+    this whole initiative sits on the external side (don't break what works),
+    not on building the internal branch.
+  </p>
+  <div class="callout">
+    <span class="lbl"
+      >Under an open model, the hierarchy is inert for visibility</span
+    >
+    <p>
+      Role hierarchy only <em>grants</em> access on top of a private baseline.
+      Today the objects are open (everyone sees everything), so the hierarchy
+      does nothing for record visibility — it is carried for reporting and
+      forecasting. The moment internal records become private, the hierarchy
+      starts doing real work: it is what gives a manager sight of their team's
+      internal processes and no one else's. That coupling is the design on the
+      next page.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <p>
+    Next:
+    <a href="#view-sharing-design"
+      >how internal stays private while external stays open</a
+    >. The org-wide default and the cutover posture are on the rebuild record's
+    <a
+      href="https://claude.ai/code/artifact/768ee2d2-c051-46d9-b2c4-dd2f8f74e814"
+      >Security</a
+    >
+    page.
+  </p>
+</footer>
+  </div></section>
+  <section class="page-view" id="view-sharing-design"><div class="wrap-inner">
+<header class="masthead">
+  <p class="eyebrow">Decision 1 · Internal vs external access</p>
+  <h1>How internal work stays private while external hiring stays open</h1>
+  <p class="subtitle">
+    The platform must do two opposite things at once. The design: mark every
+    record internal or external at the data layer, drive sharing off that mark,
+    keep external open to everyone, make internal private and hierarchical — and
+    make the periphery records inherit the model.
+  </p>
+  <p class="dateline">
+    Solution decision · draft for peer review · 16 July 2026
+  </p>
+</header>
+
+<div class="bluf">
+  <p>
+    <strong>What this decides.</strong> The record-level access design that lets
+    external candidates and jobs stay visible to the whole recruitment
+    population exactly as today, while internal HR processes are private and
+    seen only up their own management line.
+  </p>
+  <p>
+    <strong>What we chose.</strong> Set the object default to private, then
+    <strong
+      >share external records back to everyone with a criteria-based rule keyed
+      on a data-layer flag</strong
+    >
+    (a record type plus an <code>Is_External__c</code> boolean). Internal
+    records match no such rule, so they stay private and are visible only to
+    their owner, the HR team, and — via the
+    <strong>net-new internal role hierarchy</strong> — the managers above the
+    owner. Every record that exists today is stamped
+    <code>Is_External__c = true</code> in the switch so it keeps the visibility
+    it has now. Child and related records inherit the model, deliberately, so
+    nothing leaks through the side.
+  </p>
+</div>
+
+<section>
+  <p class="section-eyebrow">The mechanism</p>
+  <h2>A data-layer flag, not the record type, drives the sharing</h2>
+  <p>
+    Record type and the boolean are set together, but the
+    <strong>sharing rule keys off the data-layer flag</strong>, not the
+    record-type label. That is deliberate:
+  </p>
+  <ul>
+    <li>
+      <strong>Record type is a UI/process construct</strong> — it drives
+      layouts, picklists and processes. On its own it does not control who sees
+      a record.
+    </li>
+    <li>
+      <strong>The flag is explicit and queryable</strong> — a criteria-based
+      sharing rule, an integration, and a report can all read
+      <code>Is_External__c</code> directly, and it does not silently break if
+      someone reorders or re-purposes record types later.
+    </li>
+  </ul>
+  <p>
+    So each record carries both: the record type for the experience, the boolean
+    for the boundary. In practice they are set in lockstep, and either the
+    boolean or the <code>RecordTypeId</code> could be the rule criterion — the
+    boolean is preferred for the reasons above.
+  </p>
+  <div class="tech">
+    <span class="tech-label">For the developers</span>OWD on the recruitment
+    objects goes to Private (today: Contact = Public Read/Write; the rebuild
+    objects <code>ATS_Job__c</code>, <code>Application__c</code>,
+    <code>Interview__c</code>, <code>Placement__c</code> are authored
+    ReadWrite). One criteria-based sharing rule per object:
+    <code>Is_External__c = true</code> → share to a "Spain ATS" public group,
+    Read/Write — this reproduces today's open behaviour for external records.
+    Internal records (flag false) fall through to the private baseline and are
+    granted only by ownership + role hierarchy + explicit HR-group share.
+    Backfill <code>Is_External__c = true</code> on all existing records
+    before/at the flip so no current user loses visibility. This composes with
+    the country-keyed rules from the rebuild's post-cutover privatisation stage
+    — the two axes (country, internal/external) stack.
+  </div>
+</section>
+
+<section>
+  <p class="section-eyebrow">The internal side</p>
+  <h2>Private, plus a hierarchy that rolls up and never sideways or upward</h2>
+  <p>
+    An internal record is owned by whoever creates it (a regional director, an
+    HR recruiter). On the private baseline:
+  </p>
+  <ul>
+    <li>
+      <strong>HR sees all internal processes</strong> — via a share to the HR
+      public group (they are the cross-cutting function that must see everything
+      internal).
+    </li>
+    <li>
+      <strong>Managers see down their own line only</strong> — the internal role
+      hierarchy grants a parent role sight of records owned below it. A regional
+      director sees their own and their reports'; they do <em>not</em> see a
+      peer's, and a report does <em>not</em> see upward.
+    </li>
+    <li>
+      <strong>Nobody outside the line sees it at all</strong> — no
+      external-population share matches an internal record, so it is invisible
+      to the wider recruitment org by default.
+    </li>
+  </ul>
+  <p>
+    This is exactly the "tree where those above see below, never the reverse"
+    the requirement described — and it is delivered by native role hierarchy on
+    a private object, no code required for the common case.
+  </p>
+</section>
+
+<section>
+  <p class="section-eyebrow">The trap</p>
+  <h2>Periphery records must inherit the model</h2>
+  <p>
+    Confidentiality leaks through the weakest related record. It is not enough
+    to privatise the candidate, job and application — the whole graph around an
+    internal process has to carry the boundary:
+  </p>
+  <ul>
+    <li>
+      <strong>Master-detail children inherit automatically</strong> — screening
+      answers under a screening, for instance, follow the parent's sharing.
+      These are safe by construction.
+    </li>
+    <li>
+      <strong>Lookup-related records do not</strong> — interviews, placements,
+      activities, notes and attachments related by lookup need their own private
+      OWD and their own rule, or an internal interview sits open while the
+      internal process it belongs to is locked.
+    </li>
+  </ul>
+  <p>
+    So the design includes an explicit pass over the object graph to classify
+    each related object as inherit-by-master-detail or needs-its-own-rule.
+    Mapping that graph in full is an
+    <a href="#view-open-questions">open item</a>, but the principle is fixed
+    here: no related record is left open behind a private internal process.
+  </p>
+</section>
+
+<section>
+  <p class="section-eyebrow">Alternatives considered</p>
+  <h2>Flag-driven, record-type-driven, or manual groups</h2>
+  <div class="option">
+    <div class="option-head">
+      <span class="option-name"
+        >Data-layer flag drives sharing (record type for UX)</span
+      ><span class="chip adopted">Chosen</span>
+    </div>
+    <p>
+      Private baseline; a criteria-based rule on
+      <code>Is_External__c</code> re-opens external records to everyone;
+      internal stays private and rolls up the internal hierarchy. Explicit,
+      queryable, integration-safe, and robust to later record-type changes.
+      Cost: a data backfill on existing records and a periphery-object pass.
+    </p>
+  </div>
+  <div class="option">
+    <div class="option-head">
+      <span class="option-name">Record type alone drives visibility</span
+      ><span class="chip rejected">Rejected</span>
+    </div>
+    <p>
+      Tempting because the record type already separates internal from external
+      in the UI. Rejected: a record type does not control sharing by itself, and
+      keying access to the UI construct couples two concerns that should move
+      independently — reorganise record types and you silently reshape access.
+    </p>
+  </div>
+  <div class="option">
+    <div class="option-head">
+      <span class="option-name"
+        >Manual groups / queues per internal process</span
+      ><span class="chip rejected">Rejected</span>
+    </div>
+    <p>
+      Hand-share each internal process to a chosen set of people. Rejected: it
+      does not scale, it has no automatic roll-up (a manager would have to be
+      added by hand to every report's process), and it is error-prone in exactly
+      the case where a mistake is a confidentiality breach.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <p>
+    This is the record-level design; the org-wide default and the cutover
+    posture it sits on are the rebuild record's
+    <a
+      href="https://claude.ai/code/artifact/768ee2d2-c051-46d9-b2c4-dd2f8f74e814"
+      >Security</a
+    >
+    decision. Next: <a href="#view-what-we-build">what actually gets built</a> to
+    deliver it.
+  </p>
+</footer>
+  </div></section>
+  <section class="page-view" id="view-what-we-build"><div class="wrap-inner">
+<header class="masthead">
+  <p class="eyebrow">Decision 2 · What we build for HR</p>
+  <h1>This is a build, not just a sharing flip</h1>
+  <p class="subtitle">
+    Onboarding a team means building things: record types and the
+    internal/external flag, a net-new internal role hierarchy, HR persona
+    permission sets, and whatever onboarding-specific components the
+    requirements turn out to need. All of it on the new custom model — never on
+    the packaged product being retired.
+  </p>
+  <p class="dateline">
+    Solution decision · draft for peer review · 16 July 2026
+  </p>
+</header>
+
+<div class="bluf">
+  <p>
+    <strong>What this decides.</strong> The concrete components the HR rollout
+    builds, distinct from the access rules on
+    <a href="#view-sharing-design">the previous page</a>. The rename of this
+    initiative to "HR Rollout <em>and</em> sharing-model refactor" is exactly
+    because of this list — it is not only a privatisation stage.
+  </p>
+  <p>
+    <strong>The one rule over all of it.</strong> Every component is built on
+    the <strong>new native model</strong> (<code>ATS_Job__c</code>,
+    <code>Application__c</code>, and the rest), not on the TargetRecruit
+    package. Building HR onto the package would be building on a platform
+    already committed to retirement — instant throwaway work. This is the same
+    doctrine the rebuild follows.
+  </p>
+</div>
+
+<section>
+  <p class="section-eyebrow">The build list</p>
+  <h2>What gets created</h2>
+  <div class="tmpl">
+    <div class="tmpl-step">
+      <span class="k">Record types + flag</span>
+      <p>
+        <strong
+          >Internal and external record types on the recruitment objects, plus
+          the <code>Is_External__c</code> boolean.</strong
+        >
+        The record types drive the internal layouts, picklists and process; the
+        flag drives the sharing. Set together, used for different jobs. This is
+        the seam the whole access model keys off.
+      </p>
+    </div>
+    <div class="tmpl-step">
+      <span class="k">Internal role hierarchy</span>
+      <p>
+        <strong>A net-new internal sub-tree for the HR function.</strong> A
+        manager over a team, rolling up so a leader sees their line's internal
+        processes and no one sees upward — structurally like the recruiting
+        branch, but separate and for internal work. Built from scratch, no users
+        to migrate.
+      </p>
+    </div>
+    <div class="tmpl-step">
+      <span class="k">HR persona permission set</span>
+      <p>
+        <strong>An HR access profile on the new objects.</strong> Object and
+        field rights plus the app/tabs for the internal team — mirrored from the
+        recruiter grant and scoped to internal work, following the same
+        persona-permission-set method the
+        <a
+          href="https://claude.ai/code/artifact/768ee2d2-c051-46d9-b2c4-dd2f8f74e814"
+          >access switch</a
+        >
+        uses. Provisions licences and users.
+      </p>
+    </div>
+    <div class="tmpl-step">
+      <span class="k">HR public group + shares</span>
+      <p>
+        <strong
+          >The HR group and the sharing that grants it all internal
+          records.</strong
+        >
+        The cross-cutting "HR sees everything internal" grant, plus the
+        criteria-based external-population share that leaves external hiring
+        open — both authored as part of this build.
+      </p>
+    </div>
+    <div class="tmpl-step">
+      <span class="k">Onboarding components</span>
+      <p>
+        <strong
+          >Whatever internal recruitment / onboarding needs that external hiring
+          does not.</strong
+        >
+        Possibly a distinct kind of record, onboarding screens, or form pre-fill
+        from existing systems. This is the least-defined part and depends on HR
+        requirements — parked as an
+        <a href="#view-open-questions">open question</a>, not assumed.
+      </p>
+    </div>
+    <div class="tmpl-step">
+      <span class="k">Periphery coverage</span>
+      <p>
+        <strong>Private OWD + rules on the lookup-related objects</strong>
+        (interviews, placements, activities, notes, attachments) so an internal
+        process does not leak through a related record. The graph pass that
+        scopes this is an open item.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <p class="section-eyebrow">Reuse vs new</p>
+  <h2>Reuse the recruitment objects, or give HR its own?</h2>
+  <p>
+    A genuine design question sits inside the build: do internal processes reuse
+    the same <code>Application__c</code> / <code>ATS_Job__c</code> objects as
+    external hiring (separated only by record type + flag), or do they get their
+    own internal objects?
+  </p>
+  <div class="dq">
+    <div class="dq-col chosen">
+      <h4>Reuse the recruitment objects <span class="tag">Leaning</span></h4>
+      <p class="head-note">
+        Internal work lives on the same objects, distinguished by record type
+        and the internal/external flag.
+      </p>
+      <ul class="dq-outcomes">
+        <li>
+          <span
+            >One object model, one matching/search surface, one set of
+            automations to maintain — internal work inherits the recruitment
+            capability for free.</span
+          >
+        </li>
+        <li>
+          <span
+            >The flag-driven sharing already separates them cleanly, so a
+            separate object buys little isolation the flag doesn't give.</span
+          >
+        </li>
+        <li>
+          <span
+            >Risk: if internal onboarding turns out to need a very different
+            shape, record types stretch thin.</span
+          >
+        </li>
+      </ul>
+    </div>
+    <div class="dq-col rejected">
+      <h4>Separate internal objects <span class="tag">Held</span></h4>
+      <p class="head-note">
+        Dedicated internal-process objects, isolated from the external model.
+      </p>
+      <ul class="dq-outcomes">
+        <li>
+          <span
+            >Maximum isolation — internal data physically apart from
+            external.</span
+          >
+        </li>
+        <li>
+          <span
+            >But it duplicates the object model, the automations and the
+            matching surface, and the flag-based sharing already gives the
+            isolation that matters.</span
+          >
+        </li>
+        <li>
+          <span
+            >Justified only if HR requirements diverge sharply from recruitment
+            — which we don't yet know.</span
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+  <p>
+    The lean is reuse-with-record-types, because the access design already
+    isolates internal work and reuse avoids duplicating the whole model. But
+    this is explicitly <strong>held pending HR requirements</strong> — if
+    onboarding is structurally unlike external hiring, the answer changes.
+    Recorded as an <a href="#view-open-questions">open question</a>.
+  </p>
+</section>
+
+<footer>
+  <p>
+    Next: <a href="#view-timing">when this build lands</a> — the single business
+    fork that decides whether the private model is born on day one. The
+    persona-permission-set method is shared with the rebuild record's
+    <a
+      href="https://claude.ai/code/artifact/768ee2d2-c051-46d9-b2c4-dd2f8f74e814"
+      >Security</a
+    >
+    / access work.
+  </p>
+</footer>
+  </div></section>
+  <section class="page-view" id="view-timing"><div class="wrap-inner">
+<header class="masthead">
+  <p class="eyebrow">Decision 3 · When it lands</p>
+  <h1>At the cutover, or after it</h1>
+  <p class="subtitle">
+    One business decision governs the whole sequencing, because HR onboarding
+    and privatisation are inseparable. Onboard HR after the cutover and day one
+    stays open and clean; onboard at the cutover and the private model must be
+    born on day one. The recommendation is after — the People lead owns the
+    call.
+  </p>
+  <p class="dateline">
+    Solution decision · draft for peer review · 16 July 2026
+  </p>
+</header>
+
+<div class="bluf">
+  <p>
+    <strong>What this decides.</strong> Whether the HR rollout and the private
+    access model land <em>at</em> the platform cutover or as a stage
+    <em>after</em> it. It is a single fork because you cannot onboard HR onto an
+    open model — the moment confidential internal processes exist, "everyone
+    sees everything" is a live breach. So
+    <strong>wherever HR onboarding lands, privatisation lands with it.</strong>
+  </p>
+  <p>
+    <strong>What we recommend.</strong> Onboard HR
+    <strong>after the cutover</strong>. The cutover then moves no access
+    boundary, and the HR build plus privatisation run as their own rehearsable,
+    roll-back-able stage on quiet timing. Because HR has no existing users or
+    data, deferring costs nothing in rework. Go to born-private-at-cutover only
+    if the People lead declares HR cannot wait.
+  </p>
+</div>
+
+<section>
+  <p class="section-eyebrow">The coupling</p>
+  <h2>HR onboarding date equals privatisation date</h2>
+  <p>
+    The rebuild's security decision defaults to carrying today's open model
+    forward at cutover and privatising later, precisely because privacy alone
+    has no forcing deadline. HR breaks that assumption: its processes are
+    confidential from the first record, so the open interim that is harmless for
+    external data is unacceptable for internal data. The two dates lock
+    together:
+  </p>
+  <div class="callout key">
+    <span class="lbl">The rule</span>
+    <p>
+      Privatisation cannot land <em>before</em> HR onboarding (nothing to
+      protect yet) and cannot land <em>after</em> it (confidential data would
+      sit exposed in between). So the privatisation date <em>is</em> the HR
+      onboarding date. The cutover is simply the earliest that date can be.
+    </p>
+  </div>
+</section>
+
+<section>
+  <p class="section-eyebrow">The fork</p>
+  <h2>After the cutover, or at it</h2>
+  <div class="dq">
+    <div class="dq-col chosen">
+      <h4>Onboard HR after the cutover <span class="tag">Recommended</span></h4>
+      <p class="head-note">
+        Cutover carries today's open model forward unchanged; the HR build +
+        privatisation run afterwards as their own stage.
+      </p>
+      <ul class="dq-outcomes">
+        <li>
+          <span
+            >The riskiest window stays clean — no OWD flip, no country key, no
+            new role tree, no HR persona sets crammed into go-live.</span
+          >
+        </li>
+        <li>
+          <span
+            >The HR build + privatisation get their own rehearsal and their own
+            rollback, on empty-of-risk timing.</span
+          >
+        </li>
+        <li>
+          <span
+            >Costs nothing to defer: HR has no existing users or data, so there
+            is no rework in standing them up a few weeks later.</span
+          >
+        </li>
+      </ul>
+      <div class="dq-foot">
+        <p>
+          <span class="lbl">Worst case</span> The stage slips and HR waits
+          longer than hoped — visible and recoverable, and the external world is
+          unaffected throughout.
+        </p>
+      </div>
+    </div>
+    <div class="dq-col rejected">
+      <h4>Onboard HR at the cutover <span class="tag">Conditional</span></h4>
+      <p class="head-note">
+        The private model is born on day one — the only option if HR must go
+        live with the switch.
+      </p>
+      <ul class="dq-outcomes">
+        <li>
+          <span>HR is productive from go-live, with no interim wait.</span>
+        </li>
+        <li>
+          <span
+            >But the private model, country key, sharing rules and internal role
+            tree all land in the cutover — the worst window to add
+            complexity.</span
+          >
+        </li>
+        <li>
+          <span
+            >The access layer now carries cutover rollback risk (the default
+            path has none), so a fail-back must unwind the privatisation
+            too.</span
+          >
+        </li>
+      </ul>
+      <div class="dq-foot">
+        <p>
+          <span class="lbl">When it's right</span> Only if the People lead
+          declares HR's need genuinely immediate. Even then, prefer a
+          lightweight temporary bridge over building on TargetRecruit.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="dq-verdict">
+    <p>
+      <strong
+        >Default to after-the-cutover; treat at-the-cutover as a live
+        conditional branch, not a rejection.</strong
+      >
+      Both paths are designed and ready — the same record types, flag, internal
+      role tree and persona sets are built either way; only the timing moves.
+      The recommendation is after, to keep go-live clean and lose nothing. The
+      born-private branch fires only on an explicit business decision, and even
+      an urgent HR need is better bridged with a throwaway tool than by building
+      the full model on the product being retired.
+    </p>
+  </div>
+</section>
+
+<section>
+  <p class="section-eyebrow">Who decides</p>
+  <h2>This is the People lead's call</h2>
+  <p>
+    The technical answer is the same in both branches; what differs is urgency,
+    and only the business can weigh that. The meeting named the person
+    responsible for People as the decider. Until that call is made,
+    the cutover plan carries the after-the-cutover default, and the born-private
+    branch stays ready. The decision must be made
+    <strong>before the cutover plan is locked</strong>, because it changes what
+    lands in the go-live window.
+  </p>
+</section>
+
+<footer>
+  <p>
+    The cutover posture this fork sits on, and its rollback behaviour in each
+    branch, are on the rebuild record's
+    <a
+      href="https://claude.ai/code/artifact/768ee2d2-c051-46d9-b2c4-dd2f8f74e814"
+      >Security</a
+    >
+    page. Next: <a href="#view-open-questions">what's still open</a> until HR's
+    requirements land.
+  </p>
+</footer>
+  </div></section>
+  <section class="page-view" id="view-open-questions"><div class="wrap-inner">
+<header class="masthead">
+  <p class="eyebrow">What's not settled</p>
+  <h1>Open questions — gather before we build</h1>
+  <p class="subtitle">
+    The decisions on the previous pages hold at the level of the access model
+    and the build shape. The details below genuinely depend on the HR team's
+    requirements, which are still being gathered. They are parked here honestly,
+    not assumed.
+  </p>
+  <p class="dateline">Living list · draft for peer review · 16 July 2026</p>
+</header>
+
+<div class="bluf">
+  <p>
+    <strong>Why a page of open questions.</strong> The requirement was raised in
+    a coordination meeting; the HR team has not yet given detailed requirements.
+    Rather than invent defaults and present them as decisions, the design fixes
+    what it safely can — the access model, the build components, the timing fork
+    — and lists what it cannot decide without HR input. Each item names who
+    resolves it and what it blocks.
+  </p>
+</div>
+
+<section>
+  <p class="section-eyebrow">Requirements to gather</p>
+  <h2>What we need from the HR team</h2>
+  <ul>
+    <li>
+      <strong>The confidential-field list.</strong> Exactly which fields count
+      as sensitive — salaries, interview notes, clock-ins and internal-candidate
+      data are indicative, not confirmed. Blocks the field-level security design
+      and the periphery-object pass. <em>Owner: HR team.</em>
+    </li>
+    <li>
+      <strong
+        >Reuse the recruitment objects, or separate internal objects?</strong
+      >
+      The lean is reuse-with-record-types (see
+      <a href="#view-what-we-build">what we build</a>), but if internal
+      onboarding is structurally unlike external hiring, dedicated objects may
+      be warranted. Blocks the object-model decision.
+      <em>Owner: ATS product owner + HR.</em>
+    </li>
+    <li>
+      <strong>Onboarding-specific components.</strong> What internal recruitment
+      / onboarding needs that external hiring does not — a distinct record kind,
+      onboarding screens, form pre-fill from existing systems. Blocks the build
+      scope for the onboarding components.
+      <em>Owner: HR team + ATS product owner.</em>
+    </li>
+    <li>
+      <strong>The shape of the internal role hierarchy.</strong> Who sits above
+      whom on the internal side — how many levels, which managers see which
+      teams' internal work. The design fixes the <em>pattern</em> (roll up,
+      never sideways or upward); the actual tree needs HR's org structure.
+      <em>Owner: HR team.</em>
+    </li>
+  </ul>
+</section>
+
+<section>
+  <p class="section-eyebrow">Design items to complete</p>
+  <h2>What we can start, but must finish</h2>
+  <ul>
+    <li>
+      <strong>The periphery-object matrix.</strong> Classify every related
+      object (interviews, placements, activities, notes, attachments) as
+      inherit-by-master-detail or needs-its-own-private-rule, so no related
+      record leaks a private internal process. The principle is fixed; the full
+      map is not. <em>Owner: solution architecture.</em>
+    </li>
+    <li>
+      <strong>The existing-record backfill.</strong> Stamping
+      <code>Is_External__c = true</code> on every current record before the flip
+      so nobody loses today's visibility — a data task with a deadline before
+      the privatisation rehearsal.
+      <em>Owner: data migration + solution architecture.</em>
+    </li>
+    <li>
+      <strong>Licences and user provisioning.</strong> Creating the HR users and
+      their licences, and assigning the HR persona permission set.
+      Straightforward, but real work that must be scheduled with the rollout.
+      <em>Owner: Marlex IT.</em>
+    </li>
+  </ul>
+</section>
+
+<section>
+  <p class="section-eyebrow">Decision to confirm</p>
+  <h2>The one that gates everything</h2>
+  <ul>
+    <li>
+      <strong>The timing decision.</strong> At the cutover or after it (see
+      <a href="#view-timing">when it lands</a>). It gates whether the private
+      model is born on day one and what enters the go-live window. Must be
+      settled before the cutover plan is locked.
+      <em>Owner: the People lead.</em>
+    </li>
+  </ul>
+  <div class="callout">
+    <span class="lbl">The interim option, if HR cannot wait</span>
+    <p>
+      If the People lead declares an immediate need but the
+      born-private-at-cutover cost is unwelcome, the fallback raised in the
+      meeting is a lightweight temporary bridge built by Corporate Tools — a
+      stopgap for the minimal internal gestión — rather than building the full
+      visibility model on the TargetRecruit package. It keeps the retiring
+      platform untouched and avoids double-building.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <p>
+    These resolve as the HR team's requirements come in; this page is the living
+    list until then. Back to the <a href="#view-index">overview</a>, or the
+    rebuild record's
+    <a
+      href="https://claude.ai/code/artifact/768ee2d2-c051-46d9-b2c4-dd2f8f74e814"
+      >Security</a
+    >
+    decision this composes with.
+  </p>
+</footer>
+  </div></section>
+</main>
+</div>
+<script>
+(function(){
+  function show(slug){
+    var views = document.querySelectorAll('.page-view');
+    var links = document.querySelectorAll('.artifact-nav a.navlink');
+    var hit = document.getElementById('view-' + slug);
+    if(!hit){ slug = 'index'; hit = document.getElementById('view-index'); }
+    if(!hit){ return; }
+    for(var i=0;i<views.length;i++){ views[i].classList.toggle('active', views[i] === hit); }
+    for(var j=0;j<links.length;j++){ links[j].classList.toggle('active', links[j].getAttribute('data-view') === slug); }
+    window.scrollTo(0, 0);
+  }
+  function fromHash(){ show((location.hash || '').replace(/^#view-/, '') || 'index'); }
+  // Re-run on every signal the host might use, because the Artifact host can set
+  // the URL fragment AFTER the script first parses (arriving via a cross-artifact
+  // deep-link like #view-security). One-shot parse-time reads miss that; these
+  // cover parse-time, DOM-ready, full-load, hash changes, and a short late re-check.
+  window.addEventListener('hashchange', fromHash);
+  window.addEventListener('DOMContentLoaded', fromHash);
+  window.addEventListener('load', fromHash);
+  fromHash();
+  setTimeout(fromHash, 0);
+  setTimeout(fromHash, 200);
+})();
+</script>
