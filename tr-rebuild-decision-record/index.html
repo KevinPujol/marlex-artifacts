@@ -19962,9 +19962,23 @@
             these consumers hit the platform's standard interfaces where
             <strong>the object name is the contract</strong> — there is no port
             to swap on Marlex's side, so each must be discovered from usage logs
-            and re-pointed by its owner in step with cutover. That work is
-            enumerated on the <a href="#view-cutover">cutover page</a>; this
-            page only fixes their long-term rule.
+            and re-pointed by its owner in step with cutover. The bought tools
+            among them (the sourcing and screening connectors) carry a second,
+            harder constraint: they ship a
+            <strong
+              >fixed connector that logs in through Salesforce's own
+              authentication and reads through its standard interface</strong
+            >, with no setting to aim them at the platform instead. So the
+            "route it behind the platform later" option in the table above
+            <em>does not apply to them</em> — not by choice, but because the
+            platform can't stand in for Salesforce to a packaged connector.
+            Their only lever is the Salesforce side: which data each is allowed
+            to reach. The measured evidence for all of this — who calls, who
+            writes, who only reads — is laid out on
+            <a href="#view-integration-surface">the measured surface</a>; the
+            per-caller cutover routes are on the
+            <a href="#view-cutover">cutover page</a>; this page only fixes their
+            long-term rule.
           </p>
         </section>
 
@@ -20546,10 +20560,18 @@
             platform later, per edge class, on its own schedule — never blocking
             the cutover. "Later lane" means direct until its turn comes, not
             direct forever. Only the CV-parsing engine and the reporting pull
-            are proposed to stay direct permanently. Data connectors are exempt
-            from the platform hop entirely — their object mapping lives on the
-            caller's side, so there is no Marlex-owned interface to route them
-            behind.
+            are proposed to stay direct permanently.
+            <strong
+              >Commercial data connectors are exempt from the platform hop for a
+              product reason, not a preference:</strong
+            >
+            these are bought SaaS tools that ship a fixed Salesforce connector —
+            they log in through Salesforce's own authentication and read through
+            its standard interface, with no setting to aim them at a middleware
+            address instead. There is no Marlex-owned edge to route them behind,
+            and the platform cannot impersonate Salesforce for them. The only
+            lever on these is the Salesforce side — which data each connector is
+            allowed to reach.
           </p>
           <div class="tbl-scroll">
             <table class="dtbl">
@@ -20667,15 +20689,17 @@
                 </tr>
                 <tr class="review">
                   <td>
-                    <strong>Data connectors</strong> (external tools whose
-                    mapping lives on their side)
+                    <strong>Commercial data connectors</strong> (bought tools
+                    with a fixed Salesforce connector)
                   </td>
                   <td><strong>External owner — not Marlex</strong></td>
                   <td>
                     The external owner re-points their connector back to the old
-                    objects. A path the programme does not control — so who
-                    re-points, in what window, on what signal must be agreed
-                    <em>before</em> the fallback window opens.
+                    objects — the mapping and the connection both live in their
+                    product, and it can't be fronted by the platform. A path the
+                    programme does not control — so who re-points, in what
+                    window, on what signal must be agreed <em>before</em> the
+                    fallback window opens.
                   </td>
                 </tr>
               </tbody>
@@ -20688,9 +20712,10 @@
             <p>
               A few external data connectors are expected to be reading — and,
               once the ERP work lands, editing — the old objects by the time the
-              cutover comes. Because their object mapping is held on the
-              caller's side, Marlex cannot roll them back; their owners must.
-              The mitigation is a
+              cutover comes. These are commercial tools with a fixed Salesforce
+              connector: the connection and the field mapping both live in the
+              product, so Marlex cannot roll them back or route them through the
+              platform — their owners must re-point them. The mitigation is a
               <strong>living substitution inventory</strong>: for every old
               object and field left behind, the native object and field that
               replaces it, kept current and shared, so any owner — including an
