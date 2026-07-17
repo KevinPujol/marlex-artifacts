@@ -1181,7 +1181,7 @@
           <li>Stand up Marlex-owned <b>repositories and a deploy pipeline</b>, branch protection, and the governance review gate — a repeatable way to push to production is a hard precondition for progressive deployment.</li>
           <li>Build the <b>functional inventory and buy-versus-build classification</b> — the requirements gate. Product owners set the <em>minimum to disconnect</em> (see <a href="#view-scope">What's in scope</a>); matching and CV parsing are expected to be bought.</li>
           <li>Open the <b>component register</b> that pairs every package-coupled component with its native replacement, its activation instructions, and the behaviour to test — the real unit the rebuild is tracked by.</li>
-          <li>Settle the <b>design decisions</b> the build needs: naming, ownership boundaries, the config-driven routing pattern, build standards. No group-wide standard is pre-locked.</li>
+          <li>Settle the <b>design decisions</b> the build needs: naming, ownership boundaries, the config-driven routing pattern, build standards. No group-wide standard is pre-locked. Part of this is a <b>census of which automations need a routing switch</b> — where an object keeps its identity but its delegated logic is rebuilt, one entry point must route between legacy and canonical logic by configuration (Apex triggers and handlers, Platform Event subscribers, queueables and batch jobs, outbound listeners that deployment alone can't toggle), as against the components a native activate/deactivate already covers (see <a href="#view-rebuild-approach">Rebuild approach</a>).</li>
         </ul>
         <div class="ap-dep"><b>Blocks →</b> the build cannot start on an unscoped, unfrozen target. The minimum-to-disconnect line is the single decision that most shapes the programme's size and risk.</div>
       </div>
@@ -1269,6 +1269,7 @@
           <li>Refresh a <b>full-copy sandbox from production</b> (it comes up holding the switched-off build, real data and configuration), then practise the <b>pre-load, the delta and the activation</b> end to end — the measured pre-load time and the far smaller delta-window time are the headline outputs.</li>
           <li>Practise the <b>switch-off and rollback</b> — the timed flip back to the old system — turning the way back from a claim into an exercised procedure. Run at least twice, each from a clean starting point.</li>
           <li>Run a cheap experiment early to learn how the unreadable package behaves — it gates the first slice, the candidate re-typing and the rollback replay (see <a href="#view-rehearsal">Rehearsal</a>).</li>
+          <li>Prove sharing-dependent features <b>as each affected persona, not as one privileged account</b> — anything whose outcome turns on sharing, org-wide defaults, role, profile or permission set can pass a single-user test and still be wrong for the role that needs it (see <a href="#view-testing">Testing behaviour parity</a>). Features whose behaviour doesn't vary by user are proven once, as one user.</li>
         </ul>
         <div class="ap-dep"><b>Gates the switch →</b> the cutover cannot honestly be committed until a full-copy run produces a measured load time, a proven flip-back, and a passing data-match. Full-copy sandbox availability is a dependency to confirm with Marlex IT.</div>
       </div>
@@ -1303,7 +1304,7 @@
               </div>
               <div class="ap-rb-step ap-boundedstep">
                 <div class="ap-rb-i">05</div><h4>Activate</h4>
-                <p>Flip record-page, app and record-type assignments and the switches; re-point every external caller. Still reversible — the old package sits intact underneath, so rollback here means switching back and replaying only what was created since the flip.</p>
+                <p>Flip record-page, app and record-type assignments and the switches; re-point every external caller. On the objects that keep their identity (the candidate stays a Contact), the screen swap rides record-page assignment — <b>because a user holds only one profile, the switch can't be a profile edit</b> (see <a href="#view-candidate-model">Keep the standard objects standard</a>). Still reversible — the old package sits intact underneath, so rollback here means switching back and replaying only what was created since the flip.</p>
               </div>
               <div class="ap-rb-step ap-irrev">
                 <div class="ap-rb-i">06</div><h4>Uninstall</h4>
