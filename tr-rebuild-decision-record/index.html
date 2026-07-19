@@ -253,7 +253,6 @@
   text.dg-t-copper { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; fill: var(--copper); font-weight: 700; }
   text.dg-label { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 700; }
 
-
   /* ---- decision-page template blocks ---- */
   .tmpl { display: flex; flex-direction: column; gap: 0.5rem; margin: 1.4rem 0; }
   .tmpl-step { display: grid; grid-template-columns: 9rem 1fr; column-gap: 1.1rem; align-items: start;
@@ -14537,8 +14536,12 @@
           <td>
             <strong>New</strong> — feed and query behind a Marlex-owned port
             with a direct adapter first; parsing-and-matching parity is a
-            written go/no-go criterion
+            written go/no-go criterion. The new reader is live and has grown
+            beyond CVs into wider document reading, but the job-board CV path
+            still runs on the old package's parser — so retiring that reader is
+            part of the job-board cutover, not a switch already thrown
           </td>
+          
           <td>
             Possible later — its high-volume feed could earn the hop once the
             platform is proven; behind the port it's a configuration choice
@@ -14547,13 +14550,16 @@
         <tr>
           <td><strong>The long tail (connected apps)</strong></td>
           <td>
-            A dozen authorised external consumers — BI extracts, security-log
-            shipping, assessment and sourcing tools, an AI screening
-            intermediary
+            A dozen authorised external consumers — a finance data feed,
+            security-log shipping, candidate-sourcing tools, a
+            document-management app, the new website's inbound forms, and an
+            AI-screening service in build that writes the old model
           </td>
           <td>
             Audited at cutover: each consumer confirmed live, re-pointed only
-            where its objects moved, retired where dead
+            where its objects moved, retired where dead. Most write the native
+            model and just carry over; the sourcing connector and the
+            AI-screening service touch the old objects and re-point with the core
           </td>
           <td>Case by case, by the same rule — most never justify a hop</td>
         </tr>
@@ -14771,10 +14777,16 @@
       <strong>A few consumer unknowns remain for Marlex to close.</strong> The
       usage census identified the live callers; what's left is a short list of
       dormant or in-development external apps whose owner and purpose Marlex
-      must confirm, plus the AI screening intermediary — a new, not-yet-built
-      path that runs <em>alongside</em> the job-board feed rather than replacing
-      it — whose timing may still reshape what that feed carries.
+      must confirm. The AI screening intermediary is no longer abstract: it is
+      the pre-screening service (Orbio) now being built in the sandbox, and by
+      design it writes its scores and outcomes onto the retiring recruitment
+      objects. That makes it a second edge coupled to the old model — one that
+      re-points at cutover like the job board — though it runs
+      <em>alongside</em> the job-board feed rather than replacing it, and is not
+      yet in production. Its build timing may still reshape what the job-board
+      feed carries.
     </li>
+    
     <li>
       <strong>Port discipline is cultural, not structural.</strong> Nothing
       physically prevents a hurried edge bypassing the seam; the review rule and
@@ -14831,12 +14843,15 @@
   <p>
     <strong>The finding, in one line:</strong> of every outside system that
     touches the recruitment records, the job board clearly writes to the old
-    objects, and a deeper measurement on 16 July found that a second connector
-    may write to them too — so the edges the cutover must move are
-    <strong>one confirmed, possibly two</strong>, not the single edge first
-    reported. Everything else already runs on the new native or standard model
-    and survives the cutover untouched.
+    objects today; a second connector (Taleva) may write to them too; and a
+    third — a new AI-screening service (Orbio) now being built in the sandbox —
+    writes them <em>by design</em> but is not yet in production. So the edges the
+    cutover must actively move are
+    <strong>one confirmed live, a second under review, and a third in
+    build</strong>, not the single edge first reported. Everything else already
+    runs on the new native or standard model and survives the cutover untouched.
   </p>
+  
 </div>
 
 <div class="callout warn">
@@ -14873,13 +14888,30 @@
       standard connected-app lists do not show the platform's newer "external
       client app" connections; only the usage logs do. Reading those, five such
       connections are active — the two above, a security-log reader, a browser
-      add-in, and internal developer tooling (not a real integration).
+      add-in, and internal developer tooling (not a real integration). A later
+      review of the delivery backlog surfaced a sixth that carries no measured
+      traffic yet because it is still being built (the AI-screening service
+      below), plus a live document-management app the log sweep had folded in
+      with the others.
+    </li>
+    <li>
+      <strong>A new AI-screening service is being built against the old
+      objects.</strong> A candidate pre-screening service (Orbio) is being wired
+      up in the build sandbox — <em>not yet in production</em>. By design it
+      sends the vacancy and candidates out, and writes the screening score,
+      evaluation detail and outcome <em>back onto the retiring recruitment
+      objects</em>. When it goes live it is a further edge the cutover must
+      re-point; today it exists only in the sandbox, so it costs the cutover
+      nothing yet — but it is the concrete shape of the "AI screening
+      intermediary" this page had flagged only in the abstract.
     </li>
   </ul>
+  
   <p>
-    None of this changes the shape of the cutover, but it changes the count of
-    write-coupled edges from one to possibly two, and it is on the technical
-    agenda for the client's IT team to confirm.
+    None of this changes the shape of the cutover, but it firms up the count of
+    write-coupled edges — one live today, a second under review, a third being
+    built — and it is on the technical agenda for the client's IT team to
+    confirm.
   </p>
 </div>
 
@@ -14921,8 +14953,10 @@
     The 16 July re-read, grouping by <em>connection</em>, revised that: a
     talent-assessment connector both reads and writes those objects (see the
     note above). No other hidden write-coupled system surfaced in the six-month
-    window. The result: the edges the cutover must actively re-point are few and
-    now known — one confirmed, possibly two.
+    window — and the AI-screening service now in build (see the note above)
+    would not appear here at all, because it carries no production traffic yet.
+    The result: the edges the cutover must actively re-point are few and now
+    known — one confirmed live, a second under review, a third being built.
   </p>
   <div class="tech">
     <span class="tech-label">For the developers</span>Evidence gathered
@@ -14971,13 +15005,15 @@
         <tr>
           <td><strong>Data connector (Taleva)</strong></td>
           <td>
-            <strong>Reads, and appears to write.</strong> A live connector that
-            reads the application object heavily and, on the 16 July
-            measurement, also creates application records on the old model.
-            Because it signs in as named people, its own writes can't yet be
-            separated from those users' screen activity — the owner must
-            confirm.
+            <strong>Reads, and appears to write.</strong> A live
+            candidate-sourcing connector — it maps sourced profile data
+            (including the LinkedIn URL) onto the candidate — that reads the
+            application object heavily and, on the 16 July measurement, also
+            creates application records on the old model. Because it signs in as
+            named people, its own writes can't yet be separated from those
+            users' screen activity — the owner must confirm.
           </td>
+          
           <td>
             Re-pointed <strong>on the connector owner's side</strong>, not ours
             — the mapping lives with them. If it does write, it is a second edge
@@ -15226,7 +15262,11 @@
             monthly-margin figures in
             <span class="tech">(was listed as a Power BI reporting pull)</span>
           </td>
-          <td>Inbound write, not outbound — identify owner</td>
+          <td>
+            Inbound write, not outbound — no build record on the recruitment
+            delivery board, so most likely an ERP-side push; owner sits outside
+            the recruitment team
+          </td>
           <td>Native model — preserved</td>
         </tr>
         <tr class="dropped">
@@ -15251,9 +15291,15 @@
     <code>API Marlex Data Source</code> external client app is an
     <em>inbound</em> upsert/delete feed onto <code>MA_Incentivos__c</code> /
     <code>MX_Margen_Mensual_Por_Cliente__c</code> (636 writes / 22 reads, 30d),
-    running as the ERP-integration user — owner to identify. Package-bundled
-    outbound (<code>TRINTG__*</code> — Daxtra, Idibu, SEEK, LinkedIn, Docusign…)
-    retires with the package.
+    running as the ERP-integration user. The recruitment delivery board carries
+    <em>no</em> issue building this feed (no "Power BI", no
+    <code>MA_Incentivos__c</code> build task) — the in-house margin logic that
+    lives on the board is internal THM/impactos automation, a different thing —
+    which points to an ERP-side push rather than a reporting tool or an in-house
+    build; owner to confirm, outside the recruitment team. Both target objects
+    exist in prod as native custom objects. Package-bundled outbound
+    (<code>TRINTG__*</code> — Daxtra, Idibu, SEEK, LinkedIn, Docusign…) retires
+    with the package.
   </div>
 </section>
 
@@ -15361,18 +15407,34 @@
       they can re-point its query on a rollback.
     </li>
     <li>
-      <strong>The new CV parser is already live in production.</strong> Whether
-      everything has switched to it, or the old package's reader is still partly
-      in use, decides whether that is one fewer package dependency at cutover.
+      <strong>The new CV parser is live — but the job-board path still uses the
+      old one.</strong> The new parser runs in production, and it has been
+      extended into wider document reading (it now also reads identity documents
+      and bank details to fill those fields). But CVs arriving through the job
+      board are still routed to the <em>old package's</em> parser, on the job
+      board's own instruction. So this is <strong>not</strong> one fewer package
+      dependency yet: the old reader stays in use on that path until the
+      job-board feed is re-pointed, and closing it is part of the job-board
+      cutover, not a separate switch already thrown.
     </li>
+    
     <li>
-      <strong>A final check for anything invisible.</strong> This census is
-      built from what the platform's own logs reveal; Marlex IT confirms nothing
-      writes in from outside that channel — an internal script, an external
-      middleware, a scheduled bulk load. The recurring million-contact job
-      proves mass inbound processes do exist, so the question is worth asking
-      explicitly.
+      <strong>A final check for anything invisible — and three writers already
+      found this way.</strong> This census is built from what the platform's own
+      logs reveal; Marlex IT confirms nothing writes in from outside that
+      channel — an internal script, an external middleware, a scheduled bulk
+      load. That question has already paid off: a review of the delivery backlog
+      turned up three writers the log sweep had not called out on their own — a
+      document-management service running through its own production app
+      (Dolma), the new corporate website's candidate and company forms, and a
+      planned telephony service that will transcribe calls and fill fields from
+      the transcript. All three write the <em>native</em> model, so all three
+      survive the cutover — but they confirm that live writers exist beyond the
+      original five, and that the delivery backlog, not just the logs, has to be
+      read to find them. The recurring million-contact job proves mass inbound
+      processes do exist, so the question stays worth asking explicitly.
     </li>
+    
   </ul>
 </section>
 
