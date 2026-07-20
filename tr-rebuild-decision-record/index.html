@@ -14258,8 +14258,8 @@
   <h1>How the rebuilt edges meet the outside world</h1>
   <p class="subtitle">
     Every rebuilt integration ships behind a Marlex-owned interface with a
-    direct connection first. The integration platform is adopted per edge class,
-    additively, on its own timeline — the cutover never waits for it.
+    direct connection first. The MuleSoft integration layer is adopted per edge
+    class, additively, on its own timeline — the cutover never waits for it.
   </p>
   <p class="dateline">
     Cutover strategy · draft for peer review · 12 July 2026
@@ -14275,7 +14275,7 @@
     whether Salesforce calls out or the outside system calls in — ERP, job
     board, e-signature, credit check, training certificates, the customer data
     platform — and adds one of its own: the bought matching-and-parsing engine.
-    Do the rebuilt edges route through the new platform from day one, or stay
+    Do the rebuilt edges route through MuleSoft from day one, or stay
     point-to-point? Answered per-edge, ad hoc, later, this question quietly
     recreates the tangled coupling the rebuild exists to remove — so it gets one
     rule, decided here.
@@ -14568,7 +14568,7 @@
   </div>
   <p>
     The last row hides the discipline that makes the audit possible: these
-    consumers hit the platform's standard interfaces where
+    consumers hit <strong>Salesforce's</strong> standard interfaces where
     <strong>the object name is the contract</strong> — there is no port to swap
     on Marlex's side, so each must be discovered from usage logs and re-pointed
     by its owner in step with cutover. The bought tools among them (the sourcing
@@ -14576,11 +14576,11 @@
     <strong
       >fixed connector that logs in through Salesforce's own authentication and
       reads through its standard interface</strong
-    >, with no setting to aim them at the platform instead. So the "route it
-    behind the platform later" option in the table above
-    <em>does not apply to them</em> — not by choice, but because the platform
-    can't stand in for Salesforce to a packaged connector. Their only lever is
-    the Salesforce side: which data each is allowed to reach. The measured
+    >, with no setting to aim them at MuleSoft instead. So the "route it behind
+    MuleSoft later" option in the table above
+    <em>does not apply to them</em> — not by choice, but because MuleSoft can't
+    stand in for Salesforce to a packaged connector. Their only lever is the
+    Salesforce side: which data each is allowed to reach. The measured
     evidence for all of this — who calls, who writes, who only reads — is laid
     out on <a href="#view-integration-surface">the measured surface</a>; the
     per-caller cutover routes are on the
@@ -15084,7 +15084,8 @@
         </tr>
         <tr>
           <td>
-            <strong>ERP (NET4)</strong> push — placement and invoice traffic
+            <strong>ERP (NET4)</strong> push — offer, invoice and account
+            traffic
           </td>
           <td class="num">33,448 logins</td>
           <td>Preserved — already behind a Marlex-owned, vendor-free client</td>
@@ -15124,12 +15125,20 @@
   <p class="section-eyebrow">Who actually calls the API</p>
   <h2>Attributed by caller, not by login count</h2>
   <p>
-    Traffic attributed by
-    <strong>integration user → connected app → objects touched</strong> from the
-    call logs. The point of this table is that the heavy callers hit the
-    <em>standard</em> model — contacts, accounts, opportunities — not the
-    retiring recruitment objects, so they cross the cutover without change.
+    A different lens from the tables above. The inbound table lists what each
+    <em>service endpoint</em> receives and writes; this table lists what each
+    <em>caller identity</em> touches in the raw call logs, attributed by
+    <strong>connected app → objects touched</strong>. The two can differ, and
+    for one caller they do: <strong>several integrations share a single
+    integration login</strong> (the ERP-integration account), so grouping the
+    logs by <em>user</em> would blur them into one. The reliable split is by
+    connected app — that is how the ERP transfer and the finance feed below are
+    told apart even though they sign in as the same account. The point of the
+    table is that the heavy callers hit the <em>standard</em> model — contacts,
+    accounts, opportunities — not the retiring recruitment objects, so they
+    cross the cutover without change.
   </p>
+  
   <div class="tbl-scroll">
     <table class="dtbl">
       <thead>
@@ -15155,9 +15164,27 @@
         </tr>
         <tr>
           <td><strong>ERP (NET4)</strong></td>
-          <td>Contact plus its own invoice and incentive objects</td>
+          <td>
+            Its own offer, invoice and account objects, plus the contact — all
+            on the new model <em>(not the recruitment objects, and not the
+            finance figures below — that is a separate feed on the same login)</em>
+          </td>
           <td>Keep</td>
         </tr>
+        <tr>
+          <td>
+            <strong>Finance data feed</strong>
+            <em>(shares the ERP login)</em>
+          </td>
+          <td>
+            Writes the incentive and monthly-margin figures — a
+            <em>different</em> integration from the ERP transfer above, told
+            apart only by its connected app; both figures also carry heavy
+            hand-entry by finance staff, so the feed is one writer among several
+          </td>
+          <td>Keep — new model, but confirm the owner</td>
+        </tr>
+        
         <tr class="review">
           <td><strong>Data connector (Taleva)</strong></td>
           <td>
@@ -15201,29 +15228,29 @@
   <p>
     The outbound edges follow the port rule set on the
     <a href="#view-integrations">decision page</a>: a Marlex-built edge gets a
-    direct connection first and moves behind the integration platform later, per
-    edge class, on its own schedule — never blocking the cutover. "Later lane"
-    means direct until its turn comes, not direct forever. Only the CV-parsing
-    engine is proposed to stay direct permanently (the connection once labelled
-    a reporting pull turned out to be an inbound data feed — see the note
-    above).
+    direct connection first and moves behind the MuleSoft integration layer
+    later, per edge class, on its own schedule — never blocking the cutover.
+    "Later lane" means direct until its turn comes, not direct forever. Only the
+    CV-parsing engine is proposed to stay direct permanently (the connection
+    once labelled a reporting pull turned out to be an inbound data feed — see
+    the note above).
     <strong
-      >Commercial data connectors are exempt from the platform hop for a product
+      >Commercial data connectors are exempt from the MuleSoft hop for a product
       reason, not a preference:</strong
     >
     these are bought SaaS tools that ship a fixed Salesforce connector — they
     log in through Salesforce's own authentication and read through its standard
-    interface, with no setting to aim them at a middleware address instead.
-    There is no Marlex-owned edge to route them behind, and the platform cannot
-    impersonate Salesforce for them. The only lever on these is the Salesforce
-    side — which data each connector is allowed to reach.
+    interface, with no setting to aim them at a MuleSoft address instead. There
+    is no Marlex-owned edge to route them behind, and MuleSoft cannot impersonate
+    Salesforce for them. The only lever on these is the Salesforce side — which
+    data each connector is allowed to reach.
   </p>
   <div class="tbl-scroll">
     <table class="dtbl">
       <thead>
         <tr>
           <th>Edge</th>
-          <th>Platform sequencing</th>
+          <th>When it moves to MuleSoft</th>
           <th>State</th>
         </tr>
       </thead>
@@ -15233,19 +15260,19 @@
             <strong>Job board (InfoJobs)</strong> — vacancy publishing + CV
             pull, out
           </td>
-          <td>Platform — next lane</td>
+          <td>MuleSoft — next lane</td>
           <td><strong>Re-points</strong></td>
         </tr>
         <tr>
           <td><strong>ERP (NET4)</strong></td>
-          <td>Platform — first lane (multi-country reuse earns the hop)</td>
+          <td>MuleSoft — first lane (multi-country reuse earns the hop)</td>
           <td>Preserved</td>
         </tr>
         <tr>
           <td>
             <strong>E-signature, credit check, training certificates</strong>
           </td>
-          <td>Platform — later lane</td>
+          <td>MuleSoft — later lane</td>
           <td>Preserved</td>
         </tr>
         <tr>
@@ -15333,11 +15360,11 @@
           </td>
         </tr>
         <tr>
-          <td><strong>Platform-routed edges</strong></td>
-          <td>Marlex / integration platform</td>
+          <td><strong>MuleSoft-routed edges</strong></td>
+          <td>Marlex / MuleSoft</td>
           <td>
-            Re-point the platform layer. Routing an old-model edge behind the
-            platform before cutover is what earns this control.
+            Re-point the MuleSoft layer. Routing an old-model edge behind
+            MuleSoft before cutover is what earns this control.
           </td>
         </tr>
         <tr class="review">
@@ -15349,7 +15376,7 @@
           <td>
             The external owner re-points their connector back to the old objects
             — the mapping and the connection both live in their product, and it
-            can't be fronted by the platform. A path the programme does not
+            can't be fronted by MuleSoft. A path the programme does not
             control — so who re-points, in what window, on what signal must be
             agreed <em>before</em> the fallback window opens.
           </td>
@@ -15364,7 +15391,7 @@
       ERP work lands, editing — the old objects by the time the cutover comes.
       These are commercial tools with a fixed Salesforce connector: the
       connection and the field mapping both live in the product, so Marlex
-      cannot roll them back or route them through the platform — their owners
+      cannot roll them back or route them through MuleSoft — their owners
       must re-point them. The mitigation is a
       <strong>living substitution inventory</strong>: for every old object and
       field left behind, the native object and field that replaces it, kept
