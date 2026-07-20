@@ -459,12 +459,29 @@
     governance review, not a settled plan.
   </p>
   <p>
-    <strong>The core idea in one sentence:</strong> every rebuilt integration
-    ships behind a <strong>Marlex-owned interface</strong> with a
-    <strong>direct connection first</strong>, and the integration platform —
-    <strong>MuleSoft, now chosen</strong> — is adopted one edge at a time, by
-    configuration, on its own schedule, so
-    <strong>the go-live never waits for it</strong>.
+    <strong>The objective.</strong> Move integration logic <em>out</em> of
+    Salesforce into one shared, Marlex-owned middleware layer — MuleSoft — so
+    Salesforce goes back to running CRM, back-office and recruitment, and stops
+    being the group's integration hub. Today every endpoint change means a
+    Salesforce release, and when a hand-built connection fails mid-send the two
+    systems drift out of sync; a middleware on canonical contracts fixes both. It
+    is a <strong>platform investment, not a project cost</strong>: each connection
+    built is a reusable, named interface that Marlex Spain, Axxon and the rollout
+    countries all call, so the second job board — or a new country's ERP — is a
+    small addition, not a fresh build.
+  </p>
+  <p>
+    <strong>How it's approached.</strong> Every rebuilt integration ships behind a
+    <strong>Marlex-owned interface</strong> with a
+    <strong>direct connection first</strong>; MuleSoft is adopted one edge at a
+    time, by configuration, on its own schedule, so
+    <strong>the go-live never waits for it</strong>. Not everything routes through
+    it — connections that only need a secure, direct link stay on Salesforce, and
+    it is not a mandatory gateway. The <strong>near-term priority is the edges
+    tied to the retiring TargetRecruit data</strong>: NET4 first (the shared ERP,
+    no dependencies, reused by Axxon), then InfoJobs — built progressively, never
+    big-bang. The platform choice is settled; the architecture around it is
+    proposed for review.
   </p>
   <p>
     This set opens with the foundations — <em>why</em> an integration platform
@@ -1044,11 +1061,13 @@
     <p class="ap-kicker">The running order · the integration layer</p>
     <h1 class="ap-title">The integrations as a <em>sequence</em></h1>
     <p class="ap-lede">
-      The decision set read as one running order — which edges move to the
-      integration platform, in which order, and which never do. A sequence, not a
-      schedule: it fixes what must come before what, by dependency and reuse, not
-      by committed dates. This is the technical roadmap; the delivery plan that
-      would put weeks against it does not yet exist.
+      The objective underneath the sequence is a platform investment: integration
+      logic moves out of Salesforce into one shared layer that Marlex, Axxon and
+      the rollout countries reuse. The order below only decides which edges get
+      there first — starting with those tied to the retiring TargetRecruit data.
+      A sequence, not a schedule: it fixes what must come before what, by
+      dependency and reuse, not by committed dates. This is the technical roadmap;
+      the delivery plan that would put weeks against it does not yet exist.
     </p>
     <p class="ap-dateline">
       Grounded in the July 2026 production-org audit · draft for peer review · 19
