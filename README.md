@@ -10,6 +10,8 @@ Public, browsable HTML deliverables for the Marlex Salesforce programme, served 
 | Folder | Artifact |
 |---|---|
 | `tr-rebuild-decision-record/` | TargetRecruit Rebuild — Decision Record (assembled, client-safe) |
+| `hr-onboarding-sharing/` | HR Onboarding & Sharing-Model Refactor — Decision Record (assembled, client-safe) |
+| `integration-decision-record/` | Integration Layer — Decision Record (assembled, client-safe) |
 
 ## Publishing
 
