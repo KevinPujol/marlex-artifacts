@@ -14546,8 +14546,9 @@
           </td>
           
           <td>
-            Possible later — its high-volume feed could earn the hop once the
-            platform is proven; behind the port it's a configuration choice
+            Proposed to stay direct permanently — it is a latency-sensitive,
+            in-flow call with no shared contract to place behind MuleSoft; behind
+            the port that remains a configuration choice if it ever changes
           </td>
         </tr>
         <tr>
@@ -14797,13 +14798,14 @@
     </li>
     <li>
       <strong>The inbound surface has now been measured.</strong> Six months of
-      the platform's own usage records were sampled — nearly nine hundred
-      thousand calls — to find every caller touching the retiring objects. Only
-      the job-board feed writes to them; two smaller tools only read (one needs
-      its query re-pointed, one just inspects the schema); everything else
-      already runs on the new model. The per-caller routes are on the
-      <a href="#view-cutover">cutover page</a>; the only residual is Marlex
-      confirming a few dormant connections before the window.
+      the org's own usage records were read to find every caller touching the
+      retiring objects. The finding, in short: the write-coupled edges are few
+      and now known — the job board today, a data connector under review, and
+      the AI-screening service in build — while every heavy caller already runs
+      on the new model. The counts, the per-caller read/write breakdown and the
+      cutover routes are on
+      <a href="#view-integration-surface">the measured surface</a>; the residual
+      here is Marlex confirming a few dormant connections before the window.
     </li>
   </ul>
 </section>
@@ -14911,10 +14913,9 @@
   </ul>
   
   <p>
-    None of this changes the shape of the cutover, but it firms up the count of
-    write-coupled edges — one live today, a second under review, a third being
-    built — and it is on the technical agenda for the client's IT team to
-    confirm.
+    None of this changes the shape of the cutover — it sharpens the count of
+    write-coupled edges (set out just above) and puts the open items on the
+    technical agenda for the client's IT team to confirm.
   </p>
 </div>
 
@@ -15072,7 +15073,7 @@
       <thead>
         <tr>
           <th>Edge</th>
-          <th class="num">Volume (30d)</th>
+          <th class="num">Measured activity</th>
           <th>State at cutover</th>
         </tr>
       </thead>
@@ -15299,19 +15300,17 @@
     direct connection first and moves behind the MuleSoft integration layer
     later, per edge class, on its own schedule — never blocking the cutover.
     "Later lane" means direct until its turn comes, not direct forever. Only the
-    CV-parsing engine is proposed to stay direct permanently (the connection
-    once labelled a reporting pull turned out to be an inbound data feed — see
-    the note above).
+    CV-parsing engine is proposed to stay direct permanently — a
+    latency-sensitive, in-flow call with no shared contract to place behind
+    MuleSoft.
     <strong
-      >Commercial data connectors are exempt from the MuleSoft hop for a product
-      reason, not a preference:</strong
+      >Commercial data connectors are exempt from the MuleSoft hop</strong
     >
-    these are bought SaaS tools that ship a fixed Salesforce connector — they
-    log in through Salesforce's own authentication and read through its standard
-    interface, with no setting to aim them at a MuleSoft address instead. There
-    is no Marlex-owned edge to route them behind, and MuleSoft cannot impersonate
-    Salesforce for them. The only lever on these is the Salesforce side — which
-    data each connector is allowed to reach.
+    for the product reason set out on the
+    <a href="#view-integrations">decision page</a> — a bought tool's fixed
+    Salesforce connector cannot be aimed at a MuleSoft address, so the only
+    lever on these is the Salesforce side: which data each is allowed to reach.
+    Which connectors fall in this class is measured below.
   </p>
   <div class="tbl-scroll">
     <table class="dtbl">
@@ -15391,8 +15390,8 @@
     <strong>NET4 outbound runs on two plumbing generations:</strong> the live
     traffic goes through legacy raw-endpoint classes
     (<code>MA_SendOfferToN4</code>, <code>MA_APEX_IntegrationSYNC_ERP</code>)
-    reading a config record (<code>ERP_Connection__c</code> →
-    an internal Marlex host (redacted)/ApiRestSalesForce), while the newer
+    reading a config record (<code>ERP_Connection__c</code> → an internal
+    Marlex-hosted ERP API), while the newer
     <code>MA_Net4Client</code> family's <code>MA_Net4</code> named credential
     still holds a <strong>placeholder endpoint</strong> in production — which
     generation is canonical needs confirming before the re-point. The "Power BI"
