@@ -3338,10 +3338,9 @@
     <strong>two plumbing generations</strong> (verified in code + config,
     2026-07-20). The <em>live</em> path: legacy raw-endpoint classes
     (<code>MA_APEX_IntegrationSYNC_ERP</code>, <code>MA_SendOfferToN4</code>,
-    <code>MA_Net4SectionCtrl</code>) reading
-    <code>ERP_Connection__c.EndpointIntegration__c</code> →
-    <code>https://www3.marlex.net/ApiRestSalesForce/Salesforce/</code> through
-    Remote Site <code>N4_Integration_Site</code>; OAuth2
+    <code>MA_Net4SectionCtrl</code>) reading the configured ERP endpoint from
+    <code>ERP_Connection__c.EndpointIntegration__c</code> through Remote Site
+    <code>N4_Integration_Site</code>; OAuth2
     resource-owner-password-credentials grant, 12-hour bearer token. The
     <em>newer</em> path: the <code>MA_Net4Client</code> family resolves its
     endpoint through the <code>MA_Net4</code> Named Credential
@@ -3690,7 +3689,7 @@
       retire client and credential together. Leaving the pair half-configured
       is a silent misconfiguration waiting for the re-point.
     </li>
-    <!-- Verified 2026-07-20: MA_Net4Client body = setEndpoint('callout:MA_Net4' + path), does NOT read ERP_Connection__c; live outbound = legacy classes via ERP_Connection__c -> www3.marlex.net. -->
+    <!-- Verified 2026-07-20: MA_Net4Client body = setEndpoint('callout:MA_Net4' + path), does NOT read ERP_Connection__c; live outbound = legacy classes via ERP_Connection__c (internal ERP host, redacted from public copy). -->
   </ul>
 </section>
 
