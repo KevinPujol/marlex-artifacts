@@ -3689,6 +3689,19 @@
       retire client and credential together. Leaving the pair half-configured
       is a silent misconfiguration waiting for the re-point.
     </li>
+    <li>
+      <strong>Open — where these two items meet:</strong> which plumbing is the
+      candidate integration being built on? If it uses the modern
+      <code>MA_Net4Client</code> family, then the placeholder
+      <code>MA_Net4</code> credential above is <strong>its first blocker</strong>
+      — the candidate sync cannot go live until that credential points at the
+      real NET4 API. If instead it extends the live legacy classes, it inherits
+      the working endpoint but adds to the older generation that the MuleSoft lane
+      is meant to replace. Either way, the candidate-sync build and the
+      credential decision are the same decision, not two — confirm the plumbing
+      choice with the ERP side so the blocker is surfaced before the build, not
+      at go-live.
+    </li>
     <!-- Verified 2026-07-20: MA_Net4Client body = setEndpoint('callout:MA_Net4' + path), does NOT read ERP_Connection__c; live outbound = legacy classes via ERP_Connection__c (internal ERP host, redacted from public copy). -->
   </ul>
 </section>
