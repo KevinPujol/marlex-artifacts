@@ -14468,7 +14468,10 @@
           <td>
             <strong>Preserved, not rebuilt</strong> — already behind a
             Marlex-owned, vendor-free client; only its reads of the old model
-            re-point
+            re-point. One caveat found by the audit: two generations of that
+            client exist side by side, and the older one carries the live
+            traffic — which is canonical is on the confirm list (see
+            <a href="#view-integration-surface">the measured surface</a>)
           </td>
           <td>
             Planned — first candidate once the platform is ready; multi-country
@@ -15109,16 +15112,26 @@
     </table>
   </div>
   <div class="tech">
-    <span class="tech-label">For the developers</span>Endpoints/classes:
-    <code>/infojobsHook</code> (<code>MA_InfojobWebHook</code>);
-    <code>/Api/ERP_SF_Integration</code> (<code>MA_WS_ERP_SF</code>);
+    <span class="tech-label">For the developers</span>Endpoints/classes — all
+    four inbound edges are <em>custom Apex REST</em>, but only one is public:
+    <code>/infojobsHook</code> (<code>MA_InfojobWebHook</code>) rides the
+    <strong>public site whose URL prefix is the hook path itself</strong> —
+    guest user, no connected app, no login records. The other three
+    authenticate: <code>/Api/ERP_SF_Integration</code>
+    (<code>MA_WS_ERP_SF</code>, ERP-integration user ×
+    <code>MX_Integration_Conn_App</code>);
     <code>/Api/Humact/Certificado/*</code> (<code>MA_WS_HumactCallback</code>,
-    added 2026-06-17);
+    added 2026-06-17, dedicated Humact user × <code>Humact_Inbound</code> app);
     <code>/SG_subscriptionsEvents</code> (<code>SG_subscriptionsEvents</code>).
-    Logins mislead as a volume proxy — NET4 logs in 33k times but makes only ~7k
-    calls; the customer data platform barely logs in yet is the heaviest caller.
-    The reliable attribution key is the integration user, not the login count.
+    Identity is the <strong>tuple user × connected app</strong> — permissions
+    ride the user, log attribution rides the app; the ERP user fronts two apps
+    (NET4 + the finance feed), while Taleva/PipeLaunch/DocsMadeEasy invert it
+    (one app, many named human users). Logins mislead as a volume proxy — NET4
+    logs in 33k times but makes only ~7k calls; the customer data platform
+    barely logs in yet is the heaviest caller. The reliable attribution key is
+    the <strong>connected app</strong>, not the user and not the login count.
   </div>
+  
 </section>
 
 <section>
@@ -15309,11 +15322,25 @@
     </table>
   </div>
   <div class="tech">
-    <span class="tech-label">For the developers</span>CV parsing =
-    <code>CVParserCtrl</code> → <code>Anthropic_API</code> (Claude + Groq),
-    already live in prod, replacing the package's OCR. NET4 =
-    <code>MA_Net4Client</code>, OAuth 12h token. Iberinform/Signaturit/Humact =
-    named-credential callouts on <code>MA_*</code>. The "Power BI"
+    <span class="tech-label">For the developers</span>Outbound credential
+    inventory (verified 2026-07-20): CV/document intelligence =
+    <code>CVParserCtrl</code> → named credentials <code>Anthropic_API</code> +
+    <code>Groq_API</code>, live in prod, replacing the package's OCR — the
+    earlier FastAPI intermediary (<code>CvParserController</code> →
+    <code>CV_Parser_Service</code>) is dead code: its named credential no longer
+    exists in the org. Iberinform / Signaturit / Humact = modern named +
+    external credential pairs (<code>MA_Iberinform</code>,
+    <code>MA_Signaturit</code>, <code>Humact_API</code> → api.signaturit.com,
+    lectiovirtual.es). InfoJobs outbound = <code>MA_InfoJobs</code> named
+    credential → api.infojobs.net (9 callout classes).
+    <strong>NET4 outbound runs on two plumbing generations:</strong> the live
+    traffic goes through legacy raw-endpoint classes
+    (<code>MA_SendOfferToN4</code>, <code>MA_APEX_IntegrationSYNC_ERP</code>)
+    reading a config record (<code>ERP_Connection__c</code> →
+    an internal Marlex-hosted API address (redacted here)), while the newer
+    <code>MA_Net4Client</code> family's <code>MA_Net4</code> named credential
+    still holds a <strong>placeholder endpoint</strong> in production — which
+    generation is canonical needs confirming before the re-point. The "Power BI"
     <code>PowerBiEmbedManager</code> embed plumbing exists, but the live
     <code>API Marlex Data Source</code> external client app is an
     <em>inbound</em> upsert/delete feed onto <code>MA_Incentivos__c</code> /
@@ -15433,6 +15460,15 @@
       It should be locked down to least privilege, and its owner must confirm
       they can re-point its query on a rollback.
     </li>
+    <li>
+      <strong>The ERP link has two generations of outbound plumbing — which is
+      canonical?</strong> The older, config-driven connection is what carries
+      the live traffic; the newer, credential-based client sits alongside it
+      with its production endpoint still set to a placeholder. Before the
+      cutover re-points anything, the ERP team should confirm which path is the
+      one to keep — retiring the other closes a silent misconfiguration.
+    </li>
+    <!-- MA_Net4 NC prod endpoint = net4.example.com placeholder; live path = ERP_Connection__c -> www3.marlex.net (verified read-only 2026-07-20). -->
     <li>
       <strong>The new CV parser is live — but the job-board path still uses the
       old one.</strong> The new parser runs in production, and it has been
