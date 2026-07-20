@@ -1,4 +1,4 @@
-<title>The integration layer — the decision record</title>
+<title>MuleSoft — the Integration Layer · Decision Record</title>
 <style>
   :root {
     --paper: #F7F8F6;
@@ -406,7 +406,7 @@
 </style>
 <div class="artifact-shell">
 <aside class="artifact-nav">
-  <p class="brand">The integration layer</p>
+  <p class="brand">MuleSoft — the integration layer</p>
   <p class="brand-sub">Decision record · Marlex Salesforce programme</p>
   <a class="navlink nonum" data-view="index" href="#view-index">Overview</a>
   <a class="navlink nonum" data-view="technical-roadmap" href="#view-technical-roadmap">Technical roadmap</a>
@@ -433,14 +433,17 @@
   <section class="page-view" id="view-index"><div class="wrap-inner">
 <header class="masthead">
   <p class="eyebrow">
-    Marlex · Salesforce Programme · The Integration Layer · Decision Record
+    Marlex · Salesforce Programme · MuleSoft — the Integration Layer · Decision
+    Record
   </p>
-  <h1>The integration layer — the Decision Record</h1>
+  <h1>MuleSoft — the integration layer, as a Decision Record</h1>
   <p class="subtitle">
-    Every edge where the recruitment system meets an outside world — the ERP, the
-    job board, e-signature, credit checks, the customer data platform, the
-    sourcing tools — captured as a set of decisions, one per page: what was
-    weighed, what was chosen, and what is still open.
+    The MuleSoft build. Every edge where the recruitment system meets an outside
+    world is mapped here — the ERP, the job board, e-signature, credit checks,
+    the customer data platform, the sourcing tools — but the work MuleSoft
+    actually takes on is narrower: the integrations we route through it, starting
+    with the ones coupled to the retiring TargetRecruit data. Each is a decision,
+    one per page: what was weighed, what was chosen, and what is still open.
   </p>
   <p class="dateline">
     Decision record · draft for peer review · 19 July 2026 · Nuvolar
@@ -479,7 +482,7 @@
 
 <section>
   <p class="section-eyebrow">The finding that shapes everything</p>
-  <h2>Only three edges write the retiring data</h2>
+  <h2>Which edges touch the retiring data</h2>
   <p>
     The sharpest question for a go-live is not "who talks to Salesforce" — it is
     "who writes the old recruitment records that are being retired," because that
@@ -517,8 +520,13 @@
     people, so its own writes can't yet be told apart from users' — its owner
     must confirm. An AI pre-screening service (Orbio) writes them by design but
     exists only in the build sandbox today, with no footprint in production yet.
-    Everything else already runs on the new native or standard model and crosses
-    the go-live untouched. The full evidence is on
+    Those three are what the <em>logs</em> reveal. A fourth is coming from the
+    other direction: the ERP (NET4) is native today, but a candidate integration
+    in development will make it touch the retiring candidate data — a re-point the
+    logs can't show yet because it isn't built (see
+    <a href="#view-net4">NET4</a>). Everything else already runs on the new native
+    or standard model and crosses the go-live untouched. The full evidence — and
+    the limits of what logs alone can show — is on
     <a href="#view-measured-surface">the measured surface</a>.
   </p>
 </section>
@@ -593,12 +601,14 @@
       <span class="body"
         ><h3>NET4 — the ERP</h3>
         <p>
-          The first platform lane. Already behind a Marlex-owned, vendor-free
-          client, so it's preserved at the switch; multi-country reuse across
-          Spain and Axxon is what earns it the platform hop first.
+          The first lane. Its finance directions are native and cross untouched,
+          but a candidate integration in development makes it touch the retiring
+          candidate data — so it re-points too. It leads on both multi-country
+          reuse and being one of the edges the effort routes through MuleSoft
+          first.
         </p></span
       >
-      <span class="pick">First lane · preserved</span>
+      <span class="pick">First lane · reuse + becoming TR-coupled</span>
     </a>
     <a class="decrow" href="#view-infojobs">
       <span class="num">5</span>
@@ -732,17 +742,22 @@
       configuration switch, reversible either way.
     </li>
     <li>
-      <strong>Only three edges write the retiring records.</strong> Measured, not
-      assumed: the job board writes them today and is the go-live gate; a
-      sourcing connector reads them and appears to write (its owner must
-      confirm); an AI pre-screening service writes them by design but is still in
-      the build sandbox. Everything else already runs on the new model.
+      <strong>Three edges write the retiring records — and a fourth is
+      coming.</strong> Measured, not assumed: the job board writes them today and
+      is the go-live gate; a sourcing connector reads them and appears to write
+      (its owner must confirm); an AI pre-screening service writes them by design
+      but is still in the build sandbox. Beyond what the logs show, the ERP is
+      growing a candidate integration that will touch the same data — a re-point
+      that isn't in the traffic yet because it isn't built. Everything else
+      already runs on the new model.
     </li>
     <li>
-      <strong>Lanes are sequenced by reuse, not by size.</strong> The ERP goes
-      first — it has no dependencies and its multi-country reuse across Spain and
-      Axxon earns the platform hop soonest. The job board follows: heavier to
-      build, and the one re-point that must land in lockstep with the go-live.
+      <strong>Lanes are sequenced by reuse and by what touches the retiring
+      data.</strong> The ERP goes first — no dependencies, multi-country reuse
+      across Spain and Axxon, and a candidate integration that puts it in the
+      priority class of edges to route through MuleSoft. The job board follows:
+      heavier to build, and the one re-point that must land in lockstep with the
+      go-live.
     </li>
     <li>
       <strong>Some edges never belong on the platform.</strong> Bought tools with
@@ -1167,28 +1182,32 @@
           <span class="ap-when">First lane</span>
         </div>
         <div class="ap-body">
-          <h3>The ERP lane — because reuse earns it first</h3>
+          <h3>The ERP lane — reuse, and it touches the retiring data</h3>
           <div class="ap-tagrow">
             <span class="ap-tag ap-build">NET4</span
-            ><span class="ap-tag ap-data">Multi-country reuse</span>
+            ><span class="ap-tag ap-data">Multi-country reuse</span
+            ><span class="ap-tag ap-riskc">Candidate integration in build</span>
           </div>
           <p>
-            NET4, the ERP, goes first — not because it is the biggest risk, but
-            because it has no dependencies and its reuse across both Spain and
-            Axxon is the case that most earns the platform hop (see
-            <a href="#view-net4">NET4</a> and <a href="#view-axxon-net4">Axxon →
-            NET4</a>).
+            NET4, the ERP, goes first for two reasons that point the same way: it
+            has no dependencies and its reuse across both Spain and Axxon most
+            earns the hop, and a candidate integration now in development makes it
+            touch the retiring candidate data — putting it in the class the effort
+            prioritises (see <a href="#view-net4">NET4</a> and
+            <a href="#view-axxon-net4">Axxon → NET4</a>).
           </p>
           <ul class="ap-steps">
             <li>
-              Build the <b>NET4 system layer</b> on the platform — owning the
+              Build the <b>NET4 system layer</b> on MuleSoft — owning the
               authentication, retries and environment switching — and the
               Salesforce-side adapter behind the ERP port.
             </li>
             <li>
-              It is <b>preserved, not rebuilt</b>, at the go-live — it already
-              sits behind a Marlex-owned, vendor-free client; only its reads of
-              the old model re-point.
+              The finance directions are <b>preserved, not rebuilt</b> — already
+              behind a Marlex-owned, vendor-free client. The
+              <b>candidate integration re-points</b> where it touches the retiring
+              candidate fields on Contact (a working assumption to confirm with
+              the ERP side).
             </li>
             <li>
               The same lane, built multi-tenant, becomes
@@ -1197,9 +1216,9 @@
             </li>
           </ul>
           <div class="ap-dep">
-            <b>Why first →</b> no dependencies, and the multi-country reuse pays
-            the platform back soonest. Roughly a third of the first delivery's
-            effort.
+            <b>Why first →</b> no dependencies, multi-country reuse, and it is one
+            of the edges touching the retiring data. Roughly a third of the first
+            delivery's effort.
           </div>
         </div>
       </div>
@@ -1387,8 +1406,8 @@
         <tbody>
           <tr>
             <td>NET4 — the ERP</td>
-            <td><span class="ap-route ap-pre">Platform · first lane</span></td>
-            <td>Preserved — only its reads of the old model re-point</td>
+            <td><span class="ap-route ap-pre">MuleSoft · first lane</span></td>
+            <td>Finance preserved; candidate integration re-points (in build)</td>
           </tr>
           <tr>
             <td>InfoJobs — the job board</td>
@@ -3219,10 +3238,10 @@
   <section class="page-view" id="view-net4"><div class="wrap-inner">
 <header class="masthead">
   <p class="eyebrow">Decision 4 · NET4 ERP — the first lane</p>
-  <h1>NET4 is the first edge to move behind the platform</h1>
+  <h1>NET4 is the first edge to move behind MuleSoft</h1>
   <p class="subtitle">
-    Of all the edges that could move behind the middleware first, why this one —
-    and what actually changes for it at cutover.
+    Of all the edges that could move behind MuleSoft first, why this one — and
+    what actually changes for it at cutover.
   </p>
   <p class="dateline">
     Grounded in live production call volumes · 13 July 2026 · lane sequencing
@@ -3243,12 +3262,14 @@
   </p>
   <p>
     <strong>What we chose.</strong> <strong>NET4 is the first lane.</strong> It
-    has no dependency on anything else being built, it is already clean of the
-    retiring vendor package, and moving it once earns a reusable foundation that
-    a second country (Axxon) plugs straight into — so the effort pays for itself
-    twice. The job board is heavier and is the edge that gates the core cutover,
-    so it comes second. Sequencing the lanes this way is
-    <span class="status proposed">proposed</span> for review; the middleware
+    has no dependency on anything else being built; moving it once earns a
+    reusable foundation that a second country (Axxon) plugs straight into; and a
+    candidate integration now in development means NET4 is becoming one of the
+    edges that touches the retiring candidate data — the class the effort exists
+    to route through MuleSoft first. So the effort pays for itself twice and lands
+    where the priority is. The job board is heavier and is the edge that most
+    tightly gates the core cutover, so it comes second. Sequencing the lanes this
+    way is <span class="status proposed">proposed</span> for review; the middleware
     <em>platform</em> itself is <span class="status decided">decided</span>
     (selected 3 July 2026).
   </p>
@@ -3261,27 +3282,40 @@
     NET4 is a two-directional connection. Salesforce calls out to the ERP to
     keep it in step, and the ERP calls back in to push finance data —
     principally invoices. Both directions are already Marlex-built code running
-    against Marlex-owned interfaces: there is <strong>no coupling to the
-    retiring TargetRecruit data model</strong> anywhere in the link. It reads and
-    writes only native and standard objects — the account, the contact, the
-    offer, the invoice.
+    against Marlex-owned interfaces. As measured today, the link reads and writes
+    only native and standard objects — the account, the contact, the offer, the
+    invoice — with <strong>no coupling to the retiring TargetRecruit data
+    model</strong> in the traffic the org logs.
   </p>
   <p>
-    That single fact is why NET4 is easy to move and safe to move first. The
-    edge is a well-behaved caller: heavy on sign-ins but modest on actual work.
-    Over a measured seven-day window it logged in tens of thousands of times but
-    made only a few thousand data calls — it holds a session open constantly and
-    calls when it has something to say. Because none of those calls touch the
-    objects being retired, NET4 crosses the cutover essentially untouched; only
-    its <em>reads of the old model</em> — of which there are none today — would
-    ever need re-pointing.
+    <strong>But that "no coupling" is about to change, and it is why NET4 leads.</strong>
+    A candidate integration is in development on the ERP side — NET4 is growing
+    the ability to sync candidate records to and from Salesforce. The catch is
+    that a candidate is <em>not</em> a clean native object yet: today a candidate
+    lives as a TargetRecruit record type and TargetRecruit fields on the standard
+    Contact. So a candidate sync, while it is being built against Contact, will
+    in practice read and write the very TargetRecruit fields the rebuild is
+    retiring. On that basis we treat NET4 as an edge that
+    <strong>becomes coupled to the retiring model</strong> — which makes its
+    re-point a cutover concern like the job board's, not a "nothing to do." This
+    is a working assumption pending confirmation of exactly which candidate
+    fields the ERP side writes.
+  </p>
+  <p>
+    So NET4 leads for two reasons that now point the same way: it earns the first
+    lane on <em>reuse</em> (one clean ERP service serves both Spain and Axxon),
+    and it is one of the edges that <em>touches the retiring candidate data</em>
+    — the class the whole effort exists to route through MuleSoft first. The edge
+    is otherwise a well-behaved caller: over a measured seven-day window it logged
+    in tens of thousands of times but made only a few thousand data calls — it
+    holds a session open constantly and calls when it has something to say.
   </p>
   <div class="stat-row">
     <div class="stat">
       <span class="n">~7,059</span
       ><span class="l"
-        >data calls over 7 days <span class="lk meas">measured</span> — on the
-        contact and native objects only, never the retiring model</span
+        >data calls over 7 days <span class="lk meas">measured</span> — today on
+        the contact and native objects only</span
       >
     </div>
     <div class="stat">
@@ -3292,20 +3326,28 @@
       >
     </div>
     <div class="stat">
-      <span class="n">0</span
+      <span class="n">Candidate</span
       ><span class="l"
-        >calls against the retiring model — the link is fully native, nothing to
-        re-point at cutover</span
+        >integration in development — the evolutive that makes NET4 touch the
+        retiring TargetRecruit candidate fields, and a re-point at cutover</span
       >
     </div>
   </div>
   <div class="tech">
-    <span class="tech-label">For the developers</span>Outbound is Apex REST
-    callouts (<code>MA_Net4Client</code> / <code>MA_APEX_IntegrationSYNC_ERP</code>)
-    through Remote Site <code>N4_Integration_Site</code>
-    (<code>https://www3.marlex.net</code>); OAuth2 resource-owner-password-credentials
-    grant, 12-hour bearer token; endpoint/credential config in the
-    <code>ERP_Connection__c</code> hierarchy custom setting. Inbound is an
+    <span class="tech-label">For the developers</span>Outbound runs on
+    <strong>two plumbing generations</strong> (verified in code + config,
+    2026-07-20). The <em>live</em> path: legacy raw-endpoint classes
+    (<code>MA_APEX_IntegrationSYNC_ERP</code>, <code>MA_SendOfferToN4</code>,
+    <code>MA_Net4SectionCtrl</code>) reading
+    <code>ERP_Connection__c.EndpointIntegration__c</code> →
+    <code>https://www3.marlex.net/ApiRestSalesForce/Salesforce/</code> through
+    Remote Site <code>N4_Integration_Site</code>; OAuth2
+    resource-owner-password-credentials grant, 12-hour bearer token. The
+    <em>newer</em> path: the <code>MA_Net4Client</code> family resolves its
+    endpoint through the <code>MA_Net4</code> Named Credential
+    (<code>req.setEndpoint(NAMED_CREDENTIAL + path)</code>) — but that
+    credential's production endpoint is still a placeholder, so this client
+    cannot be carrying live traffic today. Inbound is an
     <code>@RestResource</code> (<code>MA_WS_ERP_SF</code>) at
     <code>/Api/ERP_SF_Integration</code> — the invoice (<code>Factura</code>)
     push. Objects touched: <code>Account</code>, <code>Contact</code>,
@@ -3322,6 +3364,15 @@
     finance feed's, not NET4's (see
     <a href="#view-stay-direct">the stay-direct edges</a>), and both also carry
     heavy hand-entry by finance staff.
+    <strong>Candidate integration in development.</strong> An ERP-side candidate
+    sync is being built (a NET4 candidates API, plus transfer- and
+    delete-candidate operations); today the candidate is a TargetRecruit record
+    type and TargetRecruit fields on the standard <code>Contact</code>, so that
+    sync is expected to read and write those retiring fields until the candidate
+    is rebuilt natively. Whether it targets the TargetRecruit fields specifically
+    or only native <code>Contact</code>/<code>MA_</code> fields is the open item
+    below — the working assumption is that it touches the TargetRecruit fields,
+    which is what turns this measured-native edge into a cutover re-point.
   </div>
 </section>
 
@@ -3442,8 +3493,9 @@
     <div class="dq-col chosen">
       <h4>NET4 first <span class="tag">Chosen</span></h4>
       <p class="head-note">
-        Start with the dependency-free, package-clean ERP edge; the job board
-        follows on the foundation it lays.
+        Start with the dependency-free ERP edge — reusable across countries and
+        itself becoming candidate-coupled; the job board follows on the
+        foundation it lays.
       </p>
       <ul class="dq-outcomes">
         <li>
@@ -3526,12 +3578,12 @@
   <div class="dq-verdict">
     <p>
       <strong>Start with the edge that carries the least risk and the most
-      reuse.</strong> NET4 has no dependencies, is already free of the retiring
-      package, and lays a foundation a second country reuses — so it proves the
-      groundwork cheaply. The job board is heavier and sits on the cutover's
-      critical path, so it is exactly the edge you do <em>not</em> want to learn
-      the foundation on. NET4 first, the job board second (see
-      <a href="#view-infojobs">InfoJobs</a>).
+      reuse.</strong> NET4 has no dependencies and lays a foundation a second
+      country reuses, so it proves the groundwork cheaply — and its candidate
+      integration puts it squarely in the class the effort prioritises. The job
+      board is heavier and sits most tightly on the cutover's critical path, so it
+      is exactly the edge you do <em>not</em> want to learn the foundation on.
+      NET4 first, the job board second (see <a href="#view-infojobs">InfoJobs</a>).
     </p>
   </div>
   <div class="tech">
@@ -3546,16 +3598,21 @@
 
 <section>
   <p class="section-eyebrow">Rollback for this choice</p>
-  <h2>A preserved edge with a direct adapter always behind it</h2>
+  <h2>A Marlex-owned edge, re-pointed on its own code where the candidate data moves</h2>
   <p>
-    NET4 needs no dramatic rollback, because it is
-    <strong>preserved</strong> across the cutover — it already runs behind a
-    Marlex-owned, vendor-free client, and it touches none of the objects being
-    retired. There is nothing to re-point on the day that the ERP link would
-    notice.
+    NET4's rollback is the gentlest of the write-coupled edges, because both
+    sides of it are <strong>Marlex's own code</strong>. The finance directions
+    (offers, invoices, accounts) are already native and cross the cutover
+    untouched. The part that re-points is the candidate integration: where it
+    reads or writes the retiring TargetRecruit fields on Contact, its handler is
+    swapped to the native candidate model — a change Marlex makes and verifies in
+    its own Apex, not a switch that lives with an outside vendor. So unlike the
+    commercial connectors, NET4's candidate re-point is fully within Marlex's
+    control, and unlike the job board it is not the single edge the whole cutover
+    hinges on.
   </p>
   <p>
-    The rollback that <em>does</em> apply is the middleware hop itself. Under the
+    The other rollback that applies is the middleware hop itself. Under the
     <a href="#view-swappable-adapter">swappable-adapter</a> pattern, the direct
     connection stays in place as the fallback: a single runtime configuration
     record chooses whether the edge runs direct or through the middleware, with
@@ -3575,8 +3632,19 @@
     <li>
       <strong>Foundation-first risk.</strong> Being the first lane, NET4 carries
       the cost of standing up the shared groundwork for the whole delivery —
-      mitigated precisely by choosing a dependency-free, package-clean edge for
-      it, so a slip here reaches nothing on the cutover critical path.
+      mitigated by choosing a dependency-free edge for it, so a slip here reaches
+      nothing on the cutover critical path.
+    </li>
+    <li>
+      <strong>Open — the load-bearing one:</strong> does the candidate
+      integration in development read or write the retiring TargetRecruit record
+      type and fields on Contact, or only native <code>Contact</code>/<code>MA_</code>
+      fields? If it touches the TargetRecruit fields — the working assumption,
+      since that is where a candidate lives today — then NET4 is a cutover
+      re-point, not a preserved edge, and this page is scoped correctly. If it is
+      already native-only, NET4 crosses untouched after all. This is the single
+      confirmation that decides NET4's cutover treatment, and it sits with the
+      ERP-side team.
     </li>
     <li>
       <strong>Multi-country assumption.</strong> The reuse case rests on NET4
@@ -3591,10 +3659,14 @@
       the address is a setting, not code.
     </li>
     <li>
-      <strong>Open:</strong> three methods on the client have no consumer today —
-      <code>GetProyectosSalesforce</code>, <code>PostEliminarCandidato</code> and
-      <code>PostTraspasarCandidato</code>. Decide keep or drop before they are
-      carried into the lane as dead surface.
+      <strong>Open:</strong> three methods on the client had no live consumer in
+      the measured window — <code>GetProyectosSalesforce</code>,
+      <code>PostEliminarCandidato</code> and <code>PostTraspasarCandidato</code>.
+      The two candidate methods are almost certainly part of the candidate
+      integration now being built, not dead surface — so the keep/drop call has to
+      be made <em>together with</em> the candidate-integration scope above, not
+      independently of it. <code>GetProyectosSalesforce</code> is the one to
+      confirm as genuinely unused.
     </li>
     <li>
       <strong>Open:</strong> a 2026-05 note recorded NET4 as batch-only, sending
@@ -3608,10 +3680,17 @@
       first.
     </li>
     <li>
-      <strong>Open:</strong> a stale <code>MA_Net4</code> Named Credential
-      placeholder still points at <code>net4.example.com/api</code> and is used
-      by nothing — retire it so it cannot be mistaken for the live configuration.
+      <strong>Open:</strong> the <code>MA_Net4</code> Named Credential still
+      points at a placeholder (<code>net4.example.com/api</code>) — and it is
+      <em>not</em> unused: the newer <code>MA_Net4Client</code> family resolves
+      its endpoint through it, which is exactly why that client cannot be live.
+      The decision is therefore not "retire the credential" but
+      <strong>fix-and-adopt or retire-both</strong>: either point the credential
+      at the real NET4 API and migrate outbound onto the modern client, or
+      retire client and credential together. Leaving the pair half-configured
+      is a silent misconfiguration waiting for the re-point.
     </li>
+    <!-- Verified 2026-07-20: MA_Net4Client body = setEndpoint('callout:MA_Net4' + path), does NOT read ERP_Connection__c; live outbound = legacy classes via ERP_Connection__c -> www3.marlex.net. -->
   </ul>
 </section>
 
