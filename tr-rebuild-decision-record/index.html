@@ -15114,9 +15114,12 @@
   <div class="tech">
     <span class="tech-label">For the developers</span>Endpoints/classes — all
     four inbound edges are <em>custom Apex REST</em>, but only one is public:
-    <code>/infojobsHook</code> (<code>MA_InfojobWebHook</code>) rides the
-    <strong>public site whose URL prefix is the hook path itself</strong> —
-    guest user, no connected app, no login records. The other three
+    InfoJobs is a <strong>Site + webhook</strong> — a public
+    <code>Site</code> whose <code>UrlPathPrefix</code> is
+    <code>infojobsHook</code>, exposing the webhook class
+    <code>MA_InfojobWebHook</code> at <code>/infojobsHook</code> and executing
+    as the site's <strong>guest user</strong> — no connected app, no login
+    records (guest traffic isn't in <code>LoginHistory</code>). The other three
     authenticate: <code>/Api/ERP_SF_Integration</code>
     (<code>MA_WS_ERP_SF</code>, ERP-integration user ×
     <code>MX_Integration_Conn_App</code>);
@@ -15136,27 +15139,43 @@
 
 <section>
   <p class="section-eyebrow">Who actually calls the API</p>
-  <h2>Attributed by caller, not by login count</h2>
+  <h2>By identity — the system, the login, and the app that carries it</h2>
   <p>
     A different lens from the tables above. The inbound table lists what each
     <em>service endpoint</em> receives and writes; this table lists what each
-    <em>caller identity</em> touches in the raw call logs, attributed by
-    <strong>connected app → objects touched</strong>. The two can differ, and
-    for one caller they do: <strong>several integrations share a single
-    integration login</strong> (the ERP-integration account), so grouping the
-    logs by <em>user</em> would blur them into one. The reliable split is by
-    connected app — that is how the ERP transfer and the finance feed below are
-    told apart even though they sign in as the same account. The point of the
-    table is that the heavy callers hit the <em>standard</em> model — contacts,
-    accounts, opportunities — not the retiring recruitment objects, so they
-    cross the cutover without change.
+    <em>caller</em> touches in the raw call logs. The key correction it makes:
+    <strong>a "caller" is not a system — it is an identity</strong>, and the
+    reliable identity is not the login on its own but the pair of
+    <strong>login (user) × the app it signs in through</strong>. The two columns
+    below keep them apart on purpose, because one does not imply the other:
+  </p>
+  <ul>
+    <li>
+      <strong>One login can carry several systems.</strong> The ERP-integration
+      login signs in through two <em>different</em> apps — one is the ERP
+      transfer, the other the finance feed — so grouped by login they look like
+      one caller; split by app they are plainly two. That is the whole reason
+      the finance figures were once mistaken for ERP traffic.
+    </li>
+    <li>
+      <strong>One app can carry many logins.</strong> The sourcing and
+      browser-add-in connectors are the mirror image — a single app that dozens
+      of named recruiters sign in through, so their machine traffic can't be
+      told apart from the humans' own screen work by the login alone.
+    </li>
+  </ul>
+  <p>
+    The headline still holds: the heavy callers hit the <em>standard</em> model
+    — contacts, accounts, opportunities — not the retiring recruitment objects,
+    so they cross the cutover without change.
   </p>
   
   <div class="tbl-scroll">
     <table class="dtbl">
       <thead>
         <tr>
-          <th>Caller</th>
+          <th>System / edge</th>
+          <th>Identity — login × app</th>
           <th>Objects touched</th>
           <th>State</th>
         </tr>
@@ -15164,6 +15183,7 @@
       <tbody>
         <tr>
           <td><strong>Customer data platform / marketing</strong></td>
+          <td>Dedicated platform login × platform data app</td>
           <td>
             Standard objects — contact, account, opportunity, campaign
             <em>(not the recruitment objects)</em>
@@ -15172,28 +15192,38 @@
         </tr>
         <tr class="review">
           <td><strong>Job board (InfoJobs), inbound</strong></td>
+          <td>
+            <strong>Public Site + webhook</strong> — a public site whose address
+            is the webhook path itself, running as the site's
+            <strong>guest user</strong>; no connected app, no login trail
+          </td>
           <td>Writes the recruitment objects, via the guest user</td>
           <td><strong>Re-points</strong></td>
         </tr>
         <tr>
           <td><strong>ERP (NET4)</strong></td>
           <td>
+            ERP-integration login × <em>the ERP app</em>
+            <em>(same login as the row below, different app)</em>
+          </td>
+          <td>
             Its own offer, invoice and account objects, plus the contact — all
             on the new model <em>(not the recruitment objects, and not the
-            finance figures below — that is a separate feed on the same login)</em>
+            finance figures below)</em>
           </td>
           <td>Keep</td>
         </tr>
         <tr>
+          <td><strong>Finance data feed</strong></td>
           <td>
-            <strong>Finance data feed</strong>
-            <em>(shares the ERP login)</em>
+            ERP-integration login × <em>a separate finance app</em>
+            <em>(same login as ERP above — told apart only by the app)</em>
           </td>
           <td>
             Writes the incentive and monthly-margin figures — a
-            <em>different</em> integration from the ERP transfer above, told
-            apart only by its connected app; both figures also carry heavy
-            hand-entry by finance staff, so the feed is one writer among several
+            <em>different</em> integration from the ERP transfer above; both
+            figures also carry heavy hand-entry by finance staff, so the feed is
+            one writer among several
           </td>
           <td>Keep — new model, but confirm the owner</td>
         </tr>
@@ -15201,24 +15231,31 @@
         <tr class="review">
           <td><strong>Data connector (Taleva)</strong></td>
           <td>
+            <strong>Many named human logins × one connector app</strong> — so
+            connector writes can't be split from the humans' screen work
+          </td>
+          <td>
             Reads the application object and, on the 16 July measurement,
-            <strong>also creates records on it</strong> — and
-            <em>should be scoped down</em> from its current administrator-level
-            access
+            <strong>also creates records on it</strong>; its login is
+            <em>permitted</em> to reach the retiring objects (see the
+            least-privilege note below)
           </td>
           <td>External re-point (owner to confirm write)</td>
         </tr>
         <tr>
           <td>
-            <strong>E-signature, security log, certificates, reporting</strong>
+            <strong>E-signature, security log, certificates</strong>
           </td>
-          <td>
-            Native handlers, reporting and security tooling on the new model
-          </td>
+          <td>Dedicated login × dedicated app, each</td>
+          <td>Native handlers and security tooling on the new model</td>
           <td>Keep</td>
         </tr>
         <tr>
           <td><strong>Dormant / in-development connectors</strong></td>
+          <td>
+            App registered, no measured traffic — sourcing/screening services
+            in build or awaiting confirmation
+          </td>
           <td>
             No measured traffic yet — new services not yet built, or apps to
             confirm live
@@ -15227,12 +15264,30 @@
         </tr>
         <tr class="dropped">
           <td><strong>Unused quoting integration user</strong></td>
+          <td>Login × app both unused</td>
           <td>Not used in any process</td>
           <td>Drop</td>
         </tr>
       </tbody>
     </table>
   </div>
+  <div class="callout warn">
+    <p class="callout-h">A least-privilege item for the client's IT team</p>
+    <p>
+      Identity is not only <em>who calls</em> — it is <em>what each caller is
+      allowed to reach</em>, and that gate is wider than the measured traffic.
+      Two integration logins — the ERP one and the sourcing connector — are
+      <strong>permitted to reach the retiring recruitment objects</strong> even
+      though the ERP one's measured traffic stays on the new model. Permission
+      is not use, but an open gate is a standing risk: it means either could
+      begin writing those objects without a code change. Separately, a single
+      broad access grant is assigned to <em>every</em> integration login rather
+      than scoped per integration. Both are tidy-ups the cutover does not
+      require but that the client's IT team should close — narrow each
+      integration login to exactly the objects its own integration needs.
+    </p>
+  </div>
+  
 </section>
 
 <section>
@@ -15337,7 +15392,7 @@
     traffic goes through legacy raw-endpoint classes
     (<code>MA_SendOfferToN4</code>, <code>MA_APEX_IntegrationSYNC_ERP</code>)
     reading a config record (<code>ERP_Connection__c</code> →
-    an internal Marlex-hosted API address (redacted here)), while the newer
+    an internal Marlex host (redacted)/ApiRestSalesForce), while the newer
     <code>MA_Net4Client</code> family's <code>MA_Net4</code> named credential
     still holds a <strong>placeholder endpoint</strong> in production — which
     generation is canonical needs confirming before the re-point. The "Power BI"
