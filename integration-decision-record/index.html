@@ -618,7 +618,7 @@
         ><h3>Portals</h3>
         <p>
           Candidate and recruiter portals. The front-ends move outside
-          Salesforce and are partner-built; the platform exposes the pipe as an
+          Salesforce and are partner-built; MuleSoft exposes the pipe as an
           Experience API. Blocked until the portal has an owner.
         </p></span
       >
@@ -1142,7 +1142,7 @@
             </li>
             <li>
               Build the <b>shared foundation</b>: the connectivity layer between
-              Salesforce and the platform, a reusable per-organisation
+              Salesforce and MuleSoft, a reusable per-organisation
               authentication pattern, and the first canonical contracts every
               lane speaks through.
             </li>
@@ -1380,7 +1380,7 @@
         <thead>
           <tr>
             <th>Edge</th>
-            <th>Platform routing</th>
+            <th>When it moves to MuleSoft</th>
             <th>At the go-live</th>
           </tr>
         </thead>
@@ -1832,7 +1832,7 @@
   <p>
     Two edges are proposed to <strong>stay direct permanently</strong> — the
     native CV parser (a latency-sensitive, in-flow AI call with no shared
-    contract to own) and the finance/reporting data feed — and the commercial
+    contract to own) and the finance data feed — and the commercial
     data connectors are middleware-exempt by nature, since they ship a fixed
     Salesforce connector with nothing to place a layer in front of. None of that
     contradicts the stance: the rule is a contract per edge and a direct-first
@@ -1959,7 +1959,7 @@
       Nothing is required to pass through MuleSoft. Reporting and monitoring
       tools connect straight to Salesforce over a Connected App, and two edges
       are proposed to stay direct permanently (the CV parser and the
-      finance/reporting feed — see
+      finance data feed — see
       <a href="#view-stay-direct">the stay-direct edges</a>). The platform earns
       each edge on its own merits — reuse across countries or systems, or
       protocol mediation — rather than sitting in front of everything by policy.
@@ -3232,8 +3232,9 @@
 
 <div class="bluf">
   <p>
-    <strong>The decision.</strong> The middleware is adopted one edge at a time,
-    on a schedule that never blocks the cutover (the rule is set on the
+    <strong>The decision.</strong> MuleSoft, the chosen integration platform, is
+    adopted one edge at a time, on a schedule that never blocks the cutover (the
+    rule is set on the
     <a href="#view-swappable-adapter">swappable-adapter page</a>). NET4 — the
     group's enterprise resource planning system (its ERP: the finance, billing
     and back-office platform, supplied by Nivel IV, a Zvoove company) — is the
@@ -3263,7 +3264,7 @@
     against Marlex-owned interfaces: there is <strong>no coupling to the
     retiring TargetRecruit data model</strong> anywhere in the link. It reads and
     writes only native and standard objects — the account, the contact, the
-    offer, the invoice, the incentive records.
+    offer, the invoice.
   </p>
   <p>
     That single fact is why NET4 is easy to move and safe to move first. The
@@ -3308,10 +3309,19 @@
     <code>@RestResource</code> (<code>MA_WS_ERP_SF</code>) at
     <code>/Api/ERP_SF_Integration</code> — the invoice (<code>Factura</code>)
     push. Objects touched: <code>Account</code>, <code>Contact</code>,
-    <code>MA_Oferta__c</code>, <code>MA_Factura__c</code>, <code>MA_Incentivos__c</code>
-    and similar — all native/standard, no <code>AVTRRT__</code>. Attributed
-    volume ~7,059 calls / 7d (Contact + <code>MA_</code>) against 33,448 logins /
-    30d.
+    <code>MA_Oferta__c</code>, <code>MA_Factura__c</code> and similar — all
+    native/standard, no <code>AVTRRT__</code>. Attributed volume ~7,059 calls /
+    7d (Contact + <code>MA_</code>) against 33,448 logins / 30d.
+    <strong>Attribute by connected app, not by login.</strong> The shared
+    ERP-integration login (<code>MX Integration Conn App</code>) fronts at least
+    two distinct integrations — NET4 (offers, invoices, accounts) and a separate
+    finance-metric feed (<code>API Marlex Data Source</code> →
+    <code>MA_Incentivos__c</code> / <code>MX_Margen_Mensual_Por_Cliente__c</code>).
+    Grouping the logs by user conflates them; the reliable split is by
+    <code>CONNECTED_APP_ID</code>. The incentive and margin objects are the
+    finance feed's, not NET4's (see
+    <a href="#view-stay-direct">the stay-direct edges</a>), and both also carry
+    heavy hand-entry by finance staff.
   </div>
 </section>
 
@@ -4293,9 +4303,10 @@
   <p>
     In the target shape the portal front-end lives outside Salesforce, built and
     hosted by a partner. Salesforce stops being the place the portal is
-    <em>rendered</em> and becomes the place the portal <em>talks to</em>: the
-    middleware exposes an <strong>Experience API</strong> — a Marlex-owned,
-    partner-facing interface — over the native data. The partner's front-end
+    <em>rendered</em> and becomes the place the portal <em>talks to</em>:
+    MuleSoft, the chosen integration platform, exposes an
+    <strong>Experience API</strong> — a Marlex-owned, partner-facing interface —
+    over the native data. The partner's front-end
     calls that interface; it never touches Salesforce objects directly. This is
     the <a href="#view-swappable-adapter">swappable-adapter</a> pattern applied to
     a front-end: the contract is Marlex's, and what sits behind it can change
@@ -4894,7 +4905,7 @@
     <span class="status proposed">proposed</span>.
     <strong>Axxon reuses the shared Marlex-to-NET4 lane, multi-tenant.</strong>
     The Axxon org sends its placement and invoice traffic through the same
-    middleware service Spain uses; the integration layer routes each message to
+    MuleSoft service Spain uses; the integration layer routes each message to
     the right tenant. No second lane is built, and no ERP-side change is asked
     for. This is the reuse case that justified standing the NET4 lane up first —
     the second country is meant to cost far less than a fresh build, because the
@@ -5357,13 +5368,19 @@
     reads over 30 days <span class="lk meas">measured</span> — onto
     <code>MA_Incentivos__c</code> (~15k records) and
     <code>MX_Margen_Mensual_Por_Cliente__c</code> (~29k records), running as the
-    ERP-integration user. Both target objects exist in prod as native custom
-    objects; no <code>AVTRRT__</code> coupling. Power BI embed plumbing
+    ERP-integration user — the same shared login it uses for NET4, which is why
+    the two must be split by <code>CONNECTED_APP_ID</code> rather than by user
+    (see <a href="#view-net4">NET4</a>). Both target objects exist in prod as native
+    custom objects; no <code>AVTRRT__</code> coupling. Power BI embed plumbing
     (<code>PowerBiEmbedManager</code>) exists separately, which is why the feed
     was first read as a reporting pull. The recruitment delivery board has no
     issue building this feed — the in-house margin logic on the board is a
     different, internal automation — which points to an ERP-side push; owner to
-    confirm, outside the recruitment team.
+    confirm, outside the recruitment team. <strong>These are not purely fed
+    objects:</strong> the incentive and margin records also carry heavy
+    hand-entry by finance staff, so they are a shared human-plus-integration
+    surface — anything that re-points or throttles the feed has to account for
+    the people editing the same records.
   </div>
 </section>
 
@@ -5871,8 +5888,8 @@
   <h1>These connectors are exempt from the platform — for a product reason, not a preference</h1>
   <p class="subtitle">
     Three bought SaaS tools read the recruitment data through a fixed
-    Salesforce connector. Can the integration platform front them, and if not,
-    who rolls them back?
+    Salesforce connector. Can MuleSoft, the chosen integration platform, front
+    them, and if not, who rolls them back?
   </p>
   <p class="dateline">
     Grounded in the live production-org measured surface · 19 July 2026
@@ -5897,7 +5914,7 @@
     <strong>Where a tool connects this way, the rule does not apply and cannot
       be made to.</strong>
     There is no Marlex-owned port to place in front of a packaged connector, and
-    the platform cannot impersonate Salesforce to it, so a fixed-connector tool
+    MuleSoft cannot impersonate Salesforce to it, so a fixed-connector tool
     is <strong>exempt from the platform hop</strong>. Its only lever is on the
     Salesforce side — which data it is permitted to reach — and its rollback is
     the one integration risk on the whole programme that
@@ -5917,10 +5934,9 @@
   <h2>You cannot put a Marlex port in front of a packaged connector</h2>
   <p>
     Every Marlex-built integration has a Marlex-owned interface — a "port" — in
-    front of it. That is what lets a rebuilt edge move behind the integration
-    platform later, on its own schedule, without the outside system ever
-    noticing: the swap from old objects to new happens inside a layer Marlex
-    owns. That whole mechanism depends on there being <em>something Marlex
+    front of it. That is what lets a rebuilt edge move behind MuleSoft later, on
+    its own schedule, without the outside system ever noticing: the swap from
+    old objects to new happens inside a layer Marlex owns. That whole mechanism depends on there being <em>something Marlex
     controls</em> between the outside system and the data.
   </p>
   <p>
@@ -5942,12 +5958,12 @@
       endpoint.
     </li>
     <li>
-      <strong>The platform cannot stand in for Salesforce.</strong> Even if
-      Marlex wanted to insert the integration platform in the middle, the
-      platform cannot impersonate Salesforce's authentication and standard
-      interface to a packaged connector that expects to talk to Salesforce
-      itself. There is no way to fool a product into calling middleware when its
-      connector is built to call Salesforce.
+      <strong>MuleSoft cannot stand in for Salesforce.</strong> Even if
+      Marlex wanted to insert MuleSoft in the middle, it cannot impersonate
+      Salesforce's authentication and standard interface to a packaged connector
+      that expects to talk to Salesforce itself. There is no way to fool a
+      product into calling middleware when its connector is built to call
+      Salesforce.
     </li>
   </ul>
   <div class="callout">
