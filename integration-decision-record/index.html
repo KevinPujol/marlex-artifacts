@@ -1849,10 +1849,12 @@
               <span class="body"
                 ><h3>The data connectors</h3>
                 <p>
-                  Bought tools with a fixed Salesforce connector — Taleva,
-                  Orbio, Rainmakers — exempt from the platform for a product
-                  reason, and the one class whose rollback isn't Marlex's to
-                  flip.
+                  Bought tools with a fixed Salesforce connector — Rainmakers,
+                  and provisionally Taleva — exempt from the platform for a
+                  product reason, the one class whose rollback isn't Marlex's to
+                  flip. Orbio was here but is <strong>not exempt</strong>: it
+                  connects by API, so it is routed behind the platform before
+                  cutover (resolved 2026-07-21).
                 </p></span
               >
               <span class="pick">Platform-exempt · owner-flipped</span>
@@ -3013,11 +3015,21 @@
                     <td>Preserved — already native or standard</td>
                   </tr>
                   <tr>
-                    <td>Taleva · Orbio · Rainmakers</td>
+                    <td>Taleva · Rainmakers</td>
                     <td>
                       <span class="ap-route ap-bang">Platform-exempt</span>
                     </td>
                     <td>Connector-fronted; rollback is the vendor's to flip</td>
+                  </tr>
+                  <tr>
+                    <td>Orbio</td>
+                    <td>
+                      <span class="ap-route ap-rides">System-API lane</span>
+                    </td>
+                    <td>
+                      API-based (resolved 2026-07-21) — routed behind the
+                      platform before cutover; Marlex-controlled rollback
+                    </td>
                   </tr>
                   <tr>
                     <td>Package-bundled edges</td>
@@ -7475,13 +7487,29 @@
           <ul>
             <li>
               <strong
-                >Open: the portal owner and timeline are not confirmed.</strong
+                >Open: must the portals be live on day one, or can they be
+                dropped and rebuilt after?</strong
               >
-              This lane cannot start until the portal build has an owner and a
-              schedule. Until then the Experience API has no consumer to build
-              against, and the programme cannot commit a portal go-live date.
-              This is the single item that unblocks everything else on this
-              page.
+              The sharpest form of the timing question. Either a working
+              replacement is ready in step with the core cutover — putting the
+              partner build on the cutover's critical path — or the old portals
+              come down at the cutover and the replacement follows in the tail,
+              accepting a public-facing gap whose length and fallback must be
+              agreed. This is a product-owner decision (is a gap acceptable to
+              the business?), and it sizes the portal line in the rebuild
+              estimate. The rebuild's own cutover view frames the same fork; the
+              hard constraint either way is that the replacement, or an accepted
+              gap, must be settled before the one-way package uninstall closes.
+            </li>
+            <li>
+              <strong
+                >Open: the portal owner and build schedule are not
+                confirmed.</strong
+              >
+              Whichever timing is chosen, this lane cannot start until the
+              portal build has an owner and a schedule. Until then the
+              Experience API has no consumer to build against, and the programme
+              cannot commit a portal go-live date.
             </li>
             <li>
               <strong>Open: Spain-only or multi-region.</strong> Whether the
@@ -9433,8 +9461,8 @@
           <p>
             <strong>What we chose.</strong>
             <strong
-              >Where a tool connects this way, the rule does not apply and
-              cannot be made to.</strong
+              >Where a tool connects through a fixed vendor connector, the rule
+              does not apply and cannot be made to.</strong
             >
             There is no Marlex-owned port to place in front of a packaged
             connector, and MuleSoft cannot impersonate Salesforce to it, so a
@@ -9444,13 +9472,30 @@
             rollback is the one integration risk on the whole programme that
             <strong>Marlex does not control</strong>: the external owner, not
             Marlex, must re-point the connector back to the old objects if the
-            cutover is reversed. Taleva and Rainmakers are fixed-connector tools
-            of exactly this kind.
-            <strong>Orbio is treated the same way provisionally</strong> — but
-            how Orbio actually connects is not yet confirmed, and if it turns
-            out to reach Salesforce through custom interface operations rather
-            than a fixed connector, it belongs with the Marlex-built edges
-            instead. That open question is settled below, not assumed away.
+            cutover is reversed. Rainmakers is a fixed-connector tool of exactly
+            this kind, and Taleva is provisionally treated as one pending
+            confirmation.
+          </p>
+          <p>
+            <strong>Orbio is not in this class.</strong> As of the 2026-07-21
+            technical weekly this is <strong>resolved</strong>: Orbio connects
+            through <strong>API calls, not a fixed vendor connector</strong> —
+            so it <em>is</em> routable behind a Marlex-owned interface, and
+            because it reads and writes the retiring recruitment objects it
+            should be
+            <strong
+              >sequenced behind a MuleSoft System API before the cutover</strong
+            >, like the other edges coupled to those objects. This reverses the
+            earlier written position (a 2026-07-14 reconciliation had
+            provisionally called it a commercial connector, exempt). Two facts
+            hold either way: Orbio is <strong>sandbox-only, not live</strong>,
+            and it <strong>writes the retiring objects by design</strong> — so
+            once it goes live (date still open, expected before cutover) it is a
+            third write-coupled edge to plan for.
+            <strong
+              >Taleva is now the only tool whose connection type is still
+              uncertain.</strong
+            >
           </p>
         </div>
 
@@ -9467,17 +9512,18 @@
             and the data.
           </p>
           <p>
-            A bought SaaS connector removes exactly that thing. Taleva and
-            Rainmakers are commercial products that ship their own Salesforce
-            connector, and Orbio is provisionally treated as one pending
-            confirmation (see the open question at the foot of this page). A
-            fixed-connector tool signs in through Salesforce's native
-            authentication and reads and writes through Salesforce's own
-            standard interface — the same interface any logged-in tool uses.
-            Inside such a product there is no field to type a middleware address
-            into; the connection target <em>is</em> Salesforce, and that is
-            fixed by the vendor. So two things follow, and both are product
-            facts rather than choices:
+            A bought SaaS connector removes exactly that thing. Rainmakers is a
+            commercial product that ships its own Salesforce connector, and
+            Taleva is provisionally treated as one pending confirmation (see the
+            open question at the foot of this page). Orbio is <em>not</em> in
+            this class — it connects by API and is routed behind a Marlex-owned
+            interface (see the note below). A fixed-connector tool signs in
+            through Salesforce's native authentication and reads and writes
+            through Salesforce's own standard interface — the same interface any
+            logged-in tool uses. Inside such a product there is no field to type
+            a middleware address into; the connection target
+            <em>is</em> Salesforce, and that is fixed by the vendor. So two
+            things follow, and both are product facts rather than choices:
           </p>
           <ul>
             <li>
@@ -9516,12 +9562,14 @@
           <p class="section-eyebrow">The three connectors</p>
           <h2>What each one is, and what it does to the data</h2>
           <p>
-            Taleva and Rainmakers fall under the exemption above; Orbio is
-            treated with them provisionally, pending confirmation of how it
-            connects. They differ in what they touch and in how live they are
-            today — measured, where there is traffic to measure, from the
-            production org's own usage logs. The two amber rows carry open
-            questions the client's IT team must close.
+            Rainmakers falls under the exemption above; Taleva is treated with
+            it provisionally, pending confirmation of how it connects. Orbio is
+            listed here for context but is <strong>not exempt</strong> — it
+            connects by API and is routed behind a MuleSoft System API before
+            cutover (resolved 2026-07-21). They differ in what they touch and in
+            how live they are today — measured, where there is traffic to
+            measure, from the production org's own usage logs. The amber rows
+            carry open questions the client's IT team must close.
           </p>
           <div class="tbl-scroll">
             <table class="dtbl">
@@ -9572,10 +9620,12 @@
                   <td>
                     In build, <strong>sandbox only</strong> — its fields are
                     present in the pre-production org and absent from production
-                    <span class="lk meas">measured</span>. When it goes live it
-                    is a third write-coupled edge that must re-point at cutover.
-                    See the open question below on <em>how</em> it actually
-                    connects.
+                    <span class="lk meas">measured</span>.
+                    <strong>Connects by API (resolved 2026-07-21)</strong>, so
+                    it is routed behind a MuleSoft System API before cutover —
+                    not a fixed-connector exemption. When it goes live it is a
+                    third write-coupled edge that re-points at cutover through
+                    that platform layer.
                   </td>
                 </tr>
                 <tr>
@@ -9599,12 +9649,14 @@
           <p>
             Two of the three touch the retiring recruitment objects. Taleva
             reads them now and may write them; Orbio will write them by design
-            once it leaves the sandbox. Orbio runs
-            <strong>alongside</strong> the existing job-board feed, not instead
-            of it — the InfoJobs webhook stays and reconfigures, and Orbio
-            pre-filters what flows through it (see
-            <a href="#view-infojobs">the job-board edge</a>). Rainmakers touches
-            neither the old objects nor, today, anything at all.
+            once it leaves the sandbox — but Orbio's re-point is
+            <strong>Marlex-controlled</strong>, through the MuleSoft System API
+            it sits behind, not an external-owner reversal like the
+            fixed-connector tools. Orbio runs <strong>alongside</strong> the
+            existing job-board feed, not instead of it — the InfoJobs webhook
+            stays and reconfigures, and Orbio pre-filters what flows through it
+            (see <a href="#view-infojobs">the job-board edge</a>). Rainmakers
+            touches neither the old objects nor, today, anything at all.
           </p>
           <div class="tech">
             <span class="tech-label">For the developers</span>
@@ -9656,19 +9708,22 @@
               The one integration risk that is not ours to flip
             </p>
             <p>
-              If the cutover is reversed, these connectors must be pointed back
-              at the old objects — and Marlex cannot do it. The connection and
-              the field mapping both live inside the vendor's product, and the
-              platform cannot front them, so
+              If the cutover is reversed, a fixed-connector tool must be pointed
+              back at the old objects — and Marlex cannot do it. The connection
+              and the field mapping both live inside the vendor's product, and
+              the platform cannot front them, so
               <strong
                 >the external owner has to re-point their own connector</strong
               >. By the time the cutover comes, Taleva is expected to be reading
-              — and possibly writing — the old objects, and Orbio, if it has
-              gone live, is writing them by design. Both would need their owner
-              to reverse the mapping on <em>their</em> side, on Marlex's signal,
-              inside the fallback window. That makes three things a hard
-              prerequisite before the fallback window opens, agreed with each
-              owner in advance:
+              — and possibly writing — the old objects; if it is confirmed to be
+              a fixed connector, its owner would need to reverse the mapping on
+              <em>their</em>
+              side, on Marlex's signal, inside the fallback window. (Orbio does
+              <em>not</em> fall here — it connects by API and reverses on the
+              Marlex-owned MuleSoft layer like any platform-routed edge.) Where
+              a tool is a fixed connector, three things are a hard prerequisite
+              before the fallback window opens, agreed with the owner in
+              advance:
             </p>
             <ul>
               <li>
@@ -9737,23 +9792,28 @@
               and whether that lands before or after the core cutover, are open.
             </li>
             <li>
-              <strong>Open: how Orbio actually connects.</strong> The evidence
-              disagrees. One source describes Orbio as roughly seventeen inbound
-              and seventeen outbound custom interface operations — which
-              <em>could</em> be routed through the integration platform like any
-              Marlex-built edge. Another treats it as a commercial connector,
-              exempt for the product reasons on this page. These are two
-              different integration models with two different rollback owners,
-              and only one can be true.
-              <strong>Which one Orbio really is must be confirmed</strong>
-              before its lane is planned — this page does not assert either.
+              <strong>Resolved (2026-07-21): how Orbio connects.</strong>
+              Confirmed at the technical weekly that Orbio connects through
+              <strong>API calls, not a fixed vendor connector</strong>. It is
+              therefore routable behind a Marlex-owned interface and should be
+              <strong
+                >sequenced behind a MuleSoft System API before cutover</strong
+              >, like the other edges that read or write the retiring objects.
+              This reverses a 2026-07-14 written reconciliation that had
+              provisionally treated it as a commercial connector; the API
+              finding supersedes it. What remains open is only Orbio's go-live
+              date (above), not its integration model.
             </li>
             <li>
-              <strong>Open: each connector owner's rollback commitment.</strong>
-              For Taleva, and for Orbio if it goes live, the external owner must
-              commit — in advance — to who re-points, in what window, on what
-              signal. Without that commitment, the fallback window cannot safely
-              open.
+              <strong
+                >Open: Taleva's connection type and rollback commitment.</strong
+              >
+              Taleva is now the only tool whose connection type is unconfirmed.
+              If it is a fixed connector, its owner must commit — in advance —
+              to who re-points, in what window, on what signal, before the
+              fallback window can safely open. If instead it connects by API (as
+              Orbio does), it joins the platform-routed edges and reverses on
+              the Marlex-owned layer.
             </li>
             <li>
               <strong>Open: Rainmakers before it goes live.</strong> It is a

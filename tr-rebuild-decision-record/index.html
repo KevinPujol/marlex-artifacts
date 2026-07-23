@@ -21479,6 +21479,107 @@
         </section>
 
         <section>
+          <p class="section-eyebrow">The public portals</p>
+          <h2>
+            The self-service portals leave with the package — they don't
+            re-point
+          </h2>
+          <p>
+            Three of the edges on the surface are not integrations that survive
+            the cutover at all — they are the public self-service portals
+            (<strong>candidate, recruiting and staffing</strong>), and they
+            behave differently from every other edge on this page. Each runs
+            today as a public guest-user site whose pages read and write the
+            retiring objects directly. They are wired to the old package, so
+            they cannot be re-pointed the way an API edge is —
+            <strong>they leave when the package leaves</strong>. That makes a
+            portal a <em>consequence</em> of the rebuild, not a surviving
+            connection: the question is not how to move it, but what replaces it
+            and exactly <em>when</em>.
+          </p>
+          <p>
+            The replacement shape is settled on the separate integration
+            decision record: the portal front-end is built
+            <strong>outside Salesforce by a partner</strong>, and the programme
+            exposes only a Marlex-owned data pipe for it to call. What is
+            <strong>not</strong> settled is the timing at the cutover — and it
+            is a real fork that changes the pre-cutover scope and the estimate:
+          </p>
+          <div class="tbl-scroll">
+            <table class="dtbl">
+              <thead>
+                <tr>
+                  <th>Option</th>
+                  <th>What it means at the cutover</th>
+                  <th>What it costs</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="review">
+                  <td><strong>Live on day one</strong></td>
+                  <td>
+                    A working replacement portal must be built, tested and ready
+                    to go live in step with the core cutover — no public-facing
+                    gap.
+                  </td>
+                  <td>
+                    Puts the portal build (a partner dependency) on the core
+                    cutover's critical path — the switch-off cannot happen until
+                    the new portal is ready.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Drop, then rebuild after</strong></td>
+                  <td>
+                    The old portals come down at the cutover and the replacement
+                    is built in the post-cutover tail — accepting a window with
+                    no public self-service portal, or a stop-gap during it.
+                  </td>
+                  <td>
+                    Keeps the portal off the critical path and shrinks the
+                    cutover — at the price of a service gap whose length and
+                    fallback (how live applications are handled meanwhile) must
+                    be agreed.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout warn">
+            <p class="callout-h">
+              The open decision — portal continuity at the cutover
+            </p>
+            <p>
+              <strong
+                >Must the self-service portals be operational on day one, or can
+                they be dropped when the old platform is switched off and
+                rebuilt afterwards on the native model?</strong
+              >
+              This is not decided. It belongs to the product owners, because the
+              answer turns on whether a public-facing gap is acceptable to the
+              business — and it directly sizes the portal line in the rebuild
+              estimate, which today carries a wide buffer precisely because this
+              is open. The one hard constraint, whichever way it goes: because
+              uninstalling the old package is a one-way door held to the very
+              end, the replacement — or an accepted gap — has to be settled
+              before that door closes. The full replacement design and its
+              likelihoods live on the separate integration decision record; the
+              cutover view is what this page carries.
+            </p>
+          </div>
+          <div class="tech">
+            <span class="tech-label">For the developers</span>Three of the org's
+            thirteen active <code>Site</code> records are the candidate /
+            recruiting / staffing portals (four more are the InfoJobs guest-user
+            endpoints; the rest are survey/marketing). All three portal Sites
+            and their guest-user Apex controllers are bound to the
+            <code>AVTRRT__</code>-hosted model and retire with the package —
+            tracked as package-bundled edges, not as re-pointable integrations.
+            Verified read-only against production, July 2026.
+          </div>
+        </section>
+
+        <section>
           <p class="section-eyebrow">Inbound</p>
           <h2>
             Outside systems calling in — only the job board touches the old
