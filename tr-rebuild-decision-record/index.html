@@ -2938,8 +2938,8 @@
                     Whatever is dead or broken today should not be carried into
                     the native standard. Cleanup finishes <em>before</em> the
                     native model opens, so nothing inherits known problems — and
-                    it runs where the org knowledge already lives (Marlex IT /
-                    Telefónica).
+                    it runs where the org knowledge already lives (Marlex IT and
+                    the incumbent delivery partner).
                   </p>
                   <ul class="ap-steps">
                     <li>
@@ -3717,15 +3717,21 @@
             <div class="ap-opens">
               <div class="ap-oq">
                 <h3>
-                  What Nov 2027 actually obliges — stop using, or fully remove?
+                  What Nov 2027 actually obliges — clarified: a renewal, not
+                  removal
                 </h3>
                 <p>
-                  End-of-support means the operation must be off TargetRecruit
-                  by then. It is unconfirmed whether the licence can still be
-                  <em>held</em> past that date as the dated fallback, or whether
-                  the package must be <em>uninstalled</em> by then. If removal
-                  is forced, steps 8–9 pull back inside the deadline and the
-                  fallback design changes.
+                  Clarified at the 2026-07-23 product coordination: November
+                  2027 is the
+                  <em>contract renewal / renegotiation</em> point on the current
+                  licensing, not a forced uninstall or a sudden switch-off — the
+                  licence can be <em>held</em> past that date as the dated
+                  fallback (the current arrangement keeps both the old and the
+                  new instances paid), so there is real negotiation runway
+                  rather than a hard removal deadline. The operation should
+                  still be off TargetRecruit with margin before the runway is
+                  spent; steps 8–9 keep their planned order and are not pulled
+                  forcibly inside the date.
                 </p>
                 <span class="ap-owner">Marlex IT + vendor · confirm now</span>
               </div>
@@ -3819,11 +3825,13 @@
           <p>
             <strong>What forced the question.</strong> The recruitment package
             Marlex runs on was acquired by another recruitment-software vendor
-            in mid-2025, and the end-of-support date Marlex has been given for
-            the product as it uses it is <strong>November 2027</strong>.
-            Standing still is not an option — the platform Marlex's entire
-            recruitment operation depends on has a switch-off date. Something
-            must replace it before then.
+            in mid-2025, and the current contractual runway on the product ends
+            in <strong>November 2027</strong> — a licence renewal /
+            renegotiation point, not a hard switch-off (a paid fallback exists).
+            Standing still is still not an option: the platform Marlex's entire
+            recruitment operation depends on is on someone else's clock, and
+            something Marlex controls must be live and carrying the operation
+            well before that runway runs out.
           </p>
           <p>
             <strong>What we chose, and why.</strong> Rebuild the parts Marlex
@@ -3860,12 +3868,13 @@
           <div class="callout">
             <span class="lbl">The clock, stated plainly</span>
             <p>
-              The end-of-support date Marlex has been given is November 2027 — a
-              date to plan against, and one that could still move. Whatever
+              The contractual runway Marlex has on the package ends November
+              2027 — a renewal / renegotiation point with a paid fallback, not a
+              sudden switch-off, and one that could still move. Whatever
               replaces the package must be live, proven and carrying the real
-              recruitment operation before then — with margin, not on the
-              deadline. Every option below is judged against that date as much
-              as against its own merits.
+              recruitment operation before that runway runs out — with margin,
+              not on the date. Every option below is judged against that runway
+              as much as against its own merits.
             </p>
           </div>
         </section>
@@ -3934,12 +3943,13 @@
               ><span class="chip rejected">Rejected</span>
             </div>
             <p>
-              Wait, and decide closer to the deadline. This isn't a strategy,
-              it's the absence of one — and it fails on the talent-scarcity fact
+              Wait, and decide closer to the date. This isn't a strategy, it's
+              the absence of one — and it fails on the talent-scarcity fact
               above: the closer to November 2027, the harder and dearer any
               replacement becomes, with no margin left for the rehearsals and
-              fallback the rest of this set depends on. The deadline is fixed;
-              the only variable is how much runway is spent before acting.
+              fallback the rest of this set depends on. The runway is real but
+              finite; the only variable is how much of it is spent before
+              acting.
             </p>
           </div>
         </section>
@@ -5436,11 +5446,21 @@
               preparation reduces it but can't remove it.
             </li>
             <li>
-              <strong>Documentation and training scale with scope.</strong> The
-              more the product owners keep in the rebuild (see
+              <strong
+                >Documentation and training scale with scope — and with
+                novelty.</strong
+              >
+              The more the product owners keep in the rebuild (see
               <a href="#view-scope">What's in scope</a>), the more there is to
               document and train on — another reason a lean
-              minimum-to-disconnect scope pays off on the people side too.
+              minimum-to-disconnect scope pays off on the people side too. It
+              also scales with how <em>new</em> each rebuilt capability is:
+              where the rebuild reproduces the existing behaviour and UX (an
+              equivalent flow, just native), the user experiences no real change
+              — "log in, reset the password" — and needs little or no training;
+              training effort concentrates on the genuinely new or redesigned
+              surface, not on the like-for-like mirror. Confirmed as the working
+              principle at the 2026-07-23 product coordination.
             </li>
           </ul>
         </section>
@@ -13817,6 +13837,23 @@
               deciding the order once. The volatile set shifts as the business's
               priorities do.
             </li>
+            <li>
+              <strong
+                >Every progressive deploy flows through review, on one source of
+                truth.</strong
+              >
+              Because these edges ship onto the live app ahead of the core
+              cutover, each change is raised as a
+              <strong>pull request for architectural review</strong> before it
+              merges — on the <strong>same source control</strong> the whole
+              rebuild uses, so nothing lands out-of-band. Reviews check
+              adherence to the naming conventions and the AI-usage guidelines
+              Marlex IT has defined for the build, and catch technical drift
+              early rather than at cutover. This is the same
+              branching-and-pull-request discipline the programme's release
+              strategy already mandates, applied to the pre-cutover progressive
+              stream.
+            </li>
           </ul>
         </section>
 
@@ -13859,13 +13896,16 @@
           <p>
             <strong>What we chose.</strong> Big-bang the shared core (candidate,
             job, application) in one rehearsed weekend, with placements
-            migrating alongside it by default; slice the edges (interviews
-            first) off ahead of it; never keep two copies synced. The bulk of
-            the core data is <em>pre-loaded</em> into the dormant objects weeks
-            ahead and refreshed one-way, so the weekend moves only the delta — a
-            one-way copy, not the two-way mirror ruled out below. Both systems
-            do run side by side for months — but by <em>single ownership</em>,
-            never by syncing duplicate copies.
+            migrating alongside it by default; slice the edges off ahead of it —
+            interviews first, then talent pool and placement, confirmed at the
+            2026-07-23 product coordination as the pre-cutover progressive wave,
+            with a September go-live target (October acceptable to reach
+            production with confidence); never keep two copies synced. The bulk
+            of the core data is <em>pre-loaded</em> into the dormant objects
+            weeks ahead and refreshed one-way, so the weekend moves only the
+            delta — a one-way copy, not the two-way mirror ruled out below. Both
+            systems do run side by side for months — but by
+            <em>single ownership</em>, never by syncing duplicate copies.
           </p>
         </div>
 
@@ -20394,17 +20434,19 @@
             </p>
           </div>
           <div class="callout">
-            <span class="lbl">What this depends on — the open question</span>
+            <span class="lbl">What this depends on — clarified 2026-07-23</span>
             <p>
               Whether the TargetRecruit licenses can be <em>held</em> through
-              the fallback window at all is the same unresolved question the
-              deadline raises: if the license lapses at the vendor's
-              end-of-support date, the fallback window is capped by it, and the
-              reclaim is forced early rather than chosen. That question is owned
-              by Marlex IT with the vendor, and until it closes this teardown's
-              timing is provisional. If the licenses can be held cheaply, keep
-              them for the full fallback window; if not, the fallback window
-              shortens to the license horizon.
+              the fallback window is now largely answered: November 2027 is a
+              contract renewal point, not a licence lapse, and the current
+              arrangement keeps both the old and the new instances paid — so the
+              licence can be held past that date and the fallback window is
+              <em>not</em> hard-capped by it. Marlex IT still owns the vendor
+              conversation (the renewal terms are a negotiation), but the
+              reclaim is a <em>chosen</em> step on the planned schedule rather
+              than one forced early by an expiry. Keep the licenses for the full
+              fallback window; release them when the fallback is no longer
+              needed.
             </p>
           </div>
         </section>
@@ -21593,16 +21635,22 @@
                 they be dropped when the old platform is switched off and
                 rebuilt afterwards on the native model?</strong
               >
-              This is not decided. It belongs to the product owners, because the
-              answer turns on whether a public-facing gap is acceptable to the
-              business — and it directly sizes the portal line in the rebuild
-              estimate, which today carries a wide buffer precisely because this
-              is open. The one hard constraint, whichever way it goes: because
-              uninstalling the old package is a one-way door held to the very
-              end, the replacement — or an accepted gap — has to be settled
-              before that door closes. The full replacement design and its
-              likelihoods live on the separate integration decision record; the
-              cutover view is what this page carries.
+              Not yet ratified, but leaning. It belongs to the product owners,
+              because the answer turns on whether a public-facing gap is
+              acceptable to the business — and a product signal on 2026-07-23
+              leaned toward
+              <em>drop-and-rebuild-after</em>: the portal is not critical on day
+              one and can lag the cutover ("we can wait"). Treat that as a lean,
+              not a close — the owner, schedule and Spain-vs-multi-region shape
+              are still open, and it needs product-owner sign-off. The answer
+              directly sizes the portal line in the rebuild estimate, which
+              today carries a wide buffer precisely because this is open. The
+              one hard constraint, whichever way it goes: because uninstalling
+              the old package is a one-way door held to the very end, the
+              replacement — or an accepted gap — has to be settled before that
+              door closes. The full replacement design and its likelihoods live
+              on the separate integration decision record; the cutover view is
+              what this page carries.
             </p>
           </div>
           <div class="tech">
