@@ -5780,20 +5780,100 @@
           </figure>
           <div class="tech">
             <span class="tech-label">For the developers</span>Native targets,
-            carrying Marlex's own vocabulary:
-            <code>MA_Application__c</code> (application),
-            <code>MA_Job__c</code> (job process), <code>MA_Interview__c</code>,
-            native placement, <code>MA_Employment_History__c</code> /
-            <code>MA_Education_History__c</code>, talent pool + junction,
-            <code>MA_Reference__c</code>, native deal-sheet, and a candidate
-            skills/categories child (today <code>Candidate_Category__c</code>)
-            whose object-vs-field shape stays open pending the matching engine.
-            English placeholders (placement, talent pool, deal-sheet) follow the
-            programme's canonical model, which names these entities but assigns
-            no <code>MA_</code> target yet. Candidate = Contact with the Marlex
-            candidate record type and <code>MA_</code> fields back-filled onto
-            existing rows.
+            English API names, no ownership prefix: <code>Application__c</code>,
+            <code>ATS_Job__c</code> (job process — the bare
+            <code>Job__c</code> name is already taken by a package setting, so
+            this one carries a functional <code>ATS_</code> qualifier),
+            <code>Interview__c</code>, <code>Placement__c</code>,
+            <code>Employment_History__c</code> /
+            <code>Education_History__c</code>, <code>Talent_Pool__c</code> + its
+            membership junction, <code>Reference__c</code>, native deal-sheet,
+            and a candidate skills/categories child (today
+            <code>Candidate_Category__c</code>) whose object-vs-field shape
+            stays open pending the matching engine. Candidate = Contact with the
+            Marlex candidate record type and its fields back-filled onto
+            existing rows. On the fields: a field <em>newly authored</em>
+            for the rebuild takes a plain English name with no prefix; a
+            pre-existing
+            <code>MA_</code> field carried across unchanged keeps its name
+            (prefix and all) so live dependencies don't break, and one that is
+            renamed anyway sheds the prefix at the same time. The reasoning is
+            in the naming note below.
           </div>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">Naming</p>
+          <h2>Why the new components carry no ownership prefix</h2>
+          <p>
+            Every object and field built for the rebuild takes an English name
+            with
+            <strong>no owner prefix</strong> — not the old
+            <code>MA_</code> ("Marlex") marker that many existing fields carry.
+            This is a deliberate choice, and it matches what Salesforce
+            practitioners recommend:
+            <strong
+              >prefix to group or to disambiguate, not to stamp
+              ownership.</strong
+            >
+            A prefix earns its place only when it tells the reader something the
+            name cannot otherwise convey.
+          </p>
+          <div class="callout">
+            <p class="callout-h">
+              Three reasons a blanket owner prefix is the wrong tool here
+            </p>
+            <ul>
+              <li>
+                <strong>It distinguishes nothing.</strong> A prefix exists to
+                partition one set of things from another. If almost every
+                component carries the same owner marker, it partitions nothing —
+                it is noise on every name. The old system already shows this:
+                the marker sits on the large majority of custom fields, so it no
+                longer signals anything. And the rebuilt components are already
+                separated from the vendor's own objects, which carry the
+                package's own reserved marker — so there is nothing left for an
+                owner prefix to clarify.
+              </li>
+              <li>
+                <strong
+                  >Cross-org ownership is a packaging decision, not a typed
+                  prefix.</strong
+                >
+                The real reason to worry about a marker is that these components
+                may later be promoted to other Marlex Group orgs (Axxon, the
+                Philippines) as a shared template. But Salesforce already has a
+                first-class mechanism for that: when components are packaged for
+                deployment to another org, the platform applies a registered
+                <em>namespace</em> automatically. A hand-typed prefix is a
+                manual imitation of that — and if the rebuild is ever packaged,
+                the namespace is prepended <em>on top</em> of any prefix,
+                leaving a doubly-redundant, uglier name. So the "we might share
+                it" scenario is an argument <em>against</em> a typed owner
+                prefix, not for one.
+              </li>
+              <li>
+                <strong>Prefix-free keeps the cheap direction open.</strong>
+                Adding a shared group prefix later — if and when the governance
+                body confirms a component is a genuine group-wide standard — is
+                a controlled rename at that moment. Committing every component
+                to an owner prefix now, and undoing it later, is the expensive
+                direction. The group-wide marker is a decision to take when the
+                sharing is real, not a default to apply to everything up front.
+              </li>
+            </ul>
+          </div>
+          <p>
+            Two narrow exceptions prove the rule, because both are
+            <em>functional</em>, not organizational. The job object is
+            <code>ATS_Job__c</code> rather than the bare
+            <code>Job__c</code> because that name is already taken in the org by
+            a package setting — the <code>ATS_</code> qualifier resolves a real
+            collision. And a pre-existing <code>MA_</code> field that is carried
+            across unchanged keeps its name purely so that live integrations and
+            automation pointing at it do not break; the moment such a field is
+            renamed for any other reason, the prefix goes with it.
+          </p>
         </section>
 
         <section>
@@ -6040,8 +6120,9 @@
             / 1,124); top jobs 13,151 / 6,855 / 3,883 applications. Contact
             ownership: 707,667 on "Sin Asignar", 150,483 on the package's system
             user, 49,754 on the top human owner. External keys:
-            <code>MA_TR_Migration_Id__c</code> (unique, external ID) on every
-            migrated object; the job-board key pattern already exists as
+            <code>TR_Migration_Id__c</code> (unique, external ID — a new rebuild
+            field, so prefix-free) on every migrated object; the job-board key
+            pattern already exists, carried unchanged, as
             <code>MA_External_Id_InfoJobs__c</code> on the application. Bulk
             loads run with trigger-bypass switches on (the
             <code>shouldSkipTrigger</code> guard pattern), parents before
@@ -6326,10 +6407,14 @@
             note: every native object and field name is
             <strong>English</strong> — including the Marlex custom fields that
             carried Spanish names in the old system, which are anglicised now
-            that their object is rebuilt. Names are shown
-            <strong>prefix-free</strong>; the final prefix (if any) is a
-            separate naming decision that changes only the label, never the
-            structure.
+            that their object is rebuilt. Anything
+            <strong>newly authored for the rebuild is prefix-free</strong>: no
+            <code>MA_</code> prefix on new objects or on any field that is
+            renamed, because these components may be promoted to other Marlex
+            Group orgs and become group-wide standards, where a brand prefix
+            would mislead. The one exception is a pre-existing field
+            <em>carried across unchanged</em> — it keeps its original name,
+            prefix and all, purely so live dependencies don't break.
           </p>
           <p>
             This page is the readable summary; the complete row-by-row mapping —
@@ -6337,30 +6422,6 @@
             rate and disposition — is in the workbook
             <strong>Marlex - TargetRecruit Rebuild Data Model Map.xlsx</strong>.
           </p>
-          <div class="callout">
-            <span class="lbl"
-              >What this inventory covers — and what it deliberately leaves
-              out</span
-            >
-            <p>
-              This is the inventory of the
-              <strong>recruitment package's own objects</strong> — the ones that
-              vanish when the package is removed and therefore need a native
-              replacement built and their data moved into it. It is
-              <em>not</em> the full list of every object in the rebuild. Objects
-              <strong>Marlex built itself</strong> over the years — its
-              case-and-task record, training enrolments, invoicing records and
-              the like — are not in the tables below
-              <strong>because they are not being replaced</strong>: they are
-              Marlex's own, they survive the package's removal untouched, and
-              the rebuild simply
-              <strong>keeps them and re-connects their links</strong> to the new
-              native objects. So an object being absent here means "kept and
-              re-connected," not "out of scope." Which objects get rebuilt
-              versus kept is set on the
-              <a href="#view-scope">What's in scope</a> page.
-            </p>
-          </div>
         </section>
 
         <section>
@@ -6714,32 +6775,6 @@
               </li>
             </ul>
           </div>
-          <div class="callout">
-            <p class="callout-h">
-              Why the rebuilt Job object is called <code>ATS_Job__c</code>, not
-              <code>Job__c</code>
-            </p>
-            <p>
-              The obvious internal name for the rebuilt job object would be
-              <code>Job__c</code>. That name is already in use in the live
-              system: the recruitment package installed a small hidden
-              configuration table that happens to occupy exactly that name. It
-              holds one row of settings, nothing a user ever sees — but because
-              it is a configuration table, its name is permanent and cannot be
-              changed or reused. Building the new job object under the same name
-              is therefore impossible.
-            </p>
-            <p>
-              The rebuilt object takes the name <code>ATS_Job__c</code> instead.
-              This was found by building a working prototype of the job object
-              against a copy of the real system before committing the design —
-              which is exactly the point of prototyping: it surfaces this kind
-              of hidden collision now, at design time, rather than during a live
-              go-live. The other rebuilt objects were checked the same way and
-              their names are clear. The name change is invisible to users; it
-              affects only the technical identifier, not any label or screen.
-            </p>
-          </div>
         </section>
 
         <section>
@@ -6753,11 +6788,14 @@
             (anglicised and de-prefixed from the vendor's names),
             <span class="origin-english">Anglicised</span> Marlex fields (custom
             fields that carried a Spanish name in the old system, given an
-            English name now that the object is rebuilt), and
+            English name — and, because the rename already breaks the old API
+            dependency, <strong>de-prefixed too</strong>, dropping any
+            <code>MA_</code>), and
             <span class="origin-carry">carried</span> fields (Marlex custom
-            fields already named in English, kept exactly — a straight copy).
-            Empty, formula and plumbing fields are counted but not listed
-            individually — there is nothing to move.
+            fields already named in English, kept exactly — a straight copy,
+            original prefix preserved so dependencies don't break). Empty,
+            formula and plumbing fields are counted but not listed individually
+            — there is nothing to move.
           </p>
           <div class="callout">
             <p class="callout-h">How each field was decided</p>
@@ -7271,7 +7309,7 @@
                   <tr>
                     <td>MA_Carta_de_presentacion__c</td>
                     <td class="num">12.7%</td>
-                    <td><code>MA_Cover_Letter__c</code></td>
+                    <td><code>Cover_Letter__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
@@ -7457,7 +7495,7 @@
                   <tr>
                     <td>MA_Motivo_de_descarte__c</td>
                     <td class="num">16.017%</td>
-                    <td><code>MA_Rejection_Reason__c</code></td>
+                    <td><code>Rejection_Reason__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
@@ -7475,25 +7513,25 @@
                   <tr>
                     <td>MA_Resumen_Idiomas__c</td>
                     <td class="num">6.0%</td>
-                    <td><code>MA_Languages_Summary__c</code></td>
+                    <td><code>Languages_Summary__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
                     <td>MA_Resumen_educacion__c</td>
                     <td class="num">78.2%</td>
-                    <td><code>MA_Education_Summary__c</code></td>
+                    <td><code>Education_Summary__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
                     <td>MA_Resumen_experiencia__c</td>
                     <td class="num">74.9%</td>
-                    <td><code>MA_Experience_Summary__c</code></td>
+                    <td><code>Experience_Summary__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
                     <td>MA_Resumen_habilidades__c</td>
                     <td class="num">61.1%</td>
-                    <td><code>MA_Skills_Summary__c</code></td>
+                    <td><code>Skills_Summary__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
@@ -7505,7 +7543,7 @@
                   <tr>
                     <td>MA_Score_Killer_Quiestion__c</td>
                     <td class="num">100-score</td>
-                    <td><code>MA_Killer_Question_Score__c</code></td>
+                    <td><code>Killer_Question_Score__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
@@ -7911,7 +7949,7 @@
                   <tr>
                     <td>MA_Conocimientos_necesarios__c</td>
                     <td class="num">1.8%</td>
-                    <td><code>MA_Required_Knowledge__c</code></td>
+                    <td><code>Required_Knowledge__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
@@ -7929,7 +7967,7 @@
                   <tr>
                     <td>MA_Fecha_cierre__c</td>
                     <td class="num">61.665%</td>
-                    <td><code>MA_Close_Date__c</code></td>
+                    <td><code>Close_Date__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
@@ -7967,7 +8005,7 @@
                   <tr>
                     <td>MA_Incorporaciones_previstas__c</td>
                     <td class="num">41.967%</td>
-                    <td><code>MA_Planned_Placements__c</code></td>
+                    <td><code>Planned_Placements__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
@@ -7985,13 +8023,13 @@
                   <tr>
                     <td>MA_Perfil_Marlex__c</td>
                     <td class="num">95.702%</td>
-                    <td><code>MA_Marlex_Profile__c</code></td>
+                    <td><code>Marlex_Profile__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
                     <td>MA_Requisitos_minimos__c</td>
                     <td class="num">0.6%</td>
-                    <td><code>MA_Minimum_Requirements__c</code></td>
+                    <td><code>Minimum_Requirements__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
@@ -8377,49 +8415,49 @@
                   <tr>
                     <td>MA_Fecha_Fin_FD_vinculante__c</td>
                     <td class="num">14.42%</td>
-                    <td><code>MA_Binding_FD_End_Date__c</code></td>
+                    <td><code>Binding_FD_End_Date__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
                     <td>MA_Fecha_Fin_Prorroga__c</td>
                     <td class="num">46.134%</td>
-                    <td><code>MA_Extension_End_Date__c</code></td>
+                    <td><code>Extension_End_Date__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
                     <td>MA_Fecha_fin_del_periodo_de_actividad__c</td>
                     <td class="num">5.6%</td>
-                    <td><code>MA_Activity_Period_End_Date__c</code></td>
+                    <td><code>Activity_Period_End_Date__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
                     <td>MA_Fecha_reactivacion_de_actividad__c</td>
                     <td class="num">1.0%</td>
-                    <td><code>MA_Activity_Reactivation_Date__c</code></td>
+                    <td><code>Activity_Reactivation_Date__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
                     <td>MA_Nueva_Incorporacion_Recontratada__c</td>
                     <td class="num">15.185%</td>
-                    <td><code>MA_Rehired_Placement__c</code></td>
+                    <td><code>Rehired_Placement__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
                     <td>MA_Oficina_Marlex__c</td>
                     <td class="num">99.329%</td>
-                    <td><code>MA_Marlex_Office__c</code></td>
+                    <td><code>Marlex_Office__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
                     <td>MA_Propuesta__c</td>
                     <td class="num">98.519%</td>
-                    <td><code>MA_Offer__c</code></td>
+                    <td><code>Offer__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
                     <td>MA_Prorroga__c</td>
                     <td class="num">28.749%</td>
-                    <td><code>MA_Extension__c</code></td>
+                    <td><code>Extension__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
@@ -8601,7 +8639,7 @@
                   <tr>
                     <td>MA_Habilidades__c</td>
                     <td class="num">36.8%</td>
-                    <td><code>MA_Skills__c</code></td>
+                    <td><code>Skills__c</code></td>
                     <td><span class="origin-english">Anglicised</span></td>
                   </tr>
                   <tr>
