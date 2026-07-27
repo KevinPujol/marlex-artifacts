@@ -3807,13 +3807,6 @@
     </section>
     <section class="page-view" id="view-why-rebuild">
       <div class="wrap-inner">
-        <!-- AUDIENCE NOTE (not rendered): November 2027 is the end of Marlex's current contractual
-     runway on the product (a licence-renewal / renegotiation point communicated to Marlex
-     directly, not published) and may move. It is NOT a hard switch-off — a paid fallback
-     exists and there is ~1.5yr of runway. Framed here as "the runway Marlex has been given"
-     for the current Marlex peer-review audience; commercial specifics are deliberately kept
-     off the page. If this page is ever shown outside Marlex, revisit — do not present it as a
-     public sunset date. -->
         <header class="masthead">
           <p class="eyebrow">Before the decisions · Why rebuild at all</p>
           <h1>Why rebuild, rather than move to another product</h1>
@@ -4319,7 +4312,7 @@
                 Four sources feed the rebuild list; the product owners set the
                 minimum, and the rest is dropped
               </title>
-              <!-- four inputs -->
+
               <rect
                 class="dg-box"
                 x="20"
@@ -4388,7 +4381,7 @@
               >
                 Integrations
               </text>
-              <!-- arrows to candidate list -->
+
               <path
                 class="dg-arrow"
                 d="M170 37 L250 90"
@@ -4409,7 +4402,7 @@
                 d="M170 175 L250 122"
                 marker-end="url(#sc)"
               />
-              <!-- candidate list -->
+
               <rect
                 class="dg-box-accent"
                 x="250"
@@ -4445,7 +4438,7 @@
               >
                 need rebuilding
               </text>
-              <!-- PO gate -->
+
               <path
                 class="dg-arrow-copper"
                 d="M400 106 L448 106"
@@ -4486,7 +4479,7 @@
               >
                 disconnect TR
               </text>
-              <!-- two outputs -->
+
               <path
                 class="dg-arrow"
                 d="M510 132 L510 168"
@@ -4779,7 +4772,7 @@
               shapes the size, risk and duration of the whole programme, and it
               is theirs to make.
             </p>
-            <!-- G1 BYPASS (deliberate, 2026-07-16, user-requested): external SharePoint link to the live Functional Inventory workbook. G1 normally forbids surfacing anything outside the HTML set; user explicitly opted in so the owners can open the candidate list they are deciding over. Link points at the folder (stable across the workbook's continual updates), not a versioned file. -->
+
             <p class="tbl-note">
               The candidate list itself — every capability, its layer, and its
               provisional keep/drop/defer disposition — is maintained as the
@@ -5177,7 +5170,7 @@
                 first week
               </title>
               <line class="dg-line" x1="30" y1="120" x2="610" y2="120" />
-              <!-- phase labels -->
+
               <text
                 class="dg-t-sm"
                 x="150"
@@ -5206,7 +5199,7 @@
                 first week
               </text>
               <circle class="dg-fill-copper" cx="440" cy="120" r="6" />
-              <!-- lever bars -->
+
               <rect
                 class="dg-box-accent"
                 x="40"
@@ -11286,6 +11279,26 @@
               actually needs it — see the testing-context rule on
               <a href="#view-testing">Testing behaviour parity</a>.
             </li>
+            <li>
+              <strong
+                >Confidentiality is enforced at the sharing and field-security
+                layer, never in the user interface.</strong
+              >
+              Once the private model is in place, a user who cannot see a record
+              never gets it on <em>any</em> path — and this matters most for
+              reports, dashboards and list views: a report runs in the running
+              user's context, so it inherits the boundary for free and returns
+              no row the reader is not entitled to. Confidentiality is therefore
+              never implemented as a report-level or screen-level filter (which
+              is cosmetic — a changed filter or an API call reveals the "hidden"
+              rows); it is the sharing model, plus field-level security for
+              sensitive fields on records a person can otherwise see. This
+              principle holds for both axes of the private model — the country
+              key and, where the internal HR team is onboarded, the
+              internal/external distinction — and it is the reason those
+              confidentiality requirements are met at the data layer rather than
+              the presentation layer.
+            </li>
           </ul>
         </section>
 
@@ -15272,7 +15285,7 @@
                 The freeze opens just after a background batch cycle completes
               </title>
               <line class="dg-line" x1="20" y1="95" x2="620" y2="95" />
-              <!-- batch pulses -->
+
               <rect
                 class="dg-box-mut"
                 x="40"
@@ -15316,7 +15329,7 @@
               >
                 ~1M candidates rewritten every 1–2 wks
               </text>
-              <!-- freeze opens after a cycle -->
+
               <circle class="dg-fill-accent" cx="320" cy="95" r="7" />
               <text
                 class="dg-t-accent"
@@ -21517,7 +21530,7 @@
                     parser — so retiring that reader is part of the job-board
                     cutover, not a switch already thrown
                   </td>
-                  <!-- New parser live (CVParserCtrl->Anthropic_API) + extended to DNI/IBAN OCR: SF-1309, SF-1358. But InfoJobs CVs still use TR parser: SF-1120. -->
+
                   <td>
                     Proposed to stay direct permanently — it is a
                     latency-sensitive, in-flow call with no shared contract to
@@ -21788,7 +21801,7 @@
               production. Its build timing may still reshape what the job-board
               feed carries.
             </li>
-            <!-- Orbio: SF-1333 (PO UAT), SF-1190. Fields MA_Orbio_* present in PRE only (verified read-only), 0 in prod. Writes AVTRRT__Job_Applicant__c / AVTRRT__Job__c -> TR-coupled -> re-points. -->
+
             <li>
               <strong>Port discipline is cultural, not structural.</strong>
               Nothing physically prevents a hurried edge bypassing the seam; the
@@ -21868,7 +21881,6 @@
             This page keeps the rebuild's view: which edges survive and which
             re-point at the cutover.
           </p>
-          <!-- Orbio: SF-1333 (field creation, PO UAT Jul-2026), SF-1190 (generic offers; Orbio branch deferred but fields being wired). Verified read-only: 6 MA_Orbio_* fields present in PRE on AVTRRT__Job_Applicant__c / AVTRRT__Job__c, 0 in prod → in-build, sandbox-only. Taleva write still owner-to-confirm. -->
         </div>
 
         <div class="callout warn">
@@ -21932,7 +21944,7 @@
               exists only in the sandbox, so it costs the cutover nothing yet.
             </li>
           </ul>
-          <!-- Orbio in-build: SF-1333 (PO UAT), SF-1190. PRE has all 6 MA_Orbio_* fields; prod has none (verified read-only 2026-07-19). Dolma live-in-prod app: SF-1299 (PS MA_Integration_Dolma_PS + the Dolma integration service account verified in prod). -->
+
           <p>
             None of this changes the shape of the cutover — it sharpens the
             count of write-coupled edges (set out just above) and puts the open
@@ -22033,7 +22045,7 @@
                     people, its own writes can't yet be separated from those
                     users' screen activity — the owner must confirm.
                   </td>
-                  <!-- Taleva purpose confirmed sourcing: SF-1244 (LinkedIn URL mapped via Taleva + PipeLaunch integrations). -->
+
                   <td>
                     Re-pointed <strong>on the connector owner's side</strong>,
                     not ours — the mapping lives with them. If it does write, it
@@ -22273,7 +22285,6 @@
             The reliable attribution key is the <strong>connected app</strong>,
             not the user and not the login count.
           </div>
-          <!-- Identity tuples verified 2026-07-20 (OauthToken + LoginHistory + Site query): InfoJobs site prefix = infojobsHook (guest); Humact user x Humact_Inbound; Integracion Dolma x Integration_Dolma ECA (token last-used 2026-06-03); Data Cloud = Platform Integration User x Customer 360 Data Platform + CRM Connector apps (19k uses, live); PipeLaunch ~40 named-human tokens; DocsMadeEasy many named-human tokens. -->
         </section>
 
         <section>
@@ -22316,7 +22327,7 @@
             the retiring recruitment objects, so they cross the cutover without
             change.
           </p>
-          <!-- Identity = tuple (user x connected app/ECA), validated read-only prod 2026-07-20 (OauthToken + PermissionSetAssignment + LastModifiedBy). The ERP integration service account fronts MX Integration Conn App (NET4) + API Marlex Data Source ECA (finance feed). Taleva/PipeLaunch/DocsMadeEasy = one app, many named humans. Guest-site (InfoJobs) has no app/login. No JWT/cert inbound app (the 2 self-signed certs back the SAML IdP, not an integration). -->
+
           <div class="tbl-scroll">
             <table class="dtbl">
               <thead>
@@ -22381,7 +22392,7 @@
                   </td>
                   <td>Keep — new model, but confirm the owner</td>
                 </tr>
-                <!-- NET4 objects verified: MA_WS_ERP_SF Apex writes Account/MA_Factura__c/MA_Oferta__c (grep, prod 2026-07-20); NOT MA_Incentivos__c/MX_Margen. Finance feed 'API Marlex Data Source' writes those, shares erp_integrations login. -->
+
                 <tr class="review">
                   <td><strong>Data connector (Taleva)</strong></td>
                   <td>
@@ -22448,7 +22459,6 @@
               login to exactly the objects its own integration needs.
             </p>
           </div>
-          <!-- Perm gates verified prod 2026-07-20 (PermissionSetAssignment): the ERP integration service account + the Taleva vendor account both hold TR_Permission_set (can reach AVTRRT__). All integration users carry Orbio_LLM_Callouts_PS + Candidaturas_Filtros_FLS (broad shared grant). Dolma scoped to MA_Integration_Dolma_PS; Orbio narrow. -->
         </section>
 
         <section>
@@ -22732,7 +22742,7 @@
               is the one to keep — retiring the other closes a silent
               misconfiguration.
             </li>
-            <!-- MA_Net4 NC prod endpoint = net4.example.com placeholder; live path = ERP_Connection__c -> the configured ERP endpoint (verified read-only 2026-07-20). -->
+
             <li>
               <strong
                 >The new CV parser is live — but the job-board path still uses
@@ -22748,7 +22758,7 @@
               re-pointed, and closing it is part of the job-board cutover, not a
               separate switch already thrown.
             </li>
-            <!-- SF-1120 (Done Apr-2026): InfoJobs CVs redirected to "CV parsing de TR" per Bullhorn. New parser = CVParserCtrl->Anthropic_API. Doc-intelligence extension: SF-1309 (DNI OCR), SF-1358 (IBAN OCR), Telefonica-built; prod fields MA_IBAN__c / MA_Numero_de_Identificacion__c / MA_Fecha_de_validez__c verified. -->
+
             <li>
               <strong
                 >A final check for anything invisible — and three writers
@@ -22770,7 +22780,6 @@
               inbound processes do exist, so the question stays worth asking
               explicitly.
             </li>
-            <!-- Dolma: SF-1299 (prod External App, PS + user verified). New website (Indra vendor): SF-1289 (forms -> Contact RT Candidato + Lead), SF-1244. Telephony/transcription planned: SF-905 (To Do). Finance-feed objects MA_Incentivos__c / MX_Margen_Mensual_Por_Cliente__c exist in prod (native). -->
           </ul>
         </section>
 
