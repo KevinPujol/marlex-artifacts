@@ -413,8 +413,9 @@
   <a class="navlink nonum" data-view="role-hierarchy" href="#view-role-hierarchy">Today's role hierarchy</a>
   <p class="grp">The design</p>
   <a class="navlink" data-view="sharing-design" href="#view-sharing-design"><span class="n">1</span><span>Internal vs external</span></a>
-  <a class="navlink" data-view="what-we-build" href="#view-what-we-build"><span class="n">2</span><span>What we build for HR</span></a>
-  <a class="navlink" data-view="timing" href="#view-timing"><span class="n">3</span><span>When it lands</span></a>
+  <a class="navlink" data-view="logic-replication" href="#view-logic-replication"><span class="n">2</span><span>Which logic replicates</span></a>
+  <a class="navlink" data-view="what-we-build" href="#view-what-we-build"><span class="n">3</span><span>What we build for HR</span></a>
+  <a class="navlink" data-view="timing" href="#view-timing"><span class="n">4</span><span>When it lands</span></a>
   <p class="grp">What's not settled</p>
   <a class="navlink nonum" data-view="open-questions" href="#view-open-questions">Open questions</a>
 </aside>
@@ -464,7 +465,7 @@
     rebuild's reveal — the rebuild replaces the platform; this onboards a new
     team and refactors access on top of it. It shares one decision with the
     rebuild (the access model at cutover), which lives on the
-    rebuild record</a > (open it and go to its <em>Security &amp; sharing</em> page) rather than being restated here. Everything else here is specific to HR onboarding. </p> </div> <section> <p class="section-eyebrow">The decision map</p> <h2>The decisions, each on its own page</h2> <p> Read in the order the argument builds. Two pages frame the problem — what HR actually asked for, and the role hierarchy that exists today. Three pages hold the decisions we can make now — the internal/external access design, what gets built for HR, and when it lands. The last page is the honest one: what is still open until HR's requirements are in. </p> <div class="decmap"> <a class="decrow" href="#view-the-requirement"> <span class="num">▸</span> <span class="body" ><h3> The requirement <span style="font-weight: 400; font-size: 0.8em; color: var(--ink-soft)" >— the premise</span > </h3> <p> What the internal HR team asked for and why it is confidential by nature — the director-replacing-a-director case that makes an open model unacceptable for internal work. </p></span > <span class="pick">Confidential internal recruitment</span>
+    rebuild record</a > (open it and go to its <em>Security &amp; sharing</em> page) rather than being restated here. Everything else here is specific to HR onboarding. </p> </div> <section> <p class="section-eyebrow">The decision map</p> <h2>The decisions, each on its own page</h2> <p> Read in the order the argument builds. Two pages frame the problem — what HR actually asked for, and the role hierarchy that exists today. Four pages hold the decisions we can make now — the internal/external access design, which logic and integrations apply to internal records, what gets built for HR, and when it lands. The last page is the honest one: what is still open until HR's requirements are in. </p> <div class="decmap"> <a class="decrow" href="#view-the-requirement"> <span class="num">▸</span> <span class="body" ><h3> The requirement <span style="font-weight: 400; font-size: 0.8em; color: var(--ink-soft)" >— the premise</span > </h3> <p> What the internal HR team asked for and why it is confidential by nature — the director-replacing-a-director case that makes an open model unacceptable for internal work. </p></span > <span class="pick">Confidential internal recruitment</span>
     <a class="decrow" href="#view-role-hierarchy">
       <span class="num">▸</span>
       <span class="body"
@@ -495,8 +496,22 @@
       >
       <span class="pick">Flag-driven · private internal · open external</span>
     </a>
-    <a class="decrow" href="#view-what-we-build">
+    <a class="decrow" href="#view-logic-replication">
       <span class="num">2</span>
+      <span class="body"
+        ><h3>Which logic replicates</h3>
+        <p>
+          Internal records reuse the external objects, so every validation rule,
+          flow and outbound integration fires on them by default. The flag
+          becomes a gate on behaviour: each rule and edge declares internal,
+          external or both — and integrations are external-only by default, so an
+          internal opening never reaches a public job board.
+        </p></span
+      >
+      <span class="pick">Flag gates automation · fail-closed</span>
+    </a>
+    <a class="decrow" href="#view-what-we-build">
+      <span class="num">3</span>
       <span class="body"
         ><h3>What we build for HR</h3>
         <p>
@@ -509,7 +524,7 @@
       <span class="pick">Build on the custom model</span>
     </a>
     <a class="decrow" href="#view-timing">
-      <span class="num">3</span>
+      <span class="num">4</span>
       <span class="body"
         ><h3>When it lands</h3>
         <p>
@@ -852,32 +867,126 @@
 </div>
 
 <section>
-  <p class="section-eyebrow">The mechanism</p>
-  <h2>A data-layer flag, not the record type, drives the sharing</h2>
+  <p class="section-eyebrow">The mechanism — a genuine design choice</p>
+  <h2>What carries the internal/external distinction on each record?</h2>
   <p>
-    Record type and the boolean are set together, but the
-    <strong>sharing rule keys off the data-layer flag</strong>, not the
-    record-type label. That is deliberate:
+    Internal and external work live on the same objects, so something on every
+    record has to say which it is — and everything downstream (the sharing rule,
+    validation rules, flows, integrations) keys off that something. The naive
+    framing is "record type <em>or</em> custom field", but that is a false
+    choice: they solve different problems. A record type is a
+    <strong>UI/process construct</strong> (it drives layouts, picklists and
+    processes); a custom field is a <strong>data attribute a rule can read</strong>.
+    The real decision is <strong>which is the primary key the access and logic
+    layers read</strong> — and whether we carry one or both. Three ways:
   </p>
-  <ul>
-    <li>
-      <strong>Record type is a UI/process construct</strong> — it drives
-      layouts, picklists and processes. On its own it does not control who sees
-      a record.
-    </li>
-    <li>
-      <strong>The flag is explicit and queryable</strong> — a criteria-based
-      sharing rule, an integration, and a report can all read
-      <code>Is_External__c</code> directly, and it does not silently break if
-      someone reorders or re-purposes record types later.
-    </li>
-  </ul>
-  <p>
-    So each record carries both: the record type for the experience, the boolean
-    for the boundary. In practice they are set in lockstep, and either the
-    boolean or the <code>RecordTypeId</code> could be the rule criterion — the
-    boolean is preferred for the reasons above.
-  </p>
+  <div class="dq">
+    <div class="dq-col rejected">
+      <h4>Record type as the primary key <span class="tag">Rejected</span></h4>
+      <p class="head-note">
+        One record type for internal, one for external; the sharing rule (and
+        the logic) keys on <code>RecordTypeId</code>.
+      </p>
+      <ul class="dq-outcomes">
+        <li>
+          <span
+            >Tempting because the record type already separates the two in the
+            UI, and a record type <em>can</em> technically be a sharing-rule
+            criterion.</span
+          >
+        </li>
+        <li>
+          <span
+            >But a record type is a UI/process construct owned by the layout
+            team, whose lifecycle is to be re-cut as process matures —
+            re-organise or split it later and you silently reshape who-sees-what
+            and what-fires. Keying access to it welds three concerns that must
+            move independently.</span
+          >
+        </li>
+        <li>
+          <span
+            >It is also a documented Salesforce anti-pattern: the platform's own
+            record-type guidance lists "hiding records from users" as a thing
+            record types are <em>not</em> for. And it is awkward for
+            integrations, which must resolve an 18-character record-type Id per
+            org rather than read a portable value.</span
+          >
+        </li>
+      </ul>
+    </div>
+    <div class="dq-col chosen">
+      <h4>
+        A data-layer flag drives access &amp; logic; record type drives UX
+        <span class="tag">Chosen</span>
+      </h4>
+      <p class="head-note">
+        Every record carries <em>both</em>, set in lockstep: the record type for
+        the experience (layout, picklist, process) and an
+        <code>Is_External__c</code> boolean for the boundary. Sharing, validation
+        rules, flows and integrations all key on the <strong>boolean</strong>,
+        never on the record type.
+      </p>
+      <ul class="dq-outcomes">
+        <li>
+          <span
+            >Separation of concerns under change: the access/logic boundary (the
+            flag) evolves independently of the UX boundary (the record type), so
+            re-cutting record types for a process reason never touches
+            security.</span
+          >
+        </li>
+        <li>
+          <span
+            >The flag is explicit, queryable and portable — a criteria-based
+            sharing rule, a flow entry condition, an integration filter and a
+            report all read <code>Is_External__c</code> directly, the same value
+            in every org. This is exactly what the
+            <a href="#view-logic-replication">logic-gating design</a> needs.</span
+          >
+        </li>
+        <li>
+          <span
+            >Each concern uses the platform feature it is meant for: record types
+            for the process/UX divergence they are designed to give, a data field
+            for the boundary value a rule reads.</span
+          >
+        </li>
+      </ul>
+      <div class="dq-foot">
+        <p>
+          <span class="lbl">The cost we accept</span> The record now carries the
+          internal/external fact twice (record type + flag), which could drift.
+          We close that by deriving the flag from the record type automatically
+          (a before-save default) plus a data-integrity validation rule, so the
+          two cannot disagree — and by backfilling
+          <code>Is_External__c = true</code> on every existing record before the
+          flip so nothing loses today's visibility.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="dq-verdict">
+    <p>
+      <strong
+        >Carry both, but key everything off the flag.</strong
+      >
+      The decisive factor is what happens under change: the UX boundary and the
+      security/integration boundary move for different reasons and different
+      owners, so they must not ride the same construct. Keying access off the
+      record type welds them — a routine record-type change becomes a silent
+      security change, the worst kind — and it is a documented Salesforce
+      anti-pattern. A dedicated boolean makes the boundary explicit, queryable
+      and portable across orgs and integrations, which is what the logic-gating
+      decision downstream depends on. The only real cost is duplicated state, and
+      that is mechanically closable. A third option — giving internal work its
+      own separate objects — is the isolation extreme, covered on
+      <a href="#view-what-we-build">what we build</a>; the flag-based boundary
+      already gives the isolation that matters, so separate objects are held
+      pending HR requirements, not the default.
+    </p>
+  </div>
+</section>
   <div class="tech">
     <span class="tech-label">For the developers</span>OWD on the recruitment
     objects goes to Private (today: Contact = Public Read/Write; the rebuild
@@ -925,6 +1034,51 @@
     the requirement described — and it is delivered by native role hierarchy on
     a private object, no code required for the common case.
   </p>
+</section>
+
+<section>
+  <p class="section-eyebrow">Where the boundary is enforced</p>
+  <h2>At the sharing layer — not the screen — so reports and dashboards inherit it</h2>
+  <p>
+    A confidentiality boundary is only as strong as its weakest access path. The
+    design enforces it at the <strong>sharing and field-security layer</strong>,
+    never by hiding things in the user interface — because a screen filter is
+    cosmetic (change a report filter, or call the API, and the "hidden" rows
+    reappear), while sharing is enforced by the platform on every path in.
+  </p>
+  <ul>
+    <li>
+      <strong>Reports, dashboards and list views inherit for free.</strong> A
+      report runs in the running user's context, so a user who cannot see an
+      internal record simply never gets that row — no separate report-level
+      confidentiality rule is needed, and none should be relied on. This is the
+      generic principle for the whole private model (it holds for the country
+      axis too); it is stated in full on the platform rebuild's security
+      decision, and applies here to the internal/external axis.
+    </li>
+    <li>
+      <strong>Field-level confidentiality is separate from record
+      visibility.</strong> Some data is sensitive even on a record a person can
+      otherwise see — salaries, interview notes, internal-candidate details. That
+      is <strong>field-level security</strong>, not record sharing: the
+      confidential fields are readable only by the HR persona, hidden for
+      everyone else, regardless of who owns or can see the record. The exact list
+      of confidential fields is an <a href="#view-open-questions">open question</a>
+      for the HR team.
+    </li>
+  </ul>
+  <div class="callout key">
+    <span class="lbl">Visibility here, behaviour on the next page</span>
+    <p>
+      This page decides <em>who can see</em> an internal record and its
+      confidential fields. A separate question — whether the automation and
+      outbound integrations built for external hiring should <em>act on</em> an
+      internal record (they must not publish an internal opening to a public job
+      board, for instance) — is not a visibility problem and is decided on
+      <a href="#view-logic-replication">which logic replicates</a>. Both read the
+      same <code>Is_External__c</code> flag.
+    </p>
+  </div>
 </section>
 
 <section>
@@ -1005,14 +1159,264 @@
   <p>
     This is the record-level design; the org-wide default and the cutover
     posture it sits on are the rebuild record's
-    Security</a > decision. Next: <a href="#view-what-we-build">what actually gets built to
-    deliver it.
+    Security</a > decision. Next: <a href="#view-logic-replication">which logic and
+    integrations act on internal records</a> — the behaviour side of the same flag.
+  </p>
+</footer>
+  </div></section>
+  <section class="page-view" id="view-logic-replication"><div class="wrap-inner">
+<header class="masthead">
+  <p class="eyebrow">Decision 2 · Which logic replicates</p>
+  <h1>Which automation and integrations act on internal records</h1>
+  <p class="subtitle">
+    Internal recruitment reuses the same objects as external hiring, so by
+    default every validation rule, flow and — critically — every outbound
+    integration built for external hiring also fires on internal records. That
+    default is wrong: an internal opening must never reach a public job board.
+    The design makes the internal/external flag a gate on behaviour, not just on
+    visibility.
+  </p>
+  <p class="dateline">
+    Solution decision · draft for peer review · 27 July 2026
+  </p>
+</header>
+
+<div class="bluf">
+  <p>
+    <strong>What this decides.</strong> Not who can <em>see</em> an internal
+    record — that is the <a href="#view-sharing-design">sharing page</a> — but
+    what the system <em>does</em> to it: which validation rules, flows, triggers
+    and outbound integrations act on an internal record versus an external one.
+  </p>
+  <p>
+    <strong>What we chose.</strong> Make <code>Is_External__c</code> a single
+    <strong>gate</strong> on automation and integration. Every rule, flow entry
+    condition and outbound edge declares its scope — internal, external, or both
+    — and reads the flag to enforce it. Outbound integrations are
+    <strong>external-only by default</strong>: an internal record reaches a job
+    board, a portal or an external parser only if that edge is explicitly
+    declared to carry internal traffic. The governing artefact is a
+    <strong>logic-inheritance matrix</strong>: one row per rule/flow/edge, marked
+    internal / external / both.
+  </p>
+</div>
+
+<section>
+  <p class="section-eyebrow">Two words, so the decision is clear</p>
+  <h2>What "gate" means, and what "replicate" does <em>not</em> mean</h2>
+  <p>
+    A <strong>gate</strong> is just an entry condition — the "only if" on a piece
+    of logic. "The publish-to-job-board flow runs <em>only if</em>
+    <code>Is_External__c = true</code>" is a gate. Nothing exotic; it is the
+    condition that decides whether the logic runs for a given record.
+  </p>
+  <p>
+    <strong>"Replicate" here does not mean duplicating components.</strong> There
+    is no separate internal copy of each flow or rule. There is
+    <strong>one</strong> flow, one validation rule, one integration on the shared
+    object, and it is <em>gated</em>. So the question "how much logic replicates
+    to internal records" really means: <em>of all the automation built for
+    external hiring, how much should also act on internal records — all of it,
+    some of it, or none?</em> The only option that involves real duplication is
+    giving internal work its own separate objects, which is the isolation extreme
+    considered and held on <a href="#view-what-we-build">what we build</a>.
+  </p>
+</section>
+
+<section>
+  <p class="section-eyebrow">Why there is a decision at all</p>
+  <h2>Reuse means inheritance, and inheritance is the wrong default</h2>
+  <p>
+    A flow does not know whether the record it fires on is internal or external
+    unless we tell it. So the moment internal work lives on the shared objects,
+    every external-hiring rule, flow and outbound edge fires on internal records
+    too — silently. That is already wrong for a requirement raised in the
+    meeting: <strong>an internal opening must never be published to the external
+    job board or offers portal</strong>. The same doubt applies to every other
+    edge — should an internal candidate be sent to an external CV parser, synced
+    to the finance ERP, pushed to a professional network, sourced from an
+    external job board? Almost always no. But nothing decides it, and the current
+    implicit answer is "everything, always".
+  </p>
+</section>
+
+<section>
+  <p class="section-eyebrow">Alternatives considered</p>
+  <h2>No gate, gate on record type, separate objects, or gate on the flag</h2>
+  <div class="option">
+    <div class="option-head">
+      <span class="option-name"
+        >The data-layer flag is the single automation &amp; integration gate,
+        fail-closed</span
+      ><span class="chip adopted">Chosen</span>
+    </div>
+    <p>
+      Every validation rule, flow/trigger entry condition and outbound edge
+      declares its scope (internal / external / both) and enforces it by reading
+      <code>Is_External__c</code>. Outbound integrations default to
+      <strong>external-only</strong>: an edge carries internal traffic only by an
+      explicit declaration. So a forgotten declaration under-shares (nothing
+      leaves) rather than leaks — the dangerous default is removed. One
+      consistent, queryable key — the same one the access model uses — governs
+      the whole logic surface, and the declarations collect into a reviewable
+      matrix.
+    </p>
+  </div>
+  <div class="option">
+    <div class="option-head">
+      <span class="option-name">No gate — inherit everything, suppress case by case</span
+      ><span class="chip rejected">Rejected</span>
+    </div>
+    <p>
+      Build internal on the shared objects and add an ad-hoc guard wherever
+      someone remembers internal should differ. This is the current implicit
+      state, and its default is "leak": every case someone forgets is a
+      confidentiality breach — an internal opening posted publicly, an internal
+      candidate's data sent to an external service. A confidentiality boundary
+      whose default is exposure is not acceptable.
+    </p>
+  </div>
+  <div class="option">
+    <div class="option-head">
+      <span class="option-name">Gate on record type instead of the flag</span
+      ><span class="chip rejected">Rejected</span>
+    </div>
+    <p>
+      Branch the logic on the record type rather than the boolean. Rejected for
+      the same reason the <a href="#view-sharing-design">access design</a> rejects
+      it: the logic/integration boundary would ride a mutable UI construct, and
+      integration filters would have to resolve a record-type Id per org rather
+      than read a portable value. The gate must use the same explicit key as the
+      access model, for one consistent boundary.
+    </p>
+  </div>
+  <div class="option">
+    <div class="option-head">
+      <span class="option-name">Separate internal objects</span
+      ><span class="chip limited">Held — the isolation extreme</span>
+    </div>
+    <p>
+      Give internal work its own objects, so external logic and edges simply do
+      not exist on them — the strongest isolation, with no inheritance to
+      suppress. But it duplicates the whole object model, the automation set and
+      the matching surface, and the flag-based gate already gives the isolation
+      that matters. Justified only if HR's process turns out structurally unlike
+      external hiring — held pending requirements, not the default.
+    </p>
+  </div>
+</section>
+
+<section>
+  <p class="section-eyebrow">The governing artefact</p>
+  <h2>The logic-inheritance matrix</h2>
+  <p>
+    Every rule, flow and outbound edge on the shared objects gets one row: does
+    it apply to internal, external, or both? The known cases are fixed now; the
+    per-item fill-in for the rest waits on the HR team's requirements. The
+    dangerous ones — the outbound edges — default to external-only until
+    explicitly declared otherwise.
+  </p>
+  <table class="dtbl compact">
+    <thead>
+      <tr>
+        <th>Rule / flow / integration edge</th>
+        <th class="num">Internal</th>
+        <th class="num">External</th>
+        <th class="num">Both</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Publish opening to job board / offers portal (outbound)</td>
+        <td class="num"><span class="lk bad">no</span></td><td class="num"><span class="lk good">yes</span></td><td class="num">—</td>
+        <td>Requirement: an internal opening is never published</td>
+      </tr>
+      <tr>
+        <td>External job-board application intake (inbound)</td>
+        <td class="num"><span class="lk bad">no</span></td><td class="num"><span class="lk good">yes</span></td><td class="num">—</td>
+        <td>External sourcing only</td>
+      </tr>
+      <tr>
+        <td>Professional-network sync / transport (outbound)</td>
+        <td class="num"><span class="lk bad">no*</span></td><td class="num"><span class="lk good">yes</span></td><td class="num">—</td>
+        <td>*External-only default until HR confirms</td>
+      </tr>
+      <tr>
+        <td>CV parsing / external enrichment (outbound)</td>
+        <td class="num"><span class="lk mid">?</span></td><td class="num"><span class="lk good">yes</span></td><td class="num">—</td>
+        <td>Internal candidates likely excluded — confirm</td>
+      </tr>
+      <tr>
+        <td>Finance / ERP placement sync (outbound)</td>
+        <td class="num"><span class="lk mid">?</span></td><td class="num"><span class="lk mid">?</span></td><td class="num">—</td>
+        <td>An internal placement may still be a finance event — confirm</td>
+      </tr>
+      <tr>
+        <td>Core recruiting rules (stage gating, de-dup, matching)</td>
+        <td class="num">—</td><td class="num">—</td><td class="num"><span class="lk good">both*</span></td>
+        <td>*Shared capability, likely — confirm per rule</td>
+      </tr>
+      <tr>
+        <td>Confidential-field validation / field security</td>
+        <td class="num"><span class="lk good">yes</span></td><td class="num"><span class="lk bad">no</span></td><td class="num">—</td>
+        <td>Internal-only sensitive fields (also on the sharing page)</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="tech">
+    <span class="tech-label">For the developers</span>The gate is the same
+    <code>Is_External__c</code> the sharing rules read (one key for access and
+    logic). Validation rules add
+    <code>ISCHANGED / AND(NOT(Is_External__c), …)</code>-style conditions; Flows
+    add the flag to their entry criteria / decision elements; Apex triggers and
+    integration adapters branch on it before any callout. Outbound edges fail
+    closed — the adapter checks <code>Is_External__c = true</code> before firing,
+    so an un-declared edge never carries an internal record. The same pattern
+    generalises to the country axis: the rebuild's "new sharing code is written
+    country-aware from the first line" is this rule applied to country rather
+    than internal/external.
+  </div>
+</section>
+
+<section>
+  <p class="section-eyebrow">Residual &amp; open items</p>
+  <h2>What still needs HR's input</h2>
+  <ul>
+    <li>
+      <strong>Complete the matrix.</strong> Classify every existing validation
+      rule, flow and outbound edge as internal / external / both. The skeleton is
+      fixed; the full fill-in needs the HR team's requirements.
+      <em>Owner: HR team + ATS product owner + solution architecture.</em>
+    </li>
+    <li>
+      <strong>Confirm the ambiguous outbound edges.</strong> Whether an internal
+      placement is a finance event, whether internal candidates are ever parsed
+      or network-synced. Until confirmed, they stay external-only (fail-closed).
+      <em>Owner: HR team + integration lead.</em>
+    </li>
+    <li>
+      <strong>Author-time discipline.</strong> New automation on the shared
+      objects must declare its scope when it is built, not retro-fitted — a
+      review-gate item so the matrix does not rot.
+      <em>Owner: solution architecture.</em>
+    </li>
+  </ul>
+</section>
+
+<footer>
+  <p>
+    Visibility — who can see an internal record and its confidential fields — is
+    on <a href="#view-sharing-design">internal vs external access</a>. Next:
+    <a href="#view-what-we-build">what actually gets built</a> to deliver both.
+    The country-axis version of this same gating rule is on the platform rebuild
+    record's security decision.
   </p>
 </footer>
   </div></section>
   <section class="page-view" id="view-what-we-build"><div class="wrap-inner">
 <header class="masthead">
-  <p class="eyebrow">Decision 2 · What we build for HR</p>
+  <p class="eyebrow">Decision 3 · What we build for HR</p>
   <h1>This is a build, not just a sharing flip</h1>
   <p class="subtitle">
     Onboarding a team means building things: record types and the
@@ -1179,7 +1583,7 @@
   </div></section>
   <section class="page-view" id="view-timing"><div class="wrap-inner">
 <header class="masthead">
-  <p class="eyebrow">Decision 3 · When it lands</p>
+  <p class="eyebrow">Decision 4 · When it lands</p>
   <h1>At the cutover, or after it</h1>
   <p class="subtitle">
     One business decision governs the whole sequencing, because HR onboarding
@@ -1416,6 +1820,22 @@
       inherit-by-master-detail or needs-its-own-private-rule, so no related
       record leaks a private internal process. The principle is fixed; the full
       map is not. <em>Owner: solution architecture.</em>
+    </li>
+    <li>
+      <strong>The logic-inheritance matrix.</strong> Classify every validation
+      rule, flow and outbound integration on the shared objects as internal,
+      external or both (see <a href="#view-logic-replication">which logic
+      replicates</a>). The rule is fixed — the flag gates behaviour, integrations
+      are external-only by default — but the per-item classification needs HR's
+      requirements. <em>Owner: HR team + ATS product owner + solution
+      architecture.</em>
+    </li>
+    <li>
+      <strong>The ambiguous outbound edges.</strong> Confirm whether an internal
+      placement is a finance/ERP event, and whether internal candidates are ever
+      sent to an external CV parser or professional-network sync. Until
+      confirmed they stay external-only (fail-closed).
+      <em>Owner: HR team + integration lead.</em>
     </li>
     <li>
       <strong>The existing-record backfill.</strong> Stamping
