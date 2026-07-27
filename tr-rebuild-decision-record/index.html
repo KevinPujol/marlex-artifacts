@@ -1456,6 +1456,12 @@
     <a class="navlink" data-view="operations" href="#view-operations"
       ><span class="n">16</span><span>Operations</span></a
     >
+    <a
+      class="navlink"
+      data-view="release-management"
+      href="#view-release-management"
+      ><span class="n">19</span><span>Release management</span></a
+    >
     <a class="navlink" data-view="integrations" href="#view-integrations"
       ><span class="n">17</span><span>Integrations</span></a
     >
@@ -1520,13 +1526,14 @@
             access moves to it. Decisions 6–13 describe
             <strong>how the old system leaves</strong> — the rebuild approach,
             the deployment, the cutover, the freeze, the data move, the rollback
-            and the rehearsals. Decisions 14–17 describe
+            and the rehearsals. Decisions 15–19 describe
             <strong>running it while and after it lands</strong> — delivering to
-            the business through the rebuild, operating the live system, its
-            integrations, and the archive. Each page states the alternatives we
-            considered, which one we chose and why, what could go wrong with it,
-            and — because it differs by choice — how we get back if it does.
-            Read them in order, or jump to the one you want to challenge.
+            the business through the rebuild, operating the live system, how
+            releases are managed, its integrations, and the archive. Each page
+            states the alternatives we considered, which one we chose and why,
+            what could go wrong with it, and — because it differs by choice —
+            how we get back if it does. Read them in order, or jump to the one
+            you want to challenge.
           </p>
         </div>
 
@@ -3800,7 +3807,13 @@
     </section>
     <section class="page-view" id="view-why-rebuild">
       <div class="wrap-inner">
-        
+        <!-- AUDIENCE NOTE (not rendered): November 2027 is the end of Marlex's current contractual
+     runway on the product (a licence-renewal / renegotiation point communicated to Marlex
+     directly, not published) and may move. It is NOT a hard switch-off — a paid fallback
+     exists and there is ~1.5yr of runway. Framed here as "the runway Marlex has been given"
+     for the current Marlex peer-review audience; commercial specifics are deliberately kept
+     off the page. If this page is ever shown outside Marlex, revisit — do not present it as a
+     public sunset date. -->
         <header class="masthead">
           <p class="eyebrow">Before the decisions · Why rebuild at all</p>
           <h1>Why rebuild, rather than move to another product</h1>
@@ -4306,7 +4319,7 @@
                 Four sources feed the rebuild list; the product owners set the
                 minimum, and the rest is dropped
               </title>
-              
+              <!-- four inputs -->
               <rect
                 class="dg-box"
                 x="20"
@@ -4375,7 +4388,7 @@
               >
                 Integrations
               </text>
-              
+              <!-- arrows to candidate list -->
               <path
                 class="dg-arrow"
                 d="M170 37 L250 90"
@@ -4396,7 +4409,7 @@
                 d="M170 175 L250 122"
                 marker-end="url(#sc)"
               />
-              
+              <!-- candidate list -->
               <rect
                 class="dg-box-accent"
                 x="250"
@@ -4432,7 +4445,7 @@
               >
                 need rebuilding
               </text>
-              
+              <!-- PO gate -->
               <path
                 class="dg-arrow-copper"
                 d="M400 106 L448 106"
@@ -4473,7 +4486,7 @@
               >
                 disconnect TR
               </text>
-              
+              <!-- two outputs -->
               <path
                 class="dg-arrow"
                 d="M510 132 L510 168"
@@ -4766,7 +4779,7 @@
               shapes the size, risk and duration of the whole programme, and it
               is theirs to make.
             </p>
-            
+            <!-- G1 BYPASS (deliberate, 2026-07-16, user-requested): external SharePoint link to the live Functional Inventory workbook. G1 normally forbids surfacing anything outside the HTML set; user explicitly opted in so the owners can open the candidate list they are deciding over. Link points at the folder (stable across the workbook's continual updates), not a versioned file. -->
             <p class="tbl-note">
               The candidate list itself — every capability, its layer, and its
               provisional keep/drop/defer disposition — is maintained as the
@@ -5164,7 +5177,7 @@
                 first week
               </title>
               <line class="dg-line" x1="30" y1="120" x2="610" y2="120" />
-              
+              <!-- phase labels -->
               <text
                 class="dg-t-sm"
                 x="150"
@@ -5193,7 +5206,7 @@
                 first week
               </text>
               <circle class="dg-fill-copper" cx="440" cy="120" r="6" />
-              
+              <!-- lever bars -->
               <rect
                 class="dg-box-accent"
                 x="40"
@@ -15259,7 +15272,7 @@
                 The freeze opens just after a background batch cycle completes
               </title>
               <line class="dg-line" x1="20" y1="95" x2="620" y2="95" />
-              
+              <!-- batch pulses -->
               <rect
                 class="dg-box-mut"
                 x="40"
@@ -15303,7 +15316,7 @@
               >
                 ~1M candidates rewritten every 1–2 wks
               </text>
-              
+              <!-- freeze opens after a cycle -->
               <circle class="dg-fill-accent" cx="320" cy="95" r="7" />
               <text
                 class="dg-t-accent"
@@ -20550,6 +20563,600 @@
         </footer>
       </div>
     </section>
+    <section class="page-view" id="view-release-management">
+      <div class="wrap-inner">
+        <header class="masthead">
+          <p class="eyebrow">Decision 19 · Release management</p>
+          <h1>
+            How parallel builders reach production without stepping on each
+            other
+          </h1>
+          <p class="subtitle">
+            POs, Telefónica and Marlex IT all commit to the same rebuild at
+            once. Three coupled choices decide whether that stays orderly: how
+            branches are cut, which orgs the work flows through, and how much of
+            the checking is automated.
+          </p>
+          <p class="dateline">
+            Release strategy · draft for peer review · 27 July 2026
+          </p>
+        </header>
+
+        <div class="bluf">
+          <p>
+            <strong>The decision.</strong> Release management for this programme
+            is already defined — a branch model, a Release Manager, and a review
+            rule are in place. What the rebuild adds is the answer to three
+            questions that bind it specifically: the
+            <strong>branching model</strong> (branch from main, or a Gitflow
+            <code>develop</code>, or trunk-based); the
+            <strong>environment model</strong> (a sandbox per developer, per
+            domain, or one shared); and how far to take
+            <strong>CI/CD</strong> when there is none today.
+          </p>
+          <p>
+            <strong>What we chose.</strong> Cut <code>feature/*</code> branches
+            from <code>main</code> with one long-lived <code>uat</code> branch
+            and no Gitflow <code>develop</code>; build in a
+            <strong>shared Developer sandbox per domain</strong> (the rebuild's
+            ATS work in <code>DEVATS</code>), promoting up through the
+            partial-copy <code>PRE</code> org while the full-copy
+            <code>PREFULL</code> stays reserved for the data-migration
+            rehearsal; and <strong>stage the automation</strong> — keep pull
+            requests plus mandatory Marlex review now, add validate-on-PR checks
+            as the first automation, and only buy a DevOps platform if a real
+            need appears.
+          </p>
+        </div>
+
+        <section>
+          <p class="section-eyebrow">Why there's a decision at all</p>
+          <h2>Most of this is settled — two parts were not</h2>
+          <p>
+            The programme's Release Management Strategy already fixes the spine:
+            Marlex owns GitHub and Jira; every change starts from a Jira issue;
+            no change reaches production without a Marlex reviewer; and a
+            Release Manager (Pol, in Marlex IT) groups issues into releases. The
+            branching model itself was decided months ago and is recorded as an
+            architecture decision. So this page is not inventing release
+            management — it is pulling the parts that bite the
+            <em>rebuild</em> into the decision record, and closing the two the
+            strategy left thin:
+          </p>
+          <div class="axes">
+            <div class="axis">
+              <div class="axis-name">Branching</div>
+              <p>
+                Already decided — branch from <code>main</code>, no long-lived
+                <code>develop</code>. Restated here for the rebuild, with the
+                alternatives it beat.
+              </p>
+            </div>
+            <div class="axis">
+              <div class="axis-name">Environments</div>
+              <p>
+                The open one. The strategy named "Dev/QA sandboxes" but not
+                whether each builder gets one, and did not name the concrete
+                orgs.
+              </p>
+            </div>
+            <div class="axis">
+              <div class="axis-name">CI/CD</div>
+              <p>
+                Present only as "future work". Turned here into a concrete,
+                staged proposal for Marlex — because the branch model's own weak
+                spot is the missing gate.
+              </p>
+            </div>
+          </div>
+          <div class="callout key">
+            <span class="lbl">The three are coupled, not independent</span>
+            <p>
+              The branch model's honest caveat is that branching alone does not
+              guarantee quality — without an automated gate, a pull request can
+              still merge code that breaks the org. That caveat is exactly what
+              the CI/CD choice answers, and the gate runs on the pull requests
+              the branch model produces. Deciding them together is the point.
+            </p>
+          </div>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">Alternatives considered — branching</p>
+          <h2>Branch from main, a Gitflow develop, or trunk-based</h2>
+          <p>
+            Three ways to organise the branches for a team of POs, Telefónica
+            and Marlex IT committing in parallel.
+          </p>
+          <div class="option">
+            <div class="option-head">
+              <span class="option-name"
+                >Branch from <code>main</code>, long-lived <code>uat</code>, no
+                <code>develop</code></span
+              ><span class="chip adopted">Chosen</span>
+            </div>
+            <p>
+              <code>main</code> reflects Production and is the single source of
+              truth; <code>feature/*</code> is cut per Jira issue from
+              <code>main</code>; a long-lived <code>uat</code> branch reflects
+              the pre-production org; releases group by sprint; hotfixes go
+              straight to <code>main</code> with mandatory review and are
+              back-merged down. What can still go wrong: without an automated
+              gate a bad merge reaches <code>uat</code>, and if the
+              <code>main</code>&#8594;<code>uat</code> back-merge after a hotfix
+              is forgotten, the next release can overwrite a live fix.
+            </p>
+          </div>
+          <div class="option">
+            <div class="option-head">
+              <span class="option-name"
+                >Traditional Gitflow with a long-lived
+                <code>develop</code></span
+              ><span class="chip rejected">Rejected</span>
+            </div>
+            <p>
+              A permanent <code>develop</code> branch becomes a
+              <em>second</em> integration line that drifts from
+              <code>main</code>; the team maintains two long-lived branches for
+              a single production org. On a small team it adds release-branch
+              and reconcile ceremony with no payoff, and it loads the most
+              branch-management onto the POs — the least Git-fluent
+              contributors. Gitflow's <code>develop</code> earns its keep only
+              when you ship several supported versions in parallel; a single
+              evolving org is the textbook case against it.
+            </p>
+          </div>
+          <div class="option">
+            <div class="option-head">
+              <span class="option-name"
+                >Trunk-based, no separate <code>uat</code> branch</span
+              ><span class="chip rejected">Rejected</span>
+            </div>
+            <p>
+              With no branch reflecting the pre-production org, "what is in UAT
+              right now?" has no answer, and the CoE loses the pre-production
+              state it reviews against. Trunk-based also leans on strong
+              automated gates the programme does not yet have — trunk-based
+              without CI is just un-gated merging toward production.
+            </p>
+          </div>
+          <div class="callout key">
+            <span class="lbl">Selected — and the one thing it depends on</span>
+            <p>
+              Branch-from-main is the fewest moving parts that still gives the
+              CoE a reviewable pre-production line. It holds on one condition: a
+              minimum agreed test-coverage floor and a static-analysis / sharing
+              gate on pull requests — the seam handed to the testing decision.
+              Branching keeps the flow orderly; it does not make it safe on its
+              own.
+            </p>
+          </div>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">Alternatives considered — environments</p>
+          <h2>A sandbox per developer, per domain, or one shared</h2>
+          <p>
+            The long-lived tier is not in question — it is what the org already
+            runs: Developer sandboxes below, the partial-copy
+            <code>PRE</code> as the integration and UAT org, then Production,
+            with the full-copy <code>PREFULL</code> held aside for the
+            data-migration rehearsal. The open choice is the <em>dev</em> tier:
+            how the small, mixed team shares it.
+          </p>
+          <div class="option">
+            <div class="option-head">
+              <span class="option-name"
+                >Shared Developer sandbox per domain</span
+              ><span class="chip adopted">Chosen</span>
+            </div>
+            <p>
+              One Developer sandbox per workstream — the org is already
+              organised this way (<code>DEVATS</code>, <code>DEVCRM</code>,
+              <code>DEVBO</code>, <code>DEVMKTG</code>&#8230;), shared by
+              whoever works that domain. The rebuild's ATS work concentrates in
+              <code>DEVATS</code>. What can go wrong: two people editing the
+              same metadata in one org collide, and a half-built experiment can
+              block a colleague — both contained to one domain and a small
+              group, and managed by the <code>feature/*</code>-per-issue branch,
+              which isolates the <em>work</em> even when the org is shared.
+            </p>
+          </div>
+          <div class="option">
+            <div class="option-head">
+              <span class="option-name">One Developer sandbox per builder</span
+              ><span class="chip limited">Adopted · exception</span>
+            </div>
+            <p>
+              Maximum isolation — nobody steps on anybody. But N dev orgs is N
+              copies drifting from Production between refreshes, multiplying the
+              very twin-drift tax the deployment decision fights; a PO building
+              in total isolation drifts
+              <em>hardest</em> on naming and convention because no one sees the
+              work until the pull request; and integration problems surface
+              late, at the <code>uat</code> merge. Kept as the exception for a
+              genuinely independent spike, not the default. Developer sandboxes
+              are cheap here, so cost is not the objection — drift is.
+            </p>
+          </div>
+          <div class="option">
+            <div class="option-head">
+              <span class="option-name"
+                >One shared dev sandbox for everyone</span
+              ><span class="chip rejected">Rejected</span>
+            </div>
+            <p>
+              The fewest orgs, but every builder collides with every other — the
+              ATS rebuild, CRM and back-office work all step on one org, and one
+              broken experiment blocks the whole team rather than one domain.
+              Maximum contention for minimum org count: the wrong trade at this
+              team size.
+            </p>
+          </div>
+          <div class="callout">
+            <span class="lbl">PREFULL is a separate track, on purpose</span>
+            <p>
+              The full-copy sandbox holds real production volume — millions of
+              records — and refreshing it is slow and expensive. It is the
+              rehearsal ground for the data migration, and it stays off the
+              everyday feature-promotion path. Pulling it into ordinary releases
+              would put a slow, data-heavy refresh in the critical path of
+              routine change. Features flow through <code>PRE</code>;
+              <code>PREFULL</code> proves the data move.
+            </p>
+          </div>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">How the options compare</p>
+          <h2>Per-domain versus per-developer, outcome by outcome</h2>
+          <p>
+            The one-shared option loses on contention before this comparison
+            starts. The real contest is per-domain against per-developer — and a
+            flat pros-and-cons list would hide that they fail in
+            <em>opposite</em> directions: one trades isolation for drift, the
+            other drift for contention.
+          </p>
+          <p class="lk-legend">
+            <strong>Likelihoods below are educated guesses</strong>, not
+            measured facts — an honest estimate beats refusing to give one. The
+            scale: <span class="term">rarely</span> under 10% ·
+            <span class="term">unlikely</span> 10&#8211;30% ·
+            <span class="term">possibly</span> 30&#8211;50% ·
+            <span class="term">more likely than not</span> 50&#8211;70% ·
+            <span class="term">probably</span> 70&#8211;90% ·
+            <span class="term">almost certain</span> over 90%. A
+            <span class="lk meas">measured</span> tag marks a counted figure,
+            not a guess.
+          </p>
+          <div class="dq">
+            <div class="dq-col chosen">
+              <h4>Shared sandbox per domain <span class="tag">Chosen</span></h4>
+              <p class="head-note">
+                One dev org per workstream, shared inside the domain; branches
+                isolate the work.
+              </p>
+              <ul class="dq-outcomes">
+                <li>
+                  <span
+                    >Work inside a domain integrates early, before the
+                    <code>uat</code> merge.</span
+                  >
+                  <span class="lk good">probably</span>
+                </li>
+                <li>
+                  <span
+                    >Two builders collide on the same metadata in one org.</span
+                  >
+                  <span class="lk mid">possibly</span>
+                </li>
+                <li>
+                  <span
+                    >The number of orgs to keep refreshed and in step stays
+                    small.</span
+                  >
+                  <span class="lk good">almost certain</span>
+                </li>
+                <li>
+                  <span
+                    >Convention drift is caught early, because the domain sees
+                    the work.</span
+                  >
+                  <span class="lk good">more likely than not</span>
+                </li>
+              </ul>
+              <div class="dq-foot">
+                <p>
+                  <span class="lbl">Upside, and how big</span> Matches how the
+                  org is already organised, integrates within a workstream, and
+                  keeps the drift-bearing org count low — which is what
+                  progressive-dormant deploys need.
+                </p>
+                <p>
+                  <span class="lbl">Worst case</span> Two people in one domain
+                  overwrite each other — recovered from git, contained to that
+                  domain, resolved by intra-team coordination.
+                </p>
+              </div>
+            </div>
+            <div class="dq-col rejected">
+              <h4>
+                One sandbox per developer
+                <span class="tag">Rejected as default</span>
+              </h4>
+              <p class="head-note">
+                Each builder gets their own org — kept only as the exception for
+                an isolated spike.
+              </p>
+              <ul class="dq-outcomes">
+                <li>
+                  <span>Nobody ever collides in a shared org.</span>
+                  <span class="lk good">almost certain</span>
+                </li>
+                <li>
+                  <span
+                    >Every dev org drifts from Production between refreshes —
+                    more orgs, more drift.</span
+                  >
+                  <span class="lk bad">almost certain</span>
+                </li>
+                <li>
+                  <span
+                    >A PO in isolation drifts on naming/convention until the
+                    pull request.</span
+                  >
+                  <span class="lk bad">more likely than not</span>
+                </li>
+                <li>
+                  <span
+                    >Integration problems surface late, at the
+                    <code>uat</code> merge.</span
+                  >
+                  <span class="lk bad">probably</span>
+                </li>
+              </ul>
+              <div class="dq-foot">
+                <p>
+                  <span class="lbl">Upside, and how big</span> Total isolation —
+                  real, but the branch already isolates the work, so the
+                  org-level isolation buys less than it looks.
+                </p>
+                <p>
+                  <span class="lbl">Worst case</span> Several isolated builds
+                  drift apart and on convention, colliding only at the merge —
+                  the drift the 2026-07-23 review already flagged, multiplied by
+                  org count.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="dq-verdict">
+            <p>
+              <strong
+                >The two fail in opposite directions, and drift is the more
+                expensive failure here.</strong
+              >
+              Per-developer never collides but always drifts; per-domain
+              occasionally collides but keeps drift and org-count low. This
+              programme already spends real effort fighting twin drift in how it
+              deploys, and the convention drift from isolated PO builds is a
+              live, observed problem — so the model that minimises drift and
+              matches the org's existing <code>DEV*</code> layout wins.
+              Collisions are cheap and local; drift is pervasive and surfaces
+              late. Per-developer stays available for the rare independent
+              spike.
+            </p>
+          </div>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">Alternatives considered — CI/CD</p>
+          <h2>Stage the automation, buy a platform now, or stay manual</h2>
+          <p>
+            There is no CI/CD in the org repos today — the pipeline is GitHub,
+            pull requests, and manual deploys. Three ways forward.
+          </p>
+          <div class="tmpl">
+            <div class="tmpl-step">
+              <span class="k">Now</span>
+              <p>
+                Keep GitHub + pull requests +
+                <strong>mandatory Marlex CoE review</strong>. No partner
+                self-approves; POs' pull requests already route through the
+                Release Manager and on to an architect or senior-developer
+                reviewer for naming and technical-drift review. This is the
+                discipline that exists and works.
+              </p>
+            </div>
+            <div class="tmpl-step">
+              <span class="k">First automation</span>
+              <p>
+                Add <strong>validate-on-PR</strong> in GitHub Actions: a delta
+                dry-run deploy against the target org, Apex tests to the agreed
+                coverage floor, static analysis (PMD), and the with-sharing
+                gate. This is the gate the branch model's caveat asks for —
+                automating the check the reviewer currently does by eye.
+              </p>
+            </div>
+            <div class="tmpl-step">
+              <span class="k">Only if needed</span>
+              <p>
+                Evaluate a declarative DevOps platform (Copado / Gearset /
+                DevOps Center)
+                <em>if</em> volume or multi-org regression genuinely demands it
+                — a deployment-mechanism change, not a re-architecture. Named as
+                candidates in the 2026-06-04 session; deliberately not chosen
+                yet.
+              </p>
+            </div>
+          </div>
+          <div class="option">
+            <div class="option-head">
+              <span class="option-name"
+                >Staged: PR review &#8594; validate-on-PR &#8594; platform if
+                needed</span
+              ><span class="chip adopted">Chosen</span>
+            </div>
+            <p>
+              Automate the discipline you already run before buying one that
+              presumes a discipline you have not run at volume. What can go
+              wrong: the "first automation" step slips forever if no one owns
+              the DevOps setup, leaving quality resting on manual review — which
+              is why an owner for that step is a named dependency, not a hope.
+            </p>
+          </div>
+          <div class="option">
+            <div class="option-head">
+              <span class="option-name"
+                >Buy a declarative DevOps platform now</span
+              ><span class="chip reframed">Set aside</span>
+            </div>
+            <p>
+              Cost and a learning curve land before the team has the volume to
+              justify them, and a UI-driven deploy tool still sits
+              <em>on top of</em> the branch-and-review discipline rather than
+              replacing it. Optimising tooling ahead of a settled process is the
+              wrong order. Revisit when the need is real.
+            </p>
+          </div>
+          <div class="option">
+            <div class="option-head">
+              <span class="option-name">Stay fully manual indefinitely</span
+              ><span class="chip rejected">Rejected</span>
+            </div>
+            <p>
+              The branch model's own weak spot bites: pull requests merge
+              breaking code because nothing checks them. And progressive-dormant
+              deployment runs dozens of deploys over months — precisely the
+              cadence manual deployment fails at, one hand-run risk at a time.
+            </p>
+          </div>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">Roles &amp; partner autonomy</p>
+          <h2>Who releases, and what no partner may skip</h2>
+          <p>
+            The rebuild inherits the programme's roles; two things are settled
+            and one is open.
+          </p>
+          <div class="cards">
+            <div class="card">
+              <h3>Release Manager <span class="verdict">Settled</span></h3>
+              <p>
+                Pol (Marlex IT) groups issues into releases and coordinates
+                deployments. POs' pull requests route through him and on to an
+                architect or senior-developer reviewer — a role, fillable by any
+                partner, not a fixed one. Build ownership splits three ways:
+                independent and mixed changes are built by Marlex IT; changes
+                that touch related objects and alter the standard procedure are
+                built by Telefónica.
+              </p>
+            </div>
+            <div class="card">
+              <h3>The review rule <span class="verdict">Settled</span></h3>
+              <p>
+                <strong
+                  >No partner releases to production without Marlex code
+                  review.</strong
+                >
+                A partner cannot self-approve its own change. This is the hard
+                rule and it is not in question — every progressive-dormant
+                deploy and every release flows through it, on one source of
+                truth.
+              </p>
+            </div>
+            <div class="card full">
+              <h3>
+                The open question
+                <span class="verdict">Build-governance gate</span>
+              </h3>
+              <p>
+                Two things are still to close. First, whether
+                <em>every</em> non-developer change — a PO building with AI
+                assistance included — is forced through the same
+                sandbox&#8594;branch&#8594;pull-request&#8594;review&#8594;deploy
+                path, with a solution-design approval before build (direction
+                agreed 2026-07-07; mechanism to define). Second, whether
+                Telefónica release independently or centralise the deploy step
+                through the Release Manager — the <em>review</em> rule is
+                settled, the <em>centralisation</em> of the deploy is not.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">Rollback for this choice</p>
+          <h2>How this decision fails back</h2>
+          <p>
+            Release management is process, not deployed metadata, so "rollback"
+            means reverting a way of working — cheap, and reversible in either
+            direction. If the per-domain sandbox model produces too many
+            collisions inside a busy domain, that domain splits to per-developer
+            for the duration — the exception is already the fallback, and no
+            other domain is affected. If validate-on-PR proves too slow or
+            noisy, it is tuned or paused without touching the branch model
+            beneath it. And the branch model itself extends rather than
+            reverses: if parallel release trains ever genuinely appear, a
+            <code>release/*</code> branch is added on top of branch-from-main —
+            the model was chosen partly because it grows that way without a
+            rewrite.
+          </p>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">Residual risk &amp; open items</p>
+          <h2>What we still carry</h2>
+          <ul>
+            <li>
+              <strong>Branching alone is not quality.</strong> Until
+              validate-on-PR lands, the gate the branch model depends on is a
+              manual reviewer — controlled by the mandatory-review rule, closed
+              properly by the coverage floor and gates set in the testing
+              decision.
+            </li>
+            <li>
+              <strong>Domain-sandbox contention.</strong> Two builders in one
+              domain org can overwrite each other if intra-domain coordination
+              slips — contained to one domain, recovered from git, and the
+              reason per-developer stays available as the exception.
+            </li>
+            <li>
+              <strong
+                >Refresh cadence is a dependency, not an assertion.</strong
+              >
+              The domain sandboxes and <code>PRE</code> need a refresh rhythm
+              that keeps drift bounded; <code>PREFULL</code> keeps its own
+              data-migration-rehearsal cadence. Confirm both with Marlex IT.
+            </li>
+            <li>
+              <strong>The first automation needs an owner.</strong>
+              Validate-on-PR only happens if someone with DevOps expertise sets
+              it up; without an owner it slips indefinitely and quality rests on
+              manual review.
+            </li>
+            <li>
+              <strong>Open:</strong> the build-governance gate for non-developer
+              changes, and whether Telefónica centralise deployment through the
+              Release Manager or release independently. The review rule is
+              settled; these two are not.
+            </li>
+          </ul>
+        </section>
+
+        <footer>
+          <p>
+            Continue to
+            <a href="#view-operations">Operating the new system</a> for what
+            watches the switched-on build. This decision restates the
+            programme's release strategy for the rebuild; the branching model is
+            grounded in the July 2026 production-org audit and the sandbox
+            topology it measured. Counts are point-in-time.
+          </p>
+        </footer>
+      </div>
+    </section>
     <section class="page-view" id="view-integrations">
       <div class="wrap-inner">
         <header class="masthead">
@@ -20910,7 +21517,7 @@
                     parser — so retiring that reader is part of the job-board
                     cutover, not a switch already thrown
                   </td>
-                  
+                  <!-- New parser live (CVParserCtrl->Anthropic_API) + extended to DNI/IBAN OCR: SF-1309, SF-1358. But InfoJobs CVs still use TR parser: SF-1120. -->
                   <td>
                     Proposed to stay direct permanently — it is a
                     latency-sensitive, in-flow call with no shared contract to
@@ -21181,7 +21788,7 @@
               production. Its build timing may still reshape what the job-board
               feed carries.
             </li>
-            
+            <!-- Orbio: SF-1333 (PO UAT), SF-1190. Fields MA_Orbio_* present in PRE only (verified read-only), 0 in prod. Writes AVTRRT__Job_Applicant__c / AVTRRT__Job__c -> TR-coupled -> re-points. -->
             <li>
               <strong>Port discipline is cultural, not structural.</strong>
               Nothing physically prevents a hurried edge bypassing the seam; the
@@ -21261,7 +21868,7 @@
             This page keeps the rebuild's view: which edges survive and which
             re-point at the cutover.
           </p>
-          
+          <!-- Orbio: SF-1333 (field creation, PO UAT Jul-2026), SF-1190 (generic offers; Orbio branch deferred but fields being wired). Verified read-only: 6 MA_Orbio_* fields present in PRE on AVTRRT__Job_Applicant__c / AVTRRT__Job__c, 0 in prod → in-build, sandbox-only. Taleva write still owner-to-confirm. -->
         </div>
 
         <div class="callout warn">
@@ -21325,7 +21932,7 @@
               exists only in the sandbox, so it costs the cutover nothing yet.
             </li>
           </ul>
-          
+          <!-- Orbio in-build: SF-1333 (PO UAT), SF-1190. PRE has all 6 MA_Orbio_* fields; prod has none (verified read-only 2026-07-19). Dolma live-in-prod app: SF-1299 (PS MA_Integration_Dolma_PS + the Dolma integration service account verified in prod). -->
           <p>
             None of this changes the shape of the cutover — it sharpens the
             count of write-coupled edges (set out just above) and puts the open
@@ -21426,7 +22033,7 @@
                     people, its own writes can't yet be separated from those
                     users' screen activity — the owner must confirm.
                   </td>
-                  
+                  <!-- Taleva purpose confirmed sourcing: SF-1244 (LinkedIn URL mapped via Taleva + PipeLaunch integrations). -->
                   <td>
                     Re-pointed <strong>on the connector owner's side</strong>,
                     not ours — the mapping lives with them. If it does write, it
@@ -21666,7 +22273,7 @@
             The reliable attribution key is the <strong>connected app</strong>,
             not the user and not the login count.
           </div>
-          
+          <!-- Identity tuples verified 2026-07-20 (OauthToken + LoginHistory + Site query): InfoJobs site prefix = infojobsHook (guest); Humact user x Humact_Inbound; Integracion Dolma x Integration_Dolma ECA (token last-used 2026-06-03); Data Cloud = Platform Integration User x Customer 360 Data Platform + CRM Connector apps (19k uses, live); PipeLaunch ~40 named-human tokens; DocsMadeEasy many named-human tokens. -->
         </section>
 
         <section>
@@ -21709,7 +22316,7 @@
             the retiring recruitment objects, so they cross the cutover without
             change.
           </p>
-          
+          <!-- Identity = tuple (user x connected app/ECA), validated read-only prod 2026-07-20 (OauthToken + PermissionSetAssignment + LastModifiedBy). The ERP integration service account fronts MX Integration Conn App (NET4) + API Marlex Data Source ECA (finance feed). Taleva/PipeLaunch/DocsMadeEasy = one app, many named humans. Guest-site (InfoJobs) has no app/login. No JWT/cert inbound app (the 2 self-signed certs back the SAML IdP, not an integration). -->
           <div class="tbl-scroll">
             <table class="dtbl">
               <thead>
@@ -21774,7 +22381,7 @@
                   </td>
                   <td>Keep — new model, but confirm the owner</td>
                 </tr>
-                
+                <!-- NET4 objects verified: MA_WS_ERP_SF Apex writes Account/MA_Factura__c/MA_Oferta__c (grep, prod 2026-07-20); NOT MA_Incentivos__c/MX_Margen. Finance feed 'API Marlex Data Source' writes those, shares erp_integrations login. -->
                 <tr class="review">
                   <td><strong>Data connector (Taleva)</strong></td>
                   <td>
@@ -21841,7 +22448,7 @@
               login to exactly the objects its own integration needs.
             </p>
           </div>
-          
+          <!-- Perm gates verified prod 2026-07-20 (PermissionSetAssignment): the ERP integration service account + the Taleva vendor account both hold TR_Permission_set (can reach AVTRRT__). All integration users carry Orbio_LLM_Callouts_PS + Candidaturas_Filtros_FLS (broad shared grant). Dolma scoped to MA_Integration_Dolma_PS; Orbio narrow. -->
         </section>
 
         <section>
@@ -22125,7 +22732,7 @@
               is the one to keep — retiring the other closes a silent
               misconfiguration.
             </li>
-            
+            <!-- MA_Net4 NC prod endpoint = net4.example.com placeholder; live path = ERP_Connection__c -> the configured ERP endpoint (verified read-only 2026-07-20). -->
             <li>
               <strong
                 >The new CV parser is live — but the job-board path still uses
@@ -22141,7 +22748,7 @@
               re-pointed, and closing it is part of the job-board cutover, not a
               separate switch already thrown.
             </li>
-            
+            <!-- SF-1120 (Done Apr-2026): InfoJobs CVs redirected to "CV parsing de TR" per Bullhorn. New parser = CVParserCtrl->Anthropic_API. Doc-intelligence extension: SF-1309 (DNI OCR), SF-1358 (IBAN OCR), Telefonica-built; prod fields MA_IBAN__c / MA_Numero_de_Identificacion__c / MA_Fecha_de_validez__c verified. -->
             <li>
               <strong
                 >A final check for anything invisible — and three writers
@@ -22163,7 +22770,7 @@
               inbound processes do exist, so the question stays worth asking
               explicitly.
             </li>
-            
+            <!-- Dolma: SF-1299 (prod External App, PS + user verified). New website (Indra vendor): SF-1289 (forms -> Contact RT Candidato + Lead), SF-1244. Telephony/transcription planned: SF-905 (To Do). Finance-feed objects MA_Incentivos__c / MX_Margen_Mensual_Por_Cliente__c exist in prod (native). -->
           </ul>
         </section>
 
