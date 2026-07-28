@@ -1412,58 +1412,67 @@
     <a class="navlink" data-view="access" href="#view-access"
       ><span class="n">5</span><span>Access & app switch</span></a
     >
+    <a class="navlink" data-view="build-standard" href="#view-build-standard"
+      ><span class="n">6</span><span>Declarative vs code</span></a
+    >
+    <a
+      class="navlink"
+      data-view="data-access-seam"
+      href="#view-data-access-seam"
+      ><span class="n">7</span><span>The coexistence seam</span></a
+    >
     <p class="grp">How the old one leaves</p>
     <a
       class="navlink"
       data-view="rebuild-approach"
       href="#view-rebuild-approach"
-      ><span class="n">6</span><span>Rebuild approach</span></a
+      ><span class="n">8</span><span>Rebuild approach</span></a
     >
     <a class="navlink" data-view="deployment" href="#view-deployment"
-      ><span class="n">7</span><span>Deployment</span></a
+      ><span class="n">9</span><span>Deployment</span></a
     >
     <a class="navlink" data-view="cutover" href="#view-cutover"
-      ><span class="n">8</span><span>Activation / cutover</span></a
+      ><span class="n">10</span><span>Activation / cutover</span></a
     >
     <a class="navlink" data-view="the-freeze" href="#view-the-freeze"
-      ><span class="n">9</span><span>The freeze</span></a
+      ><span class="n">11</span><span>The freeze</span></a
     >
     <a class="navlink" data-view="data-migration" href="#view-data-migration"
-      ><span class="n">10</span><span>Data migration</span></a
+      ><span class="n">12</span><span>Data migration</span></a
     >
     <a class="navlink" data-view="rollback" href="#view-rollback"
-      ><span class="n">11</span><span>Rollback</span></a
+      ><span class="n">13</span><span>Rollback</span></a
     >
     <a
       class="navlink"
       data-view="uninstall-surface"
       href="#view-uninstall-surface"
-      ><span class="n">12</span><span>Removing TargetRecruit</span></a
+      ><span class="n">14</span><span>Removing TargetRecruit</span></a
     >
     <a class="navlink" data-view="testing" href="#view-testing"
-      ><span class="n">13</span><span>Testing behaviour parity</span></a
+      ><span class="n">15</span><span>Testing behaviour parity</span></a
     >
     <a class="navlink" data-view="rehearsal" href="#view-rehearsal"
-      ><span class="n">14</span><span>Rehearsal</span></a
+      ><span class="n">16</span><span>Rehearsal</span></a
     >
     <p class="grp">Running it</p>
     <a
       class="navlink"
       data-view="delivering-while-rebuilding"
       href="#view-delivering-while-rebuilding"
-      ><span class="n">15</span><span>Delivering while rebuilding</span></a
+      ><span class="n">17</span><span>Delivering while rebuilding</span></a
     >
     <a class="navlink" data-view="operations" href="#view-operations"
-      ><span class="n">16</span><span>Operations</span></a
+      ><span class="n">18</span><span>Operations</span></a
     >
     <a
       class="navlink"
       data-view="release-management"
       href="#view-release-management"
-      ><span class="n">19</span><span>Release management</span></a
+      ><span class="n">21</span><span>Release management</span></a
     >
     <a class="navlink" data-view="integrations" href="#view-integrations"
-      ><span class="n">17</span><span>Integrations</span></a
+      ><span class="n">19</span><span>Integrations</span></a
     >
     <a
       class="navlink nonum"
@@ -1472,7 +1481,7 @@
       >· The measured surface</a
     >
     <a class="navlink" data-view="archive" href="#view-archive"
-      ><span class="n">18</span><span>Archive</span></a
+      ><span class="n">20</span><span>Archive</span></a
     >
   </aside>
   <main class="artifact-main">
@@ -1519,21 +1528,22 @@
             read in the order the argument builds. It opens with three pages
             that frame the work — <em>why rebuild</em> at all (the premise),
             <em>what's in scope</em> to rebuild, and the
-            <em>change management</em> the switch demands. Then Decisions 1–5
+            <em>change management</em> the switch demands. Then Decisions 1–6
             describe <strong>what the new system is</strong> — its data model,
             where the standard objects (candidate and the rest) live, the
-            matching engine it relies on, its security model, and how users'
-            access moves to it. Decisions 6–13 describe
+            matching engine it relies on, its security model, how users' access
+            moves to it, and the build standard that decides where the system is
+            configured and where it is coded. Decisions 7–15 describe
             <strong>how the old system leaves</strong> — the rebuild approach,
-            the deployment, the cutover, the freeze, the data move, the rollback
-            and the rehearsals. Decisions 15–19 describe
-            <strong>running it while and after it lands</strong> — delivering to
-            the business through the rebuild, operating the live system, how
-            releases are managed, its integrations, and the archive. Each page
-            states the alternatives we considered, which one we chose and why,
-            what could go wrong with it, and — because it differs by choice —
-            how we get back if it does. Read them in order, or jump to the one
-            you want to challenge.
+            the deployment, the cutover, the freeze, the data move, the
+            rollback, the uninstall surface and the rehearsals. Decisions 16–20
+            describe <strong>running it while and after it lands</strong> —
+            delivering to the business through the rebuild, operating the live
+            system, its integrations, the archive, and how releases are managed.
+            Each page states the alternatives we considered, which one we chose
+            and why, what could go wrong with it, and — because it differs by
+            choice — how we get back if it does. Read them in order, or jump to
+            the one you want to challenge.
           </p>
         </div>
 
@@ -1688,8 +1698,22 @@
               >
               <span class="pick">Reproduce access · switch as sets</span>
             </a>
-            <a class="decrow" href="#view-rebuild-approach">
+            <a class="decrow" href="#view-build-standard">
               <span class="num">6</span>
+              <span class="body"
+                ><h3>Declarative vs code</h3>
+                <p>
+                  The prototype defaulted to code for everything — record pages
+                  built as one full-screen component each, all logic in Apex.
+                  Replaced with a published default per kind of need: assembled,
+                  admin-editable record pages with modular components embedded,
+                  and code where the logic is genuinely dense.
+                </p></span
+              >
+              <span class="pick">Assembled pages · code where it earns it</span>
+            </a>
+            <a class="decrow" href="#view-rebuild-approach">
+              <span class="num">7</span>
               <span class="body"
                 ><h3>Rebuild approach</h3>
                 <p>
@@ -1702,7 +1726,7 @@
               <span class="pick">New component + switch</span>
             </a>
             <a class="decrow" href="#view-deployment">
-              <span class="num">7</span>
+              <span class="num">8</span>
               <span class="body"
                 ><h3>Deployment</h3>
                 <p>
@@ -1715,7 +1739,7 @@
               <span class="pick">Progressive · dormant</span>
             </a>
             <a class="decrow" href="#view-cutover">
-              <span class="num">8</span>
+              <span class="num">9</span>
               <span class="body"
                 ><h3>Activation &amp; cutover</h3>
                 <p>
@@ -1727,7 +1751,7 @@
               <span class="pick">Big-bang core · slice edges</span>
             </a>
             <a class="decrow" href="#view-the-freeze">
-              <span class="num">9</span>
+              <span class="num">10</span>
               <span class="body"
                 ><h3>The freeze</h3>
                 <p>
@@ -1741,7 +1765,7 @@
               <span class="pick">Freeze all writes · timed</span>
             </a>
             <a class="decrow" href="#view-data-migration">
-              <span class="num">10</span>
+              <span class="num">11</span>
               <span class="body"
                 ><h3>Data migration</h3>
                 <p>
@@ -1755,7 +1779,7 @@
               <span class="pick">Pre-load ahead · delta at cutover</span>
             </a>
             <a class="decrow" href="#view-rollback">
-              <span class="num">11</span>
+              <span class="num">12</span>
               <span class="body"
                 ><h3>Rollback</h3>
                 <p>
@@ -1766,8 +1790,21 @@
               >
               <span class="pick">Intact fallback · gated</span>
             </a>
+            <a class="decrow" href="#view-uninstall-surface">
+              <span class="num">13</span>
+              <span class="body"
+                ><h3>Removing TargetRecruit</h3>
+                <p>
+                  The measured uninstall surface — six packages, not one; 1,658
+                  references from the org's own components to clear first; and
+                  the dependencies no checker can see, led by 146 reports built
+                  on package objects. The counted list the end-game works down.
+                </p></span
+              >
+              <span class="pick">Measured surface · worked to zero</span>
+            </a>
             <a class="decrow" href="#view-testing">
-              <span class="num">12</span>
+              <span class="num">14</span>
               <span class="body"
                 ><h3>Testing behaviour parity</h3>
                 <p>
@@ -1781,7 +1818,7 @@
               <span class="pick">Characterise · then test</span>
             </a>
             <a class="decrow" href="#view-rehearsal">
-              <span class="num">13</span>
+              <span class="num">15</span>
               <span class="body"
                 ><h3>Rehearsal</h3>
                 <p>
@@ -1794,7 +1831,7 @@
               <span class="pick">Drill activation &amp; rollback</span>
             </a>
             <a class="decrow" href="#view-delivering-while-rebuilding">
-              <span class="num">14</span>
+              <span class="num">16</span>
               <span class="body"
                 ><h3>Delivering while rebuilding</h3>
                 <p>
@@ -1807,7 +1844,7 @@
               <span class="pick">Native-first · twin-tracked</span>
             </a>
             <a class="decrow" href="#view-operations">
-              <span class="num">15</span>
+              <span class="num">17</span>
               <span class="body"
                 ><h3>Operating the new system</h3>
                 <p>
@@ -1820,7 +1857,7 @@
               <span class="pick">Native observability · gated end-game</span>
             </a>
             <a class="decrow" href="#view-integrations">
-              <span class="num">16</span>
+              <span class="num">18</span>
               <span class="body"
                 ><h3>Integrations &amp; middleware</h3>
                 <p>
@@ -1833,7 +1870,7 @@
               <span class="pick">Ports now · platform later</span>
             </a>
             <a class="decrow" href="#view-archive">
-              <span class="num">17</span>
+              <span class="num">19</span>
               <span class="body"
                 ><h3>The archive</h3>
                 <p>
@@ -1844,6 +1881,20 @@
                 </p></span
               >
               <span class="pick">Cold store · keyed recall</span>
+            </a>
+            <a class="decrow" href="#view-release-management">
+              <span class="num">20</span>
+              <span class="body"
+                ><h3>Release management</h3>
+                <p>
+                  How parallel builders reach production without stepping on
+                  each other — feature branches cut from main with no Gitflow
+                  develop, a shared developer sandbox per domain promoting
+                  through the partial-copy environment, and automation staged
+                  from mandatory review to validate-on-pull-request.
+                </p></span
+              >
+              <span class="pick">Branch from main · staged automation</span>
             </a>
           </div>
         </section>
@@ -12260,10 +12311,1139 @@
         </footer>
       </div>
     </section>
+    <section class="page-view" id="view-build-standard">
+      <div class="wrap-inner">
+        <header class="masthead">
+          <p class="eyebrow">Decision 6 · Declarative vs code</p>
+          <h1>Where the build uses clicks, and where it uses code</h1>
+          <p class="subtitle">
+            The prototype has settled, without a recorded decision, on code for
+            everything: business logic in Apex, and record pages built as one
+            full-screen custom component each. This page challenges that default
+            the way every other choice in this record is challenged — options on
+            the table, evidence attached — and replaces it with a published
+            rule: for each kind of need, a declarative default, and an explicit
+            reason required to escalate to code.
+          </p>
+          <p class="dateline">
+            Build standard · draft for peer review · 28 July 2026
+          </p>
+        </header>
+
+        <div class="bluf">
+          <p>
+            <strong>Why this gets its own page.</strong> A peer review of the
+            prototype (28 July 2026, on read-only evidence retrieved from the
+            development sandbox on 24 July 2026) found that the build has
+            adopted an unwritten standard: everything is code. The two
+            custom-object record pages examined contain <em>no</em> standard
+            components at all — each is a single full-page custom component —
+            and the build ships eleven custom component bundles against only
+            three assembled pages. That is an architectural standard in all but
+            name, adopted without an options analysis. Hard-to-reverse standards
+            get argued here, so this one now is.
+          </p>
+          <p>
+            <strong>The rule.</strong> Neither "always code" nor "never code" —
+            a <strong>default per kind of need, with code by exception</strong>.
+            Record pages are assembled in the platform's page builder from
+            standard components, with small, purpose-built custom components
+            embedded where the standard ones genuinely fall short. Dense
+            business logic — the matching engine, CV parsing, bulk
+            synchronisation, integrations — belongs in Apex, where the
+            platform's own guidance puts it. Simple record automation and field
+            logic stay declarative. A full-screen custom workspace remains
+            possible, but only for a surface that is genuinely not a record
+            page, justified case by case, and composed from the same modular
+            components.
+          </p>
+          <p>
+            <strong>The decisive fact.</strong> AI-assisted development has made
+            code dramatically cheaper to <em>write</em> — the prototype's own
+            history proves it. It has not made code cheaper to <em>own</em>.
+            After cutover this system is operated by a two-person IT team, and
+            on a page built as one custom component, moving a single field is a
+            developer change with a test and deployment cycle. The cost that
+            governs this decision is the ownership cost, not the build cost.
+          </p>
+        </div>
+
+        <section>
+          <p class="section-eyebrow">The evidence</p>
+          <h2>What the peer review found</h2>
+          <p>
+            This is not an impression of the code — it is what the assembled
+            pages themselves declare. The review opened the prototype's record
+            pages and read their composition:
+          </p>
+          <ul>
+            <li>
+              <strong>The interview record page is one component.</strong>
+              <code>MA_Entrevista_Record_Page</code> contains a standard
+              highlights panel and a single custom component,
+              <code>c:maEntrevistaWorkspace</code>. Nothing else.
+            </li>
+            <li>
+              <strong>The talent-pool record page is one component.</strong>
+              <code>MA_Talent_Pool_Record_Page</code>: highlights panel plus a
+              single <code>c:maTalentPool</code>. Nothing else.
+            </li>
+            <li>
+              <strong>Zero standard components on either page.</strong> No
+              record detail, no related lists, no path, no tabs. The layer an
+              administrator can edit — drag-and-drop page regions, field
+              sections, component visibility — has disappeared from these
+              screens entirely. Any user-interface change, however trivial (move
+              a field, add one), requires a developer.
+            </li>
+            <li>
+              <strong
+                >The build reuses components inherited from
+                TargetRecruit.</strong
+              >
+              Package-era custom components (<code>addCandidateToHotBook</code>,
+              <code>createInterviewRecords</code>,
+              <code>scheduleInterview</code>) run alongside the new
+              <code>ma*</code> bundles with only their styling and markup
+              changed. That is the opposite of "rebuilt natively on the new
+              objects": it keeps the new build tethered to the package it exists
+              to replace, and it blocks the side-by-side comparison and clean
+              rollback that the rebuild approach depends on (see
+              <a href="#view-rollback">Rollback</a> and
+              <a href="#view-uninstall-surface">Removing TargetRecruit</a>).
+            </li>
+            <li>
+              <strong>Styling is hard-coded per component.</strong> Each
+              component carries its own CSS rather than sharing a styling module
+              built on the platform's design system — so every visual change is
+              repeated per component, compounding the maintenance cost of the
+              point above.
+            </li>
+          </ul>
+          <div class="stat-row">
+            <div class="stat">
+              <span class="n">11 / 3</span
+              ><span class="l"
+                >custom component bundles versus assembled pages in the
+                prototype — the shape of a build where everything is code</span
+              >
+            </div>
+            <div class="stat">
+              <span class="n">0</span
+              ><span class="l"
+                >standard components on the two custom-object record pages
+                examined — no record detail, related lists, path or tabs</span
+              >
+            </div>
+            <div class="stat">
+              <span class="n">~31,000</span
+              ><span class="l"
+                >lines of custom code (Apex + components) written in roughly
+                three weeks — the speed is real; the question is who maintains
+                it</span
+              >
+            </div>
+          </div>
+          <div class="tech">
+            <span class="tech-label">For the developers</span>Evidence is the
+            FlexiPage metadata itself: each audited page's component tree is
+            <code>force:highlightsPanel</code> + one <code>c:*</code> component
+            filling the single region — no <code>flexipage:recordDetail</code> /
+            <code>Dynamic Forms</code> field sections, no
+            <code>force:relatedListContainer</code>. The interview module alone
+            is 7,825 lines of Apex + 2,870 of component code for a 40-field
+            object; the package totals ≈20,000 Apex + ≈11,000 component lines in
+            ~3 weeks (single developer, AI-assisted — from the build's own
+            history). The reused package-era bundles were carried over with
+            CSS/HTML edits only, not re-implemented against the new objects.
+          </div>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">What is being given up</p>
+          <h2>What a coded-over record page forfeits</h2>
+          <p>
+            A record page built as one custom component is not just "the same
+            page, written differently". It opts out of a platform layer that
+            keeps working and improving on its own:
+          </p>
+          <ul>
+            <li>
+              <strong>Admin changes become developer changes.</strong> On an
+              assembled page, moving a field, adding one, or hiding a section
+              for one profile is a configuration action — minutes, no
+              deployment, reversible. On a coded page every one of those is a
+              code change: developer, tests, review, deploy.
+            </li>
+            <li>
+              <strong>Per-audience variation is re-implemented by hand.</strong>
+              The platform varies an assembled page by profile, record type, app
+              and device natively, and renders field sections conditionally. A
+              coded page must re-build each of those behaviours in JavaScript —
+              and then maintain them.
+            </li>
+            <li>
+              <strong>The platform's UI roadmap stops arriving.</strong>
+              Salesforce ships its record-page improvements — dynamic field
+              sections, conditional actions, mobile behaviour — through the page
+              builder and its standard components, three releases a year, at no
+              cost. Screens that bypass that layer are frozen at what their
+              author wrote.
+            </li>
+            <li>
+              <strong>Knowledge concentrates.</strong> The coded pages were
+              produced fast by AI-assisted development, largely by one author.
+              Every screen that only a developer can change makes the future org
+              more dependent on that one profile of person — the opposite of
+              what an operable baseline needs (see
+              <a href="#view-operations">Operating the new system</a>).
+            </li>
+          </ul>
+          <p>
+            None of this argues that custom components are bad. It argues that
+            the
+            <em>page</em> is the wrong unit for them. A custom component
+            embedded in an assembled page adds the one interaction the standard
+            components can't do, and leaves everything around it admin-editable.
+            A custom component that <em>is</em> the page takes the whole screen
+            out of the declarative layer in one move.
+          </p>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">Alternatives considered</p>
+          <h2>Four ways to decide where code is allowed</h2>
+          <div class="option">
+            <div class="option-head">
+              <span class="option-name"
+                >Code for everything — Apex for all logic, one full-page
+                component per screen (the prototype's current practice)</span
+              ><span class="chip rejected">Rejected</span>
+            </div>
+            <p>
+              One paradigm for everything: every behaviour in Apex, every screen
+              a custom component, all of it version-controlled and testable,
+              built at the demonstrated AI-assisted speed. The appeal is real —
+              total control of the pixel and the logic, no declarative limits,
+              no mixed-tool seams. The cost is the whole declarative layer:
+              every future change, however small, becomes a developer change;
+              the per-audience variation the platform does natively gets
+              re-implemented and maintained by hand; the platform's
+              three-releases-a-year UI improvements stop applying to these
+              screens; and the org's maintainability concentrates in whoever
+              writes the code. It optimises the cost AI already made cheap —
+              writing — and pays for it in the cost nobody has made cheap —
+              owning. It also contradicts the programme's standing doctrine of
+              standard-first, custom-last.
+            </p>
+          </div>
+          <div class="option">
+            <div class="option-head">
+              <span class="option-name"
+                >Declarative only — flows and assembled pages for everything,
+                code as an absolute last resort</span
+              ><span class="chip rejected">Rejected</span>
+            </div>
+            <p>
+              The opposite pendulum swing. It maximises admin operability and
+              eliminates the test-class estate — but this domain has genuinely
+              dense logic: a matching engine, CV parsing, bulk synchronisation
+              over a million-plus applications, integration callouts.
+              Salesforce's own published guidance for record-triggered
+              automation reserves exactly that class of work for Apex — dense
+              logic, map-based bulk processing, complex error handling, callouts
+              — and flow-built approximations of it become the worst kind of
+              debt: hard to review, hard to unit-test, hard to version.
+              Replacing "always code" with "never code" would repeat the same
+              mistake with the sign flipped.
+            </p>
+          </div>
+          <div class="option">
+            <div class="option-head">
+              <span class="option-name"
+                >A published default per kind of need, with an explicit
+                escalation rule — declarative where the platform is strong, code
+                where it is</span
+              ><span class="chip adopted">Chosen</span>
+            </div>
+            <p>
+              The decision is not "clicks or code" — it is a
+              <strong>matrix</strong>, published in this record: for each kind
+              of need, the default tool, and the objective condition that
+              justifies escalating to code. Record pages are assembled from
+              standard components with small custom components embedded by
+              exception; simple record automation stays declarative (before-save
+              flows, validation rules, formulas); dense domain logic, bulk work
+              and integrations go to Apex <em>as the default</em>, not as an
+              exception — that is where the platform's own guidance puts them.
+              Code concentrates where it earns its keep; everything else stays
+              changeable by the people who will actually run the system. The
+              cost is honest: an escalation now needs a stated reason and a
+              reviewer, which is friction for a team used to deciding alone, and
+              the matrix is a living standard someone has to keep current.
+            </p>
+          </div>
+          <div class="option">
+            <div class="option-head">
+              <span class="option-name"
+                >Builder's choice — whoever builds a feature picks the tools, no
+                standard (the de-facto state today)</span
+              ><span class="chip rejected">Rejected</span>
+            </div>
+            <p>
+              Zero friction and maximum local speed — and it is precisely what
+              produced the current situation: a foundational standard adopted by
+              default, without analysis, visible only after an audit. Left in
+              place it yields an org where the same problem is solved three
+              different ways, quality gates are optional, and every future
+              reviewer must reverse-engineer intent. A programme that runs every
+              other hard-to-reverse choice through a decision record cannot
+              exempt the one that shapes every screen and every trigger.
+            </p>
+          </div>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">The standard itself</p>
+          <h2>The default per need, and when code is the right answer</h2>
+          <p>
+            The matrix below is the standard. The default column is where every
+            feature starts; the escalation column is the condition under which
+            code is the correct choice — not a concession, the
+            <em>correct choice</em>. What it removes is silent escalation:
+            skipping the default requires saying why, in review.
+          </p>
+          <table class="data">
+            <caption>
+              Build standard — default tool per kind of need, escalation
+              condition to code.
+            </caption>
+            <thead>
+              <tr>
+                <th>Need</th>
+                <th>Default</th>
+                <th>Escalate to code when…</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Derive or validate fields on the record being saved</td>
+                <td>Formula · validation rule · before-save flow</td>
+                <td>
+                  The logic needs external data or dense multi-object work
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Simple record automation — create related records, notify,
+                  update children
+                </td>
+                <td>Record-triggered flow</td>
+                <td>
+                  Automation on the object becomes dense or
+                  performance-critical; then consolidate into an Apex trigger
+                  (per the platform's own low/medium/high-density guidance),
+                  keeping one automation strategy per object
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Domain logic, bulk processing, integrations, transactional
+                  orchestration
+                </td>
+                <td>
+                  <strong>Apex service layer — code is the default here</strong>
+                </td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>
+                  Record page layout — fields, sections, related lists, actions
+                </td>
+                <td>
+                  Assembled page: standard record components + dynamic field
+                  sections
+                </td>
+                <td>Never — a layout is never re-implemented as code</td>
+              </tr>
+              <tr>
+                <td>
+                  An interaction the standard components genuinely can't do
+                </td>
+                <td>
+                  A small, single-purpose custom component, embedded in a region
+                  of the assembled page, configurable by admins where it can be
+                </td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td>A guided multi-step user process</td>
+                <td>Screen flow</td>
+                <td>
+                  The interaction demonstrably exceeds what a screen flow
+                  renders
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  A working surface that is not a record page — a console
+                  spanning many records, a pipeline board, a scheduling
+                  workspace
+                </td>
+                <td>
+                  Full-screen custom component <em>allowed</em> — justified case
+                  by case, composed from the same modular child components, on
+                  an app page or tab rather than replacing a record page
+                </td>
+                <td>—</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout key">
+            <span class="lbl">The hard rule the matrix implies</span>
+            <p>
+              <strong>Record pages are assembled, not coded.</strong> A custom
+              component is a tile <em>on</em> the page, never the page itself. A
+              full-screen component that reproduces a record layout is
+              prohibited — it forfeits dynamic field sections, per-profile and
+              per-device assembly, and every future page-builder improvement,
+              and it turns each field-level change into a development ticket.
+              Where a genuine workspace is warranted (the interview workspace is
+              a fair candidate), it lives on an app page or tab as a deliberate,
+              argued exception — and the <em>record</em> page of that same
+              object stays assembled and admin-editable.
+            </p>
+          </div>
+          <p>
+            Two companion rules ride along, both direct answers to audit
+            findings.
+            <strong>No package-era components in the new build:</strong>
+            everything the rebuild ships is re-implemented against the new
+            objects, not restyled from TargetRecruit bundles — otherwise the
+            uninstall surface this record works so hard to shrink (see
+            <a href="#view-uninstall-surface">Removing TargetRecruit</a>) grows
+            back inside the new code.
+            <strong>One shared styling module:</strong> component styling
+            extends the platform's design system from a single shared source,
+            not per-component hard-coded CSS.
+          </p>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">Why the chosen option wins</p>
+          <h2>Code got cheap to write; it did not get cheap to own</h2>
+          <p>
+            The prototype's speed is not in dispute — it is measured, and it is
+            an asset. What the all-code default gets wrong is
+            <em>which cost it optimises</em>. Build cost has collapsed;
+            ownership cost has not. Every screen that only a developer can
+            change is a recurring claim on developer time for the life of the
+            system, and the system's life is measured in years of layout tweaks,
+            field additions and process adjustments — the exact changes the
+            declarative layer exists to make cheap. The chosen standard keeps
+            the demonstrated speed where code genuinely is the right tool (the
+            engine, the parsers, the integrations — Apex by default, per the
+            platform's own guidance) and refuses to spend the org's future
+            changeability on screens the page builder would have assembled.
+          </p>
+          <p class="lk-legend">
+            <strong>Likelihoods below are educated guesses</strong>, not
+            measured facts — an honest estimate beats refusing to give one. The
+            scale: <span class="term">rarely</span> under 10% ·
+            <span class="term">unlikely</span> 10–30% ·
+            <span class="term">possibly</span> 30–50% ·
+            <span class="term">more likely than not</span> 50–70% ·
+            <span class="term">probably</span> 70–90% ·
+            <span class="term">almost certain</span> over 90%. A
+            <span class="lk meas">measured</span> tag marks a counted figure,
+            not a guess.
+          </p>
+          <div class="dq">
+            <div class="dq-col chosen">
+              <h4>
+                Default per need, code by exception
+                <span class="tag">Chosen</span>
+              </h4>
+              <p class="head-note">
+                Assembled record pages with embedded components; declarative
+                simple automation; Apex as the default for dense logic.
+              </p>
+              <ul class="dq-outcomes">
+                <li>
+                  <span
+                    >Field- and layout-level changes remain admin actions — no
+                    developer, no deployment — for the life of the system.</span
+                  >
+                  <span class="lk good">almost certain</span>
+                </li>
+                <li>
+                  <span
+                    >Dense logic still lands in Apex where the platform's
+                    guidance puts it — nothing forces engine work into
+                    flows.</span
+                  >
+                  <span class="lk good">almost certain</span>
+                </li>
+                <li>
+                  <span
+                    >The escalation gate slows the prototype's current pace
+                    while the team adjusts to arguing exceptions.</span
+                  >
+                  <span class="lk mid">probably</span>
+                </li>
+                <li>
+                  <span
+                    >The matrix decays into paperwork if nobody reviews against
+                    it — a governance failure mode, not a technical one.</span
+                  >
+                  <span class="lk mid">possibly</span>
+                </li>
+              </ul>
+              <div class="dq-foot">
+                <p>
+                  <span class="lbl">Upside, and how big</span> The org stays
+                  operable by the people who will actually run it, and the
+                  platform's declarative roadmap keeps applying to every
+                  assembled screen — free, three times a year, indefinitely.
+                </p>
+                <p>
+                  <span class="lbl">Worst case</span> The gate is honoured in
+                  name only and drift resumes — which is why conformance is
+                  reviewed against the assembled pages themselves, the same way
+                  this audit worked, not against intentions.
+                </p>
+              </div>
+            </div>
+            <div class="dq-col rejected">
+              <h4>Code for everything <span class="tag">Rejected</span></h4>
+              <p class="head-note">
+                Every behaviour in Apex; every screen one full-page custom
+                component (the prototype's current practice).
+              </p>
+              <ul class="dq-outcomes">
+                <li>
+                  <span
+                    >Pixel-level control of every screen and a single paradigm
+                    across the build.</span
+                  >
+                  <span class="lk good">almost certain</span>
+                </li>
+                <li>
+                  <span
+                    >Every user-interface change, however trivial, is a
+                    developer change — the audited pages contain zero
+                    admin-editable regions (<span class="lk meas">measured</span
+                    >).</span
+                  >
+                  <span class="lk bad">almost certain</span>
+                </li>
+                <li>
+                  <span
+                    >The platform's ongoing record-page improvements never apply
+                    to the coded screens.</span
+                  >
+                  <span class="lk bad">almost certain</span>
+                </li>
+                <li>
+                  <span
+                    >Maintenance knowledge concentrates in the code's original,
+                    AI-assisted author.</span
+                  >
+                  <span class="lk bad">probably</span>
+                </li>
+              </ul>
+              <div class="dq-foot">
+                <p>
+                  <span class="lbl">Upside, and how big</span> Demonstrated
+                  build speed and total control — real, but the speed survives
+                  under the chosen standard wherever code is genuinely the right
+                  tool.
+                </p>
+                <p>
+                  <span class="lbl">Worst case</span> An org whose screens only
+                  their original author can change, where every layout tweak is
+                  a ticket and the two-person IT team owns thirty thousand lines
+                  it didn't write.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="dq-verdict">
+            <p>
+              <strong
+                >The speed survives the standard; the operability doesn't
+                survive the all-code default.</strong
+              >
+              Under the chosen rule, everything the all-code route does well —
+              the engine, the parsers, the genuinely novel interactions — is
+              still built in code, at the same speed. What changes is only what
+              never needed to be code: layouts, field sections, simple
+              automation. The rejected route's upside is fully contained in the
+              chosen one; its downside — an org that needs a developer for every
+              trivial change, forever — is not containable at all. That
+              asymmetry decides it.
+            </p>
+          </div>
+          <div class="tech">
+            <span class="tech-label">For the developers</span>The logic split
+            follows Salesforce's published record-triggered-automation guidance:
+            same-record field updates → before-save flow (no DML cost);
+            low-density automation → record-triggered flow; medium density →
+            flow + invocable Apex for the complex step; high density / bulk /
+            callouts / complex error handling → Apex trigger + service layer,
+            one automation strategy per object. UI split: assembled FlexiPage +
+            Dynamic Forms/Actions as the record-page baseline; custom components
+            declare page-builder targets and design attributes so admins
+            configure them in place; full-screen components only on app
+            pages/tabs. Styling extends SLDS via styling hooks from one shared
+            module. Component tests (Jest) and Apex tests are part of
+            definition-of-done for every escalation.
+          </div>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">What this means for what exists</p>
+          <h2>Applying the standard to the prototype</h2>
+          <p>
+            The standard is forward-looking, but the audit findings are already
+            on the table, and pretending otherwise would repeat the
+            silent-default mistake in the other direction. Three remediations
+            follow, in order of leverage:
+          </p>
+          <ul>
+            <li>
+              <strong
+                >The coded record pages are decomposed — or argued.</strong
+              >
+              Each full-page component either becomes an assembled page with its
+              custom interactions embedded as modular tiles, or its owner makes
+              the workspace case for it explicitly (the interview workspace has
+              a plausible one) and it moves to an app page while the object's
+              record page is restored to an assembled, admin-editable baseline.
+            </li>
+            <li>
+              <strong
+                >Package-era components are replaced, not restyled.</strong
+              >
+              The TargetRecruit-inherited bundles in the new build are
+              re-implemented against the new objects, restoring the clean
+              side-by-side and rollback story the rebuild approach depends on.
+            </li>
+            <li>
+              <strong>Styling consolidates into one shared module</strong>
+              extending the platform's design system, retiring the per-component
+              hard-coded CSS.
+            </li>
+          </ul>
+          <p>
+            None of this discards the prototype's value: the objects, the logic
+            and most of the component internals carry forward. What changes is
+            the unit of packaging — from "the page is the component" to "the
+            page is assembled, the components are tiles".
+          </p>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">Residual risk &amp; open items</p>
+          <h2>What we still carry</h2>
+          <ul>
+            <li>
+              <strong>Full conformance inventory of the existing build.</strong>
+              The peer review examined the assembled pages and the component
+              list; a complete pass — which logic sits in Apex that the matrix
+              would have kept declarative, which components can be made
+              page-builder-configurable as they stand — is owned by programme
+              architecture and produces the remediation backlog above.
+            </li>
+            <li>
+              <strong>Ratification and the review gate.</strong> The standard
+              and its escalation review (who signs off a justified exception)
+              belong to the programme's architecture governance forum. Until
+              ratified there, this page is the argued draft.
+            </li>
+            <li>
+              <strong>The workspace exceptions.</strong> Whether the interview
+              workspace (and any sibling) earns its full-screen exception is
+              decided case by case against the matrix, by its owner and the
+              review gate — not grandfathered in by default.
+            </li>
+            <li>
+              <strong>The test baseline for existing code.</strong> Accepting
+              the prototype's code into the rebuild baseline requires knowing
+              its real test coverage — Apex and component tests both. Owned by
+              the build team, with programme architecture setting the bar.
+            </li>
+          </ul>
+        </section>
+
+        <footer>
+          <p>
+            This standard governs how every surface in the rebuild is built; the
+            screens it applies to first are those on the
+            <a href="#view-data-model">target data model</a>'s new objects. Who
+            operates the result — and why admin-editability is load-bearing — is
+            <a href="#view-operations">Operating the new system</a>; the
+            package-era component finding feeds
+            <a href="#view-uninstall-surface">Removing TargetRecruit</a> and
+            <a href="#view-rollback">Rollback</a>. Grounded in the 28 July 2026
+            peer review of the prototype build.
+          </p>
+        </footer>
+      </div>
+    </section>
+    <section class="page-view" id="view-data-access-seam">
+      <div class="wrap-inner">
+        <header class="masthead">
+          <p class="eyebrow">Decision 7 · The coexistence seam</p>
+          <h1>How rebuilt code touches the old package while both run</h1>
+          <p class="subtitle">
+            During the months the new system and TargetRecruit run side by side,
+            new code still has to read and write the old package's objects. The
+            original plan wrapped every such touch in a full translation layer —
+            built for a world with two separate vendors behind one shared model.
+            That world is gone: there is now a single native model. This page
+            replaces the heavy wrapper with a rule sized for one model — confine
+            the old-package access, don't ceremonially abstract it — so the
+            switch-off is an edit in one place, not a rewrite.
+          </p>
+          <p class="dateline">
+            Data-access seam · recorded direction, pending ratification · 28
+            July 2026
+          </p>
+        </header>
+
+        <div class="bluf">
+          <p>
+            <strong>What this decides.</strong> New code that touches the old
+            package (its <code>AVTRRT__</code> objects) during coexistence
+            splits into <strong>two kinds, treated differently</strong>. Code
+            whose only job is to keep the old package alive until switch-off is
+            written directly, kept cheap, and <em>deleted</em> at cutover. Code
+            that will keep running afterwards — against the new native objects —
+            has all of its old-package reads and writes penned into one small
+            class per business entity, so at cutover that one class is
+            re-pointed and the business logic never moves.
+          </p>
+          <p>
+            <strong>Why it changed.</strong> The rebuild once planned for two
+            vendors (TargetRecruit and a second package) sitting behind a
+            shared, vendor-neutral model, which justified a full translation
+            layer at every seam. The programme then chose a single custom build,
+            and the new model <em>became</em> the neutral model. With no second
+            vendor to translate to, that translation layer now translates a
+            thing into itself — pure ceremony for zero gain. The seam still
+            needs discipline; it no longer needs the ceremony.
+          </p>
+          <p>
+            <strong>The decisive fact.</strong> What makes cutover cheap is not
+            abstraction, it is <em>confinement</em>. If every old-package query
+            lives in one named place per entity, cutover edits that place and
+            stops. If those queries are scattered through the business logic,
+            cutover becomes a rewrite. The rule buys confinement and refuses to
+            pay for abstraction the single model doesn't need.
+          </p>
+        </div>
+
+        <section>
+          <p class="section-eyebrow">The premise</p>
+          <h2>One model changes what the seam is worth</h2>
+          <p>
+            A translation layer earns its cost when it shields business logic
+            from a
+            <em>foreign</em> schema — when the shape on the other side of the
+            seam is somebody else's and might change under you. That was the
+            original design: two recruitment packages, each with its own object
+            shapes, both hidden behind one Marlex-owned model so the logic above
+            never saw either vendor.
+          </p>
+          <p>
+            The single-build decision collapsed that. There is one model now, it
+            is Marlex's, and it is the same model the logic already speaks. For
+            an entity the new system owns natively, the seam no longer crosses
+            into foreign territory — so the translator on the native side would
+            map an object to an identical copy of itself. The programme keeps
+            the full translation layer for the one place it still earns its keep
+            — a genuine outside vendor — and drops it everywhere the new model
+            simply owns the data.
+          </p>
+          <div class="callout key">
+            <span class="lbl"
+              >The distinction that drives everything below</span
+            >
+            <p>
+              The old-package touch is either <strong>throwaway</strong> (its
+              whole reason for existing ends at cutover) or
+              <strong>surviving</strong> (the same logic keeps running
+              afterwards, just against native objects). These are opposite jobs
+              and get opposite treatment — the mistake is treating them the
+              same.
+            </p>
+          </div>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">The two kinds</p>
+          <h2>Disposable bridges, and surviving logic</h2>
+          <p>
+            <strong>Disposable bridges — deleted at cutover.</strong> Single-use
+            code that only exists to keep the old package fed while both systems
+            run: writing the same record into an old-package object as well as
+            the new one, or syncing a value back and forth so the package
+            doesn't notice the new system exists. Examples on this build are the
+            talent-pool dual-write into the package's
+            <code>AVTRRT__Hotbook__c</code>, and the interview-to-candidate
+            sync. This code has no life after cutover — the moment the package
+            leaves, it is deleted. Because it is throwaway, it is written the
+            simplest way that works: direct old-package access, sitting in the
+            bridge layer, plainly labelled <em>delete at cutover</em>. Wrapping
+            it in an abstraction is effort spent polishing something scheduled
+            for demolition.
+          </p>
+          <p>
+            <strong>Surviving logic — re-pointed at cutover.</strong> The
+            controllers and services that read jobs, applications and candidate
+            data today, and will go on reading them after cutover — only then
+            from the native objects. For these, every query and every write
+            against an old-package object is penned into
+            <strong>one small class per entity</strong> — a
+            <em>repository</em> — that hands back plain records and fields. No
+            translation, no parallel data shapes, no wrapper types. The business
+            logic calls the repository and never issues an old-package query
+            itself. At cutover you edit <em>only</em> the repository — point it
+            at the native object — and the business logic above it does not
+            change a line. Labelled <em>re-point at cutover</em>.
+          </p>
+          <div class="tech">
+            <span class="tech-label">For the developers</span>Surviving-logic
+            classes are named <code>&lt;Entity&gt;Repository</code> —
+            <code>JobRepository</code>, <code>ApplicationRepository</code> —
+            <em>deliberately without</em> the <code>ACL_</code> prefix, so they
+            read as visually distinct from the full translation-layer components
+            (<code>ACL_I&lt;Entity&gt;Repository</code>,
+            <code>ACL_&lt;Vendor&gt;_&lt;Entity&gt;Adapter</code>, the DTOs and
+            mappers), which are now reserved for the genuine two-vendor case
+            only. A repository holds SOQL/DML on <code>AVTRRT__</code> objects
+            and returns SObjects/fields — no DTO, no mapper, no canonical
+            translation. It is the Selector/Repository pattern (Salesforce
+            Enterprise Patterns / fflib), used for its intended purpose: isolate
+            the query, not translate the schema. Cutover edits the repository
+            body only; callers are untouched. Disposable bridges keep direct
+            <code>AVTRRT__</code> access in the adapter/bridge layer, tagged for
+            deletion.
+          </div>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">The schema caveat</p>
+          <h2>Some coupling no code pattern can hide</h2>
+          <p>
+            Around two dozen lookup fields on the new objects point straight at
+            old-package objects. That is coupling in the <em>data model</em>,
+            not in code — and no repository or wrapper can abstract a field that
+            physically references a package object. These are handled the only
+            way schema coupling can be: at cutover each becomes a new field
+            pointing at the native object, with the data moved across as part of
+            the data migration, exactly as the old-to-new data-model map already
+            records. It is tracked as model-and-data work, kept off the list of
+            code to re-point — mislabelling it as adapter work would hide real
+            migration effort.
+          </p>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">The metric as a runbook</p>
+          <h2>The coupled-code count becomes two action lists</h2>
+          <p>
+            The decoupling metric used to read as a single number — roughly
+            thirty-odd classes still touching the old package. A count doesn't
+            tell anyone what to do at cutover. Split by the two kinds, it
+            becomes a runbook:
+          </p>
+          <table class="data">
+            <caption>
+              The old-package touch points, as cutover actions rather than a
+              counter.
+            </caption>
+            <thead>
+              <tr>
+                <th>List</th>
+                <th>What it is</th>
+                <th>Cutover action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Delete at cutover</strong></td>
+                <td>
+                  Disposable bridges — dual-write and sync code keeping the
+                  package alive
+                </td>
+                <td>Removed with the package; not migrated</td>
+              </tr>
+              <tr>
+                <td><strong>Re-point at cutover</strong></td>
+                <td>Surviving-logic repositories, one per entity</td>
+                <td>
+                  Edit the repository class to read the native object; callers
+                  untouched
+                </td>
+              </tr>
+              <tr>
+                <td><em>Model / data migration</em></td>
+                <td>
+                  Lookup fields on new objects pointing at package objects
+                  (schema coupling)
+                </td>
+                <td>New field + data move; not code work</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            The same classes that felt like a debt to be counted are now a
+            checklist to be executed — each item already carrying its own
+            cutover instruction.
+          </p>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">Alternatives considered</p>
+          <h2>Three ways to sit at the seam</h2>
+          <div class="option">
+            <div class="option-head">
+              <span class="option-name"
+                >Full translation layer at every seam — the wrapper types,
+                ports, adapters and mappers of the original two-vendor
+                plan</span
+              ><span class="chip rejected">Rejected</span>
+            </div>
+            <p>
+              One uniform pattern everywhere, maximum isolation, no exceptions
+              to reason about. It was the right design when two separate vendors
+              sat behind a shared model. Under a single native model the
+              native-side mapper maps a record to an identical copy of itself —
+              an identity translation that adds classes, indirection and test
+              surface for no portability whatsoever. It spends build time and
+              ownership cost buying a property (shielding from a foreign schema)
+              that no longer exists for a natively-owned entity, and it
+              contradicts the programme's own standard-first, ceremony-last
+              instinct.
+            </p>
+          </div>
+          <div class="option">
+            <div class="option-head">
+              <span class="option-name"
+                >Direct old-package access everywhere — no seam discipline,
+                query the package wherever it's convenient</span
+              ><span class="chip rejected">Rejected</span>
+            </div>
+            <p>
+              The fastest thing to write in the moment, and the most expensive
+              thing to switch off. With old-package queries threaded through
+              controllers and services, cutover has to find and rewrite every
+              one of them, inside live business logic, under a rehearsal
+              deadline — the coupling has spread into exactly the code that must
+              not move on the cutover weekend. It turns a one-line re-point into
+              a scattered rewrite and puts the switch-off at risk.
+            </p>
+          </div>
+          <div class="option">
+            <div class="option-head">
+              <span class="option-name"
+                >Two kinds — throwaway bridges deleted, surviving logic confined
+                to per-entity repositories and re-pointed</span
+              ><span class="chip adopted">Chosen</span>
+            </div>
+            <p>
+              Match the treatment to the code's lifespan. Throwaway code stays
+              cheap and unabstracted because it dies at cutover; surviving code
+              pays one small, real cost — its old-package queries live in a
+              named class per entity — and collects the whole payoff at cutover,
+              when that class is re-pointed and the logic above it is untouched.
+              It keeps the isolation where isolation is worth having, refuses
+              the identity-map ceremony where it isn't, and turns the
+              coupled-code metric into an executable delete-list plus
+              re-point-list. The cost is honest: each seam has to be tagged
+              correctly, and a bridge mistaken for surviving logic (or the
+              reverse) is coupling debt — a discipline cost, not a structural
+              one.
+            </p>
+          </div>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">Why the chosen option wins</p>
+          <h2>Isolate where it pays; don't translate a model into itself</h2>
+          <p>
+            The rejected routes are the two pendulum ends — abstract everything,
+            or abstract nothing. One pays ceremony for isolation the single
+            model has made free; the other saves that ceremony and hands the
+            bill to the cutover weekend as a rewrite. The chosen rule takes the
+            property each end was really after — the wrapper's clean switch-off,
+            the direct route's low overhead — and keeps both, by letting the
+            code's lifespan decide which it gets.
+          </p>
+          <div class="dq">
+            <div class="dq-col chosen">
+              <h4>
+                Two kinds — confine and re-point <span class="tag">Chosen</span>
+              </h4>
+              <p class="head-note">
+                Bridges written directly and deleted; surviving logic penned
+                into per-entity repositories and re-pointed at cutover.
+              </p>
+              <ul class="dq-outcomes">
+                <li>
+                  <span
+                    >Surviving logic switches to native by editing one class per
+                    entity; callers don't change.</span
+                  >
+                  <span class="lk good">almost certain</span>
+                </li>
+                <li>
+                  <span
+                    >No identity-map ceremony slows the build on natively-owned
+                    entities.</span
+                  >
+                  <span class="lk good">almost certain</span>
+                </li>
+                <li>
+                  <span
+                    >Throwaway bridge code stays cheap because nobody polishes
+                    what gets deleted.</span
+                  >
+                  <span class="lk good">almost certain</span>
+                </li>
+                <li>
+                  <span
+                    >A mis-tagged seam (bridge treated as surviving, or
+                    vice-versa) leaves coupling behind.</span
+                  >
+                  <span class="lk mid">possibly</span>
+                </li>
+              </ul>
+              <div class="dq-foot">
+                <p>
+                  <span class="lbl">Upside, and how big</span> The coupled-code
+                  list becomes a cutover checklist that executes itself item by
+                  item, and the business logic above the seam survives cutover
+                  untouched.
+                </p>
+                <p>
+                  <span class="lbl">Worst case</span> Sloppy tagging leaves a
+                  handful of seams in the wrong bucket — caught by reviewing the
+                  repository boundaries, a contained clean-up, not a structural
+                  failure.
+                </p>
+              </div>
+            </div>
+            <div class="dq-col rejected">
+              <h4>
+                Full translation layer everywhere
+                <span class="tag">Rejected</span>
+              </h4>
+              <p class="head-note">
+                The original two-vendor wrapper — ports, adapters, mappers,
+                wrapper types — applied to natively-owned entities too.
+              </p>
+              <ul class="dq-outcomes">
+                <li>
+                  <span
+                    >Uniform pattern, maximum isolation, nothing special to
+                    reason about.</span
+                  >
+                  <span class="lk good">almost certain</span>
+                </li>
+                <li>
+                  <span
+                    >The native-side mapper translates a record into an
+                    identical copy — pure overhead.</span
+                  >
+                  <span class="lk bad">almost certain</span>
+                </li>
+                <li>
+                  <span
+                    >Extra classes and indirection to build, test and own, for
+                    zero portability gain.</span
+                  >
+                  <span class="lk bad">almost certain</span>
+                </li>
+              </ul>
+              <div class="dq-foot">
+                <p>
+                  <span class="lbl">Upside, and how big</span> Genuine — but
+                  only for a real second vendor, which is exactly the case the
+                  rule keeps the full layer for.
+                </p>
+                <p>
+                  <span class="lbl">Worst case</span> The build spends weeks on
+                  wrapper scaffolding that a two-person team then maintains
+                  forever, isolating a model from itself.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="dq-verdict">
+            <p>
+              <strong
+                >The wrapper's one real benefit — a clean switch-off — is fully
+                delivered by confining the queries; its cost is not.</strong
+              >
+              A per-entity repository gives the same one-place cutover edit
+              without translating anything, so the rejected route's upside is
+              contained in the chosen one, while its overhead — scaffolding that
+              isolates the native model from itself — is not containable at all.
+              The full translation layer keeps its home at the one seam that
+              still faces an outside vendor.
+            </p>
+          </div>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">Residual risk &amp; open items</p>
+          <h2>What we still carry</h2>
+          <ul>
+            <li>
+              <strong>Ratification.</strong> This is a recorded direction,
+              agreed in principle after the reference-org discussion and pending
+              confirmation with Marlex. Until confirmed there, this page is the
+              argued draft — it does not yet bind the build.
+            </li>
+            <li>
+              <strong>The per-entity delete-vs-re-point split.</strong> The two
+              action lists are seeded with the known cases; the full assignment
+              of every old-package touch point to <em>delete</em> or
+              <em>re-point</em> is filled in per entity as capabilities are
+              built, owned by the build team with programme architecture
+              reviewing.
+            </li>
+            <li>
+              <strong>The repository boundary is a review item.</strong> Whether
+              a class has genuinely confined <em>all</em> its old-package access
+              — with none leaking into callers — is checked at review, because a
+              leak is what turns a re-point back into a rewrite.
+            </li>
+          </ul>
+        </section>
+
+        <footer>
+          <p>
+            This seam sits above the
+            <a href="#view-data-model">target data model</a>'s new objects and
+            is governed by the same build discipline as
+            <a href="#view-build-standard">Declarative vs code</a>. The
+            delete-list and re-point-list feed the
+            <a href="#view-cutover">activation &amp; cutover</a>
+            runbook, and the schema-coupling lookups it hands off are moved by
+            <a href="#view-data-migration">Data migration</a>. Recorded 28 July
+            2026 as a direction pending ratification.
+          </p>
+        </footer>
+      </div>
+    </section>
     <section class="page-view" id="view-rebuild-approach">
       <div class="wrap-inner">
         <header class="masthead">
-          <p class="eyebrow">Decision 6 · Rebuild approach</p>
+          <p class="eyebrow">Decision 8 · Rebuild approach</p>
           <h1>New component, or a branch in the logic?</h1>
           <p class="subtitle">
             For each thing being replaced: build a fresh native component and
@@ -13455,7 +14635,7 @@
     <section class="page-view" id="view-deployment">
       <div class="wrap-inner">
         <header class="masthead">
-          <p class="eyebrow">Decision 7 · Deployment</p>
+          <p class="eyebrow">Decision 9 · Deployment</p>
           <h1>How the switched-off build reaches production</h1>
           <p class="subtitle">
             Deploy the new system piece by piece as it's written — or hold it
@@ -13892,7 +15072,7 @@
     <section class="page-view" id="view-cutover">
       <div class="wrap-inner">
         <header class="masthead">
-          <p class="eyebrow">Decision 8 · Activation &amp; cutover</p>
+          <p class="eyebrow">Decision 10 · Activation &amp; cutover</p>
           <h1>How each capability crosses from old to new</h1>
           <p class="subtitle">
             Slice a capability off early, big-bang the shared core, or keep both
@@ -15185,7 +16365,7 @@
     <section class="page-view" id="view-the-freeze">
       <div class="wrap-inner">
         <header class="masthead">
-          <p class="eyebrow">Decision 9 · The freeze</p>
+          <p class="eyebrow">Decision 11 · The freeze</p>
           <h1>The pause that makes the last of the data move clean</h1>
           <p class="subtitle">
             A full write-freeze on the package objects — everything that writes
@@ -15691,7 +16871,7 @@
     <section class="page-view" id="view-data-migration">
       <div class="wrap-inner">
         <header class="masthead">
-          <p class="eyebrow">Decision 10 · Data migration</p>
+          <p class="eyebrow">Decision 12 · Data migration</p>
           <h1>Ten years of data into a new model</h1>
           <p class="subtitle">
             How the data actually crosses — the bulk pre-loaded ahead of time,
@@ -17177,7 +18357,7 @@
     <section class="page-view" id="view-rollback">
       <div class="wrap-inner">
         <header class="masthead">
-          <p class="eyebrow">Decision 11 · Rollback</p>
+          <p class="eyebrow">Decision 13 · Rollback</p>
           <h1>How we get back if go-live fails</h1>
           <p class="subtitle">
             The way back is different for each way a capability crosses — and
@@ -17899,7 +19079,7 @@
     <section class="page-view" id="view-uninstall-surface">
       <div class="wrap-inner">
         <header class="masthead">
-          <p class="eyebrow">Decision 12 · Removing TargetRecruit</p>
+          <p class="eyebrow">Decision 14 · Removing TargetRecruit</p>
           <h1>Removing TargetRecruit — the uninstall dependency surface</h1>
           <p class="subtitle">
             Once the rebuild is live and the data has moved, the old package
@@ -18364,7 +19544,7 @@
     <section class="page-view" id="view-testing">
       <div class="wrap-inner">
         <header class="masthead">
-          <p class="eyebrow">Decision 13 · Testing behaviour parity</p>
+          <p class="eyebrow">Decision 15 · Testing behaviour parity</p>
           <h1>Capture what each feature does, then hold the rebuild to it</h1>
           <p class="subtitle">
             Before a feature can be rebuilt safely, its current behaviour has to
@@ -18958,7 +20138,7 @@
     <section class="page-view" id="view-rehearsal">
       <div class="wrap-inner">
         <header class="masthead">
-          <p class="eyebrow">Decision 14 · Rehearsal</p>
+          <p class="eyebrow">Decision 16 · Rehearsal</p>
           <h1>Prove it continuously, then rehearse the flip both ways</h1>
           <p class="subtitle">
             One story in two halves: a continuous-proof harness keeps the
@@ -19607,7 +20787,7 @@
     <section class="page-view" id="view-delivering-while-rebuilding">
       <div class="wrap-inner">
         <header class="masthead">
-          <p class="eyebrow">Decision 15 · Delivering while rebuilding</p>
+          <p class="eyebrow">Decision 17 · Delivering while rebuilding</p>
           <h1>
             Keeping the business moving without letting the two systems drift
             apart
@@ -20029,7 +21209,7 @@
     <section class="page-view" id="view-operations">
       <div class="wrap-inner">
         <header class="masthead">
-          <p class="eyebrow">Decision 16 · Operating the new system</p>
+          <p class="eyebrow">Decision 18 · Operating the new system</p>
           <h1>What watches the new system</h1>
           <p class="subtitle">
             On activation morning the native build runs real volume for the
@@ -20579,7 +21759,7 @@
     <section class="page-view" id="view-release-management">
       <div class="wrap-inner">
         <header class="masthead">
-          <p class="eyebrow">Decision 19 · Release management</p>
+          <p class="eyebrow">Decision 21 · Release management</p>
           <h1>
             How parallel builders reach production without stepping on each
             other
@@ -21173,7 +22353,7 @@
     <section class="page-view" id="view-integrations">
       <div class="wrap-inner">
         <header class="masthead">
-          <p class="eyebrow">Decision 17 · Integrations &amp; middleware</p>
+          <p class="eyebrow">Decision 19 · Integrations &amp; middleware</p>
           <h1>How the rebuilt edges meet the outside world</h1>
           <p class="subtitle">
             Every rebuilt integration ships behind a Marlex-owned interface with
@@ -22798,7 +23978,7 @@
     <section class="page-view" id="view-archive">
       <div class="wrap-inner">
         <header class="masthead">
-          <p class="eyebrow">Decision 18 · The archive</p>
+          <p class="eyebrow">Decision 20 · The archive</p>
           <h1>Where the records that don't board go</h1>
           <p class="subtitle">
             Half a million never-active candidates and seventy thousand finished
