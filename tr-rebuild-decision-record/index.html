@@ -14609,14 +14609,25 @@
               <a href="#view-rehearsal">Rehearsal</a>).
             </li>
             <li>
-              <strong>Same-entry-point routing isn't inventoried yet.</strong>
-              The trigger/handler case is named and the mechanism chosen, but
-              the full census — which triggers, Platform Event subscribers,
-              queueables/batches and outbound listeners need a routing switch
-              versus which are covered by native activation alone — hasn't been
-              done. Until it is, assume any entry point on a non-migrating
-              object that currently calls package-coupled logic is a candidate
-              and check it explicitly.
+              <strong
+                >Same-entry-point routing: mechanism proven, census still to
+                do.</strong
+              >
+              The case where an automation stays on an object that survives the
+              rebuild but its logic reaches into the old package is named, and
+              the switch mechanism — one entry point per object, choosing the
+              old or the new logic by a configuration setting, with a guarantee
+              that only one ever runs — was built and exercised end-to-end in
+              the audit sandbox on 2026-07-28: the switch flipped old→new by
+              changing configuration alone, with no code redeploy, and reverted
+              the same way, confirming a clean per-capability rollback. What
+              that trial did <em>not</em> cover is converting a real live
+              trigger into this shape, and taking the full census of which
+              triggers, event subscribers, background jobs and outbound
+              listeners need the switch versus which are covered by native
+              activation alone. Until that census is done, assume any entry
+              point on a surviving object that currently calls package-coupled
+              logic is a candidate and check it explicitly.
             </li>
           </ul>
         </section>
