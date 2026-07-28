@@ -22961,6 +22961,30 @@
         </section>
 
         <section>
+          <p class="section-eyebrow">How new integrations authenticate</p>
+          <h2>Modern connection framework, not the old login</h2>
+          <p>
+            Every new connection built during the rebuild uses the platform's
+            current authentication framework by default — a dedicated connection
+            secret held in the platform's own credential store, rather than an
+            integration user with a name and password sent in the request. The
+            trigger for the rule was concrete: the ERP connection still runs on
+            the older style and went down when that user's password expired.
+          </p>
+          <p>
+            The modern approach removes that whole class of outage — there is no
+            user and no password to expire — keeps the secret out of the request
+            headers, and stays aligned with the platform capabilities Marlex
+            already pays for. It is a review checkpoint applied to new work, not
+            a rewrite of connections that already run cleanly: an edge already
+            built to the target pattern is kept and only re-pointed. A
+            certificate is required only where an external system genuinely
+            demands one — certificates expire too, so they are not forced by
+            default.
+          </p>
+        </section>
+
+        <section>
           <p class="section-eyebrow">Residual risk &amp; open items</p>
           <h2>What we still carry</h2>
           <ul>
