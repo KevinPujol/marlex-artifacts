@@ -4841,7 +4841,7 @@
             Everything else already runs on the native (<code>MA_*</code>) or
             standard model and crosses the cutover untouched.
           </p>
-          
+          <!-- Orbio in-build: SF-1333 (field creation, PO UAT Jul-2026), SF-1190 (offers; Orbio branch deferred, fields being wired). Read-only verified: 6 MA_Orbio_* fields present in PRE, 0 in prod. Taleva write owner-to-confirm (named-user OAuth). -->
         </div>
 
         <section>
@@ -5146,7 +5146,7 @@
               to re-point.
             </li>
           </ul>
-          
+          <!-- Orbio: SF-1333 (PO UAT), SF-1190. PRE has all 6 MA_Orbio_* fields; prod has none (verified read-only 2026-07-19). Taleva named-user OAuth so connector-vs-human writes not separable from EventLogFile alone. -->
           <p>
             Neither changes the shape of the cutover; both firm up its count of
             write-coupled edges, and both belong to the client's IT team to
@@ -5235,7 +5235,7 @@
                     cannot yet be separated from those users' screen activity —
                     the owner must confirm.
                   </td>
-                  
+                  <!-- Taleva sourcing purpose confirmed: SF-1244 (LinkedIn URL via Taleva + PipeLaunch). -->
                   <td>
                     Re-pointed <strong>on the connector owner's side</strong> —
                     the mapping lives in their product. If it writes, it is a
@@ -5513,7 +5513,7 @@
               current means re-reading the backlog, not just re-running the
               query.
             </li>
-            
+            <!-- Native writers surfaced from backlog: Dolma SF-1299 (prod External App); new website (Indra) SF-1289 (forms -> Contact RT Candidato + Lead), SF-1244; telephony/transcription SF-905 (To Do). All native, survive cutover. -->
           </ul>
         </section>
 
@@ -6172,7 +6172,7 @@
               decision, not two — confirm the plumbing choice with the ERP side
               so the blocker is surfaced before the build, not at go-live.
             </li>
-            
+            <!-- Verified 2026-07-20: MA_Net4Client body = setEndpoint('callout:MA_Net4' + path), does NOT read ERP_Connection__c; live outbound = legacy classes via ERP_Connection__c (internal ERP host, redacted from public copy). -->
           </ul>
         </section>
 
@@ -6790,7 +6790,7 @@
               "alongside", and the ±30–40 hours is the size of the swing.
             </p>
           </div>
-          
+          <!-- Orbio: fields MA_Orbio_* present in PRE only, 0 in prod (verified read-only). Writes AVTRRT__Job_Applicant__c / AVTRRT__Job__c by design -> 3rd write edge at go-live. -->
         </section>
 
         <section>
@@ -8069,6 +8069,24 @@
             cost far less than a fresh build, because the groundwork is already
             paid for.
           </p>
+          <p>
+            <strong>Two horizons — read this first.</strong> There are two
+            separate moments here, and they must not be conflated.
+            <em>Near-term:</em> Axxon replaces its current finance system with
+            NET4 on its fiscal cutover date. That ERP replacement happens on
+            schedule regardless — what is <em>not</em> built for that date is an
+            automated connection from Axxon's Salesforce org to NET4. In the
+            interim that step is handled manually (a service ticket to the
+            corporate back-office team), because a purpose-built Axxon
+            connection would have only a few months of useful life before the
+            rebuild replaces it. <em>Later:</em> the shared-lane reuse described
+            here is the target end-state, and it is reached only
+            <strong
+              >after the Marlex-to-NET4 lane has been built and proven
+              first</strong
+            >. Until that exists, nothing is reused for Axxon. So the reuse
+            below is the destination, not the day-one arrangement.
+          </p>
         </div>
 
         <section>
@@ -8305,6 +8323,36 @@
               rather than discovered late.
             </p>
           </div>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">The near-term bridge, before any reuse</p>
+          <h2>
+            The ERP moves on its date; the automated link waits for the rebuild
+          </h2>
+          <p>
+            On its fiscal cutover, Axxon switches its finance and back-office
+            operation onto NET4 — its consultants do the labour-management work
+            directly in NET4, and Axxon keeps its existing recruitment system in
+            place for the time being. The one piece deliberately
+            <em>not</em> built for that date is the automated hand-off from
+            Axxon's Salesforce org into NET4. In the interim that hand-off is a
+            manual step: the commercial opportunity is passed to the corporate
+            back-office team through a service ticket rather than an
+            integration.
+          </p>
+          <p>
+            This is a cost-of-life judgement, not a shortcut. Any Axxon-specific
+            connection built for the bridge would be replaced within months by
+            the rebuilt platform, so building it twice is avoided. The shared
+            lane below is the destination — and it becomes available to Axxon
+            only
+            <strong
+              >after the Marlex-to-NET4 lane is built and proven first</strong
+            >. The sequence is deliberate: build once for Marlex, prove it, then
+            extend the same proven service to Axxon. Nothing is reused for Axxon
+            before that point.
+          </p>
         </section>
 
         <section>
@@ -9691,7 +9739,7 @@
                 logins, no measured record traffic.
               </li>
             </ul>
-            
+            <!-- SF-1333 (Orbio field creation, PO UAT), SF-1190; SF-1244 (Taleva/PipeLaunch LinkedIn URL mapping). -->
           </div>
         </section>
 
