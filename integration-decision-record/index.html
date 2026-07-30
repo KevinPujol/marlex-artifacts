@@ -1688,6 +1688,50 @@
         </section>
 
         <section>
+          <p class="section-eyebrow">How to read an edge</p>
+          <h2>Two jobs, and the two questions that decide the routing</h2>
+          <p>
+            Before the lanes, one distinction clears up what these edges
+            actually are. Every integration is doing one of two jobs — and some
+            do both:
+          </p>
+          <ul>
+            <li>
+              <strong>Keeping data in step.</strong> A record kept in two
+              systems stays consistent — a candidate, an account, an offer, an
+              invoice lives on both sides and a change on one is copied across.
+              The test is whether there is a second copy to reconcile. The ERP's
+              bulk traffic, the job board's application intake, the
+              customer-data-platform feed are all this.
+            </li>
+            <li>
+              <strong>Calling a service mid-process.</strong> The edge reaches
+              an outside capability as a step inside a live process — publish a
+              vacancy, send a contract to sign, look up a client's solvency,
+              parse a CV — then uses the answer and moves on, keeping no second
+              copy. Publishing to the job board, e-signature, the credit check
+              and the matching engine are all this.
+            </li>
+          </ul>
+          <p>
+            The same connection can do both: the ERP mostly keeps data in step
+            but also serves a live screen lookup; the job board keeps
+            applications in step while publishing vacancies is a service call.
+            This is what the routing rule turns on —
+            <strong
+              >high-volume data-in-step traffic reused across countries is what
+              earns a place on the shared platform; a single-consumer service
+              call rarely does</strong
+            >. Two further questions decide the cutover, not the platform:
+            <strong>who owns the seam</strong> (a Marlex interface we can
+            re-point, or a bought tool's fixed connector we cannot) and
+            <strong>whether the edge touches the retiring records</strong>.
+            Every edge, tagged on all of these, is on
+            <a href="#view-measured-surface">the measured surface</a>.
+          </p>
+        </section>
+
+        <section>
           <p class="section-eyebrow">The decision map</p>
           <h2>The decisions, each on its own page</h2>
           <p>
@@ -4841,7 +4885,7 @@
             Everything else already runs on the native (<code>MA_*</code>) or
             standard model and crosses the cutover untouched.
           </p>
-          <!-- Orbio in-build: SF-1333 (field creation, PO UAT Jul-2026), SF-1190 (offers; Orbio branch deferred, fields being wired). Read-only verified: 6 MA_Orbio_* fields present in PRE, 0 in prod. Taleva write owner-to-confirm (named-user OAuth). -->
+          
         </div>
 
         <section>
@@ -5040,6 +5084,293 @@
         </section>
 
         <section>
+          <p class="section-eyebrow">Every edge, classified</p>
+          <h2>
+            The full classification — each edge on every axis that matters
+          </h2>
+          <p>
+            The at-a-glance table above answers
+            <em>what happens at cutover</em>. This one answers
+            <em>what kind of integration each edge is</em> — the complete
+            classification, so no reader has to infer it. Each edge is tagged on
+            eight independent questions. The first four drive the decisions
+            across this set; the last four are reference detail for the build.
+          </p>
+          <p class="lk-legend">
+            <strong>The four that drive decisions.</strong>
+            <span class="term">Job</span> — <em>data in step</em> keeps a record
+            consistent across two systems; <em>service call</em> reaches out for
+            a capability mid-process and keeps no second copy; some edges do
+            both. <span class="term">Direction</span> — outbound (Salesforce
+            calls out) or inbound (the outside system calls in).
+            <span class="term">Seam</span> — who owns the interface that can be
+            re-pointed: a <em>Marlex port</em>, a bought tool's
+            <em>fixed connector</em> (only its owner can re-point), a
+            <em>managed package</em>, or Salesforce's own
+            <em>standard interface</em>. <span class="term">Old model</span> —
+            whether the edge <em>writes</em> the retiring records, only
+            <em>reads</em> them, or already runs on the <em>new</em> model.
+          </p>
+          <p class="lk-legend">
+            <strong>The four for reference.</strong>
+            <span class="term">Pattern</span> — how the call is shaped
+            (request-reply, fire-and-forget, batch, webhook).
+            <span class="term">Timing</span> — real time, near-real-time, or
+            scheduled. <span class="term">Protocol</span> — the wire format and
+            authentication. <span class="term">Data</span> — the sensitivity of
+            what crosses.
+          </p>
+          <div class="tbl-scroll">
+            <table class="dtbl compact">
+              <thead>
+                <tr>
+                  <th>Edge</th>
+                  <th>Job</th>
+                  <th>Direction</th>
+                  <th>Seam</th>
+                  <th>Old model</th>
+                  <th>Pattern</th>
+                  <th>Timing</th>
+                  <th>Protocol</th>
+                  <th>Data</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>ERP (NET4)</strong> — offers, accounts, invoices
+                  </td>
+                  <td>Data in step</td>
+                  <td><span class="dir out">Both</span></td>
+                  <td>Marlex port</td>
+                  <td>
+                    <span class="state preserved">new</span> (candidate link
+                    coming)
+                  </td>
+                  <td>Fire-and-forget + inbound push</td>
+                  <td>Near-real-time</td>
+                  <td>REST/JSON, OAuth</td>
+                  <td>Financial + personal</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>ERP (NET4)</strong> — candidate lookup from the
+                    screen
+                  </td>
+                  <td>Service call</td>
+                  <td><span class="dir out">Outbound</span></td>
+                  <td>Marlex port</td>
+                  <td><span class="state preserved">new</span></td>
+                  <td>Request-reply</td>
+                  <td>Real time</td>
+                  <td>REST/JSON, OAuth</td>
+                  <td>Personal</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Job board (InfoJobs)</strong> — vacancy publishing
+                  </td>
+                  <td>Service call</td>
+                  <td><span class="dir out">Outbound</span></td>
+                  <td>Marlex port</td>
+                  <td><span class="state preserved">new</span></td>
+                  <td>Request-reply</td>
+                  <td>Real time</td>
+                  <td>SOAP/XML</td>
+                  <td>Low</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Job board (InfoJobs)</strong> — application &amp; CV
+                    intake
+                  </td>
+                  <td>Data in step</td>
+                  <td><span class="dir in">Both</span></td>
+                  <td>Marlex port</td>
+                  <td><span class="state repoint">writes</span></td>
+                  <td>Webhook + batch pull</td>
+                  <td>Real time in / scheduled pull</td>
+                  <td>SOAP/XML + guest site</td>
+                  <td>Personal</td>
+                </tr>
+                <tr>
+                  <td><strong>E-signature (Signaturit)</strong></td>
+                  <td>Service call</td>
+                  <td><span class="dir out">Both</span></td>
+                  <td>Marlex port</td>
+                  <td><span class="state preserved">new</span></td>
+                  <td>Request-reply + webhook</td>
+                  <td>Real time</td>
+                  <td>REST/JSON, Bearer</td>
+                  <td>Personal (contracts)</td>
+                </tr>
+                <tr>
+                  <td><strong>Credit check (Iberinform)</strong></td>
+                  <td>Service call</td>
+                  <td><span class="dir out">Outbound</span></td>
+                  <td>Marlex port</td>
+                  <td><span class="state preserved">new</span></td>
+                  <td>Request-reply</td>
+                  <td>Real time</td>
+                  <td>REST/JSON</td>
+                  <td>Financial</td>
+                </tr>
+                <tr>
+                  <td><strong>Matching &amp; CV-parsing engine</strong></td>
+                  <td>Service call</td>
+                  <td><span class="dir out">Outbound</span></td>
+                  <td>Marlex port</td>
+                  <td><span class="state preserved">new</span></td>
+                  <td>Request-reply</td>
+                  <td>Real time (latency-sensitive)</td>
+                  <td>REST/JSON</td>
+                  <td>Personal</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Training certificates (Humact / Lectio)</strong>
+                  </td>
+                  <td>Data in step</td>
+                  <td><span class="dir in">Inbound</span></td>
+                  <td>Marlex port</td>
+                  <td>
+                    <span class="state preserved">new</span> (restructured
+                    first)
+                  </td>
+                  <td>Inbound push</td>
+                  <td>Near-real-time</td>
+                  <td>Inbound endpoint</td>
+                  <td>Low</td>
+                </tr>
+                <tr>
+                  <td><strong>Customer data platform (Data Cloud)</strong></td>
+                  <td>Data in step</td>
+                  <td><span class="dir out">Outbound</span></td>
+                  <td>Native connector</td>
+                  <td><span class="state repoint">reads</span> → new</td>
+                  <td>Streaming connector</td>
+                  <td>Near-real-time</td>
+                  <td>Platform-native connector</td>
+                  <td>Personal</td>
+                </tr>
+                <tr>
+                  <td><strong>Analytics extract (Power BI)</strong></td>
+                  <td>Data in step (egress)</td>
+                  <td><span class="dir in">Inbound</span></td>
+                  <td>Standard interface</td>
+                  <td><span class="state repoint">reads</span></td>
+                  <td>Batch</td>
+                  <td>Scheduled</td>
+                  <td>Bulk API</td>
+                  <td>Financial + personal</td>
+                </tr>
+                <tr>
+                  <td><strong>Finance write feed</strong> — same identity</td>
+                  <td>Data in step</td>
+                  <td><span class="dir in">Inbound</span></td>
+                  <td>Standard interface</td>
+                  <td><span class="state preserved">new</span></td>
+                  <td>Batch</td>
+                  <td>Scheduled</td>
+                  <td>Standard API</td>
+                  <td>Financial</td>
+                </tr>
+                <tr class="review">
+                  <td><strong>Data connector (Taleva)</strong></td>
+                  <td>Data in step</td>
+                  <td><span class="dir in">Inbound</span></td>
+                  <td>Fixed connector</td>
+                  <td>
+                    <span class="state repoint">reads</span> (writes to confirm)
+                  </td>
+                  <td>Connector</td>
+                  <td>Real time</td>
+                  <td>Standard API, OAuth</td>
+                  <td>Personal</td>
+                </tr>
+                <tr class="review">
+                  <td><strong>AI pre-screening (Orbio)</strong> — in build</td>
+                  <td>Service call + writes score back</td>
+                  <td><span class="dir in">Both</span></td>
+                  <td>Marlex port (API-routable)</td>
+                  <td><span class="state repoint">writes</span></td>
+                  <td>Request-reply</td>
+                  <td>Real time</td>
+                  <td>API</td>
+                  <td>Personal</td>
+                </tr>
+                <tr>
+                  <td><strong>Website lead intake (Rainmakers)</strong></td>
+                  <td>Data in step</td>
+                  <td><span class="dir in">Inbound</span></td>
+                  <td>Fixed connector</td>
+                  <td><span class="state preserved">new</span></td>
+                  <td>Connector</td>
+                  <td>Real time</td>
+                  <td>Standard API</td>
+                  <td>Leads</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Document generation</strong> (DocMerge /
+                    DocsMadeEasy)
+                  </td>
+                  <td>Service call</td>
+                  <td><span class="dir out">Outbound</span></td>
+                  <td>Managed package</td>
+                  <td>
+                    <span class="state preserved">none</span> (schema only)
+                  </td>
+                  <td>Request-reply</td>
+                  <td>On demand</td>
+                  <td>Managed package</td>
+                  <td>None</td>
+                </tr>
+                <tr>
+                  <td><strong>Geocoding (Google Maps)</strong></td>
+                  <td>Service call</td>
+                  <td><span class="dir out">Outbound</span></td>
+                  <td>Managed package</td>
+                  <td><span class="state preserved">new</span></td>
+                  <td>Batch</td>
+                  <td>Scheduled</td>
+                  <td>Managed package</td>
+                  <td>Low</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Single sign-on</strong> (Azure AD) &amp; ad-platform
+                    auth
+                  </td>
+                  <td>Identity</td>
+                  <td><span class="dir in">Both</span></td>
+                  <td>Identity provider</td>
+                  <td><span class="state preserved">n/a</span></td>
+                  <td>Assertion / token exchange</td>
+                  <td>Real time</td>
+                  <td>SAML 2.0 / OAuth</td>
+                  <td>Authentication</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Two readings fall straight out of the table.
+            <strong>Identity is its own class</strong> — single sign-on and the
+            advertising-platform logins are integrations, but neither keeps data
+            in step nor calls a service; they only establish who someone is, and
+            they cross the cutover untouched.
+            <strong>The job and the seam are independent</strong> — a
+            data-in-step edge can sit behind any seam, and it is the seam, not
+            the job, that decides whether Marlex can re-point it. That is why
+            the bought connectors (a fixed connector Marlex cannot aim
+            elsewhere) are the one class whose rollback is the owner's to flip,
+            worked in full on
+            <a href="#view-connectors">the data connectors page</a>.
+          </p>
+        </section>
+
+        <section>
           <p class="section-eyebrow">How it was measured</p>
           <h2>Six months of the platform's own call logs, read-only</h2>
           <p>
@@ -5146,7 +5477,7 @@
               to re-point.
             </li>
           </ul>
-          <!-- Orbio: SF-1333 (PO UAT), SF-1190. PRE has all 6 MA_Orbio_* fields; prod has none (verified read-only 2026-07-19). Taleva named-user OAuth so connector-vs-human writes not separable from EventLogFile alone. -->
+          
           <p>
             Neither changes the shape of the cutover; both firm up its count of
             write-coupled edges, and both belong to the client's IT team to
@@ -5235,7 +5566,7 @@
                     cannot yet be separated from those users' screen activity —
                     the owner must confirm.
                   </td>
-                  <!-- Taleva sourcing purpose confirmed: SF-1244 (LinkedIn URL via Taleva + PipeLaunch). -->
+                  
                   <td>
                     Re-pointed <strong>on the connector owner's side</strong> —
                     the mapping lives in their product. If it writes, it is a
@@ -5513,7 +5844,7 @@
               current means re-reading the backlog, not just re-running the
               query.
             </li>
-            <!-- Native writers surfaced from backlog: Dolma SF-1299 (prod External App); new website (Indra) SF-1289 (forms -> Contact RT Candidato + Lead), SF-1244; telephony/transcription SF-905 (To Do). All native, survive cutover. -->
+            
           </ul>
         </section>
 
@@ -6172,7 +6503,7 @@
               decision, not two — confirm the plumbing choice with the ERP side
               so the blocker is surfaced before the build, not at go-live.
             </li>
-            <!-- Verified 2026-07-20: MA_Net4Client body = setEndpoint('callout:MA_Net4' + path), does NOT read ERP_Connection__c; live outbound = legacy classes via ERP_Connection__c (internal ERP host, redacted from public copy). -->
+            
           </ul>
         </section>
 
@@ -6790,7 +7121,7 @@
               "alongside", and the ±30–40 hours is the size of the swing.
             </p>
           </div>
-          <!-- Orbio: fields MA_Orbio_* present in PRE only, 0 in prod (verified read-only). Writes AVTRRT__Job_Applicant__c / AVTRRT__Job__c by design -> 3rd write edge at go-live. -->
+          
         </section>
 
         <section>
@@ -9739,7 +10070,7 @@
                 logins, no measured record traffic.
               </li>
             </ul>
-            <!-- SF-1333 (Orbio field creation, PO UAT), SF-1190; SF-1244 (Taleva/PipeLaunch LinkedIn URL mapping). -->
+            
           </div>
         </section>
 

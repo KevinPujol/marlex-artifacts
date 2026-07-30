@@ -1156,6 +1156,76 @@
   table.dtbl tr.review td {
     background: var(--chip-limited-bg);
   }
+  /* ---- direction badge (inbound / outbound / both) + cutover-state chip: shared with the integration-surface tables ---- */
+  .dir {
+    display: inline-block;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.2em 0.55em;
+    border-radius: 4px;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .dir.in {
+    background: var(--chip-limited-bg);
+    color: var(--chip-limited-fg);
+  }
+  .dir.out {
+    background: var(--accent-soft);
+    color: var(--chip-adopted-fg);
+  }
+  .state {
+    display: inline-block;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.2em 0.55em;
+    border-radius: 4px;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .state.preserved {
+    background: var(--chip-adopted-bg);
+    color: var(--chip-adopted-fg);
+  }
+  .state.repoint {
+    background: var(--chip-limited-bg);
+    color: var(--chip-limited-fg);
+  }
+  .state.retires {
+    background: var(--chip-rejected-bg);
+    color: var(--chip-rejected-fg);
+  }
+  .st {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .st.confirmed {
+    color: var(--chip-adopted-fg);
+  }
+  .st.toconfirm {
+    color: var(--chip-limited-fg);
+  }
+  .st.na {
+    color: var(--ink-soft);
+  }
+  table.dtbl td a.edge-lk {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 700;
+  }
+  table.dtbl td a.edge-lk:hover {
+    text-decoration: underline;
+  }
   table.dtbl tr.tbl-sep td {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-transform: uppercase;
@@ -22558,6 +22628,62 @@
         </section>
 
         <section>
+          <p class="section-eyebrow">How to read an edge</p>
+          <h2>Two questions decide how an edge is treated</h2>
+          <p>
+            Before the routing rule, one distinction clears up most of the
+            confusion about what these edges are. An integration is doing one of
+            two jobs — and some do both:
+          </p>
+          <div class="dq" style="grid-template-columns: 1fr 1fr">
+            <div class="dq-col">
+              <h4>Keeping data in step</h4>
+              <p class="head-note">
+                The edge exists so a record kept in two systems stays consistent
+                — a candidate, an account, an offer, an invoice lives on both
+                sides and a change on one is copied to the other. The test:
+                <em>is there a second copy to reconcile?</em>
+              </p>
+            </div>
+            <div class="dq-col">
+              <h4>Calling a service mid-process</h4>
+              <p class="head-note">
+                The edge calls an outside capability as a step inside a live
+                process — publish a vacancy, send a contract to sign, look up a
+                client's solvency, parse a CV — then uses the answer and moves
+                on. No second copy is kept; the outside system is a tool the
+                process reaches for.
+              </p>
+            </div>
+          </div>
+          <p>
+            Both jobs can live on the same connection. The ERP is mostly the
+            first — bulk record replication — but the same link also serves a
+            live lookup a user triggers from the screen, which is the second.
+            The job board is the same: application intake keeps records in step,
+            while publishing a vacancy is a service call. This matters for
+            routing:
+            <strong
+              >high-volume data-in-step traffic reused across countries is what
+              earns the shared platform hop; a single-consumer service call
+              rarely does.</strong
+            >
+          </p>
+          <p>
+            Two further questions decide the <em>cutover</em> treatment, and
+            they, not the job above, are the load-bearing ones.
+            <strong>Who owns the seam</strong>
+            — a Marlex-owned interface we can re-point, a bought tool's fixed
+            connector we cannot, or something a platform-native connector
+            already handles — and
+            <strong>whether the edge touches the records being retired</strong>,
+            by writing them, only reading them, or already running on the new
+            model. The measured answer for every edge, on all of these, is on
+            <a href="#view-integration-surface">the measured surface</a>.
+          </p>
+        </section>
+
+        <section>
           <p class="section-eyebrow">Alternatives considered</p>
           <h2>Platform-first, ports-first, or point-to-point forever</h2>
           <div class="option">
@@ -22618,6 +22744,7 @@
                 <tr>
                   <th>Edge class</th>
                   <th>What it does</th>
+                  <th>Job</th>
                   <th>At cutover</th>
                   <th>Platform route</th>
                 </tr>
@@ -22627,6 +22754,10 @@
                   <td><strong>ERP (NET4)</strong></td>
                   <td>
                     Placements, offers and invoice traffic to and from the ERP
+                  </td>
+                  <td>
+                    Mostly <strong>data in step</strong>; one live screen lookup
+                    is a service call
                   </td>
                   <td>
                     <strong>Preserved, not rebuilt</strong> — already behind a
@@ -22650,6 +22781,10 @@
                     Publishes vacancies out; ~27,000 applications a week in
                   </td>
                   <td>
+                    Publishing is a <strong>service call</strong>; application
+                    intake is <strong>data in step</strong>
+                  </td>
+                  <td>
                     Outbound publishing behind a switchable service that can
                     move ahead of cutover; inbound entry re-pointed with the
                     core (see
@@ -22665,6 +22800,10 @@
                   <td>
                     Contract signature requests and signed-event callbacks
                   </td>
+                  <td>
+                    <strong>Service call</strong> — runs the signing step of the
+                    offer process
+                  </td>
                   <td>Re-pointed direct — low coupling, single consumer</td>
                   <td>
                     Only if a second consumer or orchestration need appears;
@@ -22674,6 +22813,10 @@
                 <tr>
                   <td><strong>Credit check (Iberinform)</strong></td>
                   <td>Client solvency lookups</td>
+                  <td>
+                    <strong>Service call</strong> — a lookup mid-process,
+                    nothing stored twice
+                  </td>
                   <td>Re-pointed direct — low volume, request-response</td>
                   <td>
                     Unlikely to ever earn the hop; stays direct behind its port
@@ -22685,6 +22828,10 @@
                   </td>
                   <td>Inbound certificate and enrolment documents</td>
                   <td>
+                    <strong>Data in step</strong> — certificate records kept
+                    aligned
+                  </td>
+                  <td>
                     Kept on its existing inbound endpoint; its rigid data
                     attachment to the old model is restructured beforehand (see
                     <a href="#view-data-migration">Data migration</a>)
@@ -22694,6 +22841,10 @@
                 <tr>
                   <td><strong>Customer data platform (Data Cloud)</strong></td>
                   <td>Feeds candidate and client data to marketing</td>
+                  <td>
+                    <strong>Data in step</strong> — a continuous feed to the
+                    marketing platform
+                  </td>
                   <td>
                     Its data streams re-point to the new objects at cutover — a
                     standard-connector reconfiguration, not code
@@ -22711,6 +22862,10 @@
                     candidate–vacancy matches — the one new edge the rebuild
                     adds, bought rather than built (worked in full on
                     <a href="#view-matching-engine">its own page</a>)
+                  </td>
+                  <td>
+                    <strong>Service call</strong> — an in-flow parse-and-rank,
+                    latency-sensitive
                   </td>
                   <td>
                     <strong>New</strong> — feed and query behind a Marlex-owned
@@ -22737,6 +22892,11 @@
                     document-management app, the new website's inbound forms,
                     and an AI-screening service in build that writes the old
                     model
+                  </td>
+                  <td>
+                    <strong>Mixed</strong> — mostly data connectors keeping
+                    records in step; the screening service also calls out
+                    mid-process
                   </td>
                   <td>
                     Audited at cutover: each consumer confirmed live, re-pointed
@@ -23211,6 +23371,293 @@
             production traffic yet; it was caught from the backlog. The result:
             the edges the cutover must actively re-point are few and now known —
             one confirmed live, a second under review, a third being built.
+          </p>
+        </section>
+
+        <section>
+          <p class="section-eyebrow">Every edge, classified</p>
+          <h2>
+            The full classification — each edge on every axis that matters
+          </h2>
+          <p>
+            The tables above answer <em>what happens at cutover</em>. This one
+            answers <em>what kind of integration each edge is</em> — the
+            complete classification, so no reader has to infer it. Each edge is
+            tagged on eight independent questions. The first four drive the
+            decisions on the <a href="#view-integrations">integrations page</a>;
+            the last four are reference detail for the build.
+          </p>
+          <p class="lk-legend">
+            <strong>The four that drive decisions.</strong>
+            <span class="term">Job</span> — <em>data in step</em> keeps a record
+            consistent across two systems; <em>service call</em> reaches out for
+            a capability mid-process and keeps no second copy; some edges do
+            both. <span class="term">Direction</span> — outbound (Salesforce
+            calls out) or inbound (the outside system calls in).
+            <span class="term">Seam</span> — who owns the interface that can be
+            re-pointed: a <em>Marlex port</em>, a bought tool's
+            <em>fixed connector</em> (only its owner can re-point), a
+            <em>managed package</em>, or Salesforce's own
+            <em>standard interface</em> (the object name is the contract).
+            <span class="term">Old model</span> — whether the edge
+            <em>writes</em> the retiring records, only <em>reads</em> them, or
+            already runs on the <em>new</em> model.
+          </p>
+          <p class="lk-legend">
+            <strong>The four for reference.</strong>
+            <span class="term">Pattern</span> — how the call is shaped
+            (request-reply, fire-and-forget, batch, webhook).
+            <span class="term">Timing</span> — real time, near-real-time, or
+            scheduled. <span class="term">Protocol</span> — the wire format and
+            authentication. <span class="term">Data</span> — the sensitivity of
+            what crosses (personal, financial, or low).
+          </p>
+          <div class="tbl-scroll">
+            <table class="dtbl compact">
+              <thead>
+                <tr>
+                  <th>Edge</th>
+                  <th>Job</th>
+                  <th>Direction</th>
+                  <th>Seam</th>
+                  <th>Old model</th>
+                  <th>Pattern</th>
+                  <th>Timing</th>
+                  <th>Protocol</th>
+                  <th>Data</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>ERP (NET4)</strong> — offers, accounts, invoices
+                  </td>
+                  <td>Data in step</td>
+                  <td><span class="dir out">Both</span></td>
+                  <td>Marlex port</td>
+                  <td>
+                    <span class="state preserved">new</span> (candidate link
+                    coming)
+                  </td>
+                  <td>Fire-and-forget + inbound push</td>
+                  <td>Near-real-time</td>
+                  <td>REST/JSON, OAuth</td>
+                  <td>Financial + personal</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>ERP (NET4)</strong> — candidate lookup from the
+                    screen
+                  </td>
+                  <td>Service call</td>
+                  <td><span class="dir out">Outbound</span></td>
+                  <td>Marlex port</td>
+                  <td><span class="state preserved">new</span></td>
+                  <td>Request-reply</td>
+                  <td>Real time</td>
+                  <td>REST/JSON, OAuth</td>
+                  <td>Personal</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Job board (InfoJobs)</strong> — vacancy publishing
+                  </td>
+                  <td>Service call</td>
+                  <td><span class="dir out">Outbound</span></td>
+                  <td>Marlex port</td>
+                  <td><span class="state preserved">new</span></td>
+                  <td>Request-reply</td>
+                  <td>Real time</td>
+                  <td>SOAP/XML</td>
+                  <td>Low</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Job board (InfoJobs)</strong> — application &amp; CV
+                    intake
+                  </td>
+                  <td>Data in step</td>
+                  <td><span class="dir in">Both</span></td>
+                  <td>Marlex port</td>
+                  <td><span class="state repoint">writes</span></td>
+                  <td>Webhook + batch pull</td>
+                  <td>Real time in / scheduled pull</td>
+                  <td>SOAP/XML + guest site</td>
+                  <td>Personal</td>
+                </tr>
+                <tr>
+                  <td><strong>E-signature (Signaturit)</strong></td>
+                  <td>Service call</td>
+                  <td><span class="dir out">Both</span></td>
+                  <td>Marlex port</td>
+                  <td><span class="state preserved">new</span></td>
+                  <td>Request-reply + webhook</td>
+                  <td>Real time</td>
+                  <td>REST/JSON, Bearer</td>
+                  <td>Personal (contracts)</td>
+                </tr>
+                <tr>
+                  <td><strong>Credit check (Iberinform)</strong></td>
+                  <td>Service call</td>
+                  <td><span class="dir out">Outbound</span></td>
+                  <td>Marlex port</td>
+                  <td><span class="state preserved">new</span></td>
+                  <td>Request-reply</td>
+                  <td>Real time</td>
+                  <td>REST/JSON</td>
+                  <td>Financial</td>
+                </tr>
+                <tr>
+                  <td><strong>Matching &amp; CV-parsing engine</strong></td>
+                  <td>Service call</td>
+                  <td><span class="dir out">Outbound</span></td>
+                  <td>Marlex port</td>
+                  <td><span class="state preserved">new</span></td>
+                  <td>Request-reply</td>
+                  <td>Real time (latency-sensitive)</td>
+                  <td>REST/JSON</td>
+                  <td>Personal</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Training certificates (Humact / Lectio)</strong>
+                  </td>
+                  <td>Data in step</td>
+                  <td><span class="dir in">Inbound</span></td>
+                  <td>Marlex port</td>
+                  <td>
+                    <span class="state preserved">new</span> (restructured
+                    first)
+                  </td>
+                  <td>Inbound push</td>
+                  <td>Near-real-time</td>
+                  <td>Inbound endpoint</td>
+                  <td>Low</td>
+                </tr>
+                <tr>
+                  <td><strong>Customer data platform (Data Cloud)</strong></td>
+                  <td>Data in step</td>
+                  <td><span class="dir out">Outbound</span></td>
+                  <td>Native connector</td>
+                  <td><span class="state repoint">reads</span> → new</td>
+                  <td>Streaming connector</td>
+                  <td>Near-real-time</td>
+                  <td>Platform-native connector</td>
+                  <td>Personal</td>
+                </tr>
+                <tr>
+                  <td><strong>Analytics extract (Power BI)</strong></td>
+                  <td>Data in step (egress)</td>
+                  <td><span class="dir in">Inbound</span></td>
+                  <td>Standard interface</td>
+                  <td><span class="state repoint">reads</span></td>
+                  <td>Batch</td>
+                  <td>Scheduled</td>
+                  <td>Bulk API</td>
+                  <td>Financial + personal</td>
+                </tr>
+                <tr>
+                  <td><strong>Finance write feed</strong> — same identity</td>
+                  <td>Data in step</td>
+                  <td><span class="dir in">Inbound</span></td>
+                  <td>Standard interface</td>
+                  <td><span class="state preserved">new</span></td>
+                  <td>Batch</td>
+                  <td>Scheduled</td>
+                  <td>Standard API</td>
+                  <td>Financial</td>
+                </tr>
+                <tr class="review">
+                  <td><strong>Data connector (Taleva)</strong></td>
+                  <td>Data in step</td>
+                  <td><span class="dir in">Inbound</span></td>
+                  <td>Fixed connector</td>
+                  <td>
+                    <span class="state repoint">reads</span> (writes to confirm)
+                  </td>
+                  <td>Connector</td>
+                  <td>Real time</td>
+                  <td>Standard API, OAuth</td>
+                  <td>Personal</td>
+                </tr>
+                <tr class="review">
+                  <td><strong>AI pre-screening (Orbio)</strong> — in build</td>
+                  <td>Service call + writes score back</td>
+                  <td><span class="dir in">Both</span></td>
+                  <td>Marlex port (API-routable)</td>
+                  <td><span class="state repoint">writes</span></td>
+                  <td>Request-reply</td>
+                  <td>Real time</td>
+                  <td>API</td>
+                  <td>Personal</td>
+                </tr>
+                <tr>
+                  <td><strong>Website lead intake (Rainmakers)</strong></td>
+                  <td>Data in step</td>
+                  <td><span class="dir in">Inbound</span></td>
+                  <td>Fixed connector</td>
+                  <td><span class="state preserved">new</span></td>
+                  <td>Connector</td>
+                  <td>Real time</td>
+                  <td>Standard API</td>
+                  <td>Leads</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Document generation</strong> (DocMerge /
+                    DocsMadeEasy)
+                  </td>
+                  <td>Service call</td>
+                  <td><span class="dir out">Outbound</span></td>
+                  <td>Managed package</td>
+                  <td>
+                    <span class="state preserved">none</span> (schema only)
+                  </td>
+                  <td>Request-reply</td>
+                  <td>On demand</td>
+                  <td>Managed package</td>
+                  <td>None</td>
+                </tr>
+                <tr>
+                  <td><strong>Geocoding (Google Maps)</strong></td>
+                  <td>Service call</td>
+                  <td><span class="dir out">Outbound</span></td>
+                  <td>Managed package</td>
+                  <td><span class="state preserved">new</span></td>
+                  <td>Batch</td>
+                  <td>Scheduled</td>
+                  <td>Managed package</td>
+                  <td>Low</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Single sign-on</strong> (Azure AD) &amp; ad-platform
+                    auth
+                  </td>
+                  <td>Identity</td>
+                  <td><span class="dir in">Both</span></td>
+                  <td>Identity provider</td>
+                  <td><span class="state preserved">n/a</span></td>
+                  <td>Assertion / token exchange</td>
+                  <td>Real time</td>
+                  <td>SAML 2.0 / OAuth</td>
+                  <td>Authentication</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            Two readings fall straight out of the table.
+            <strong>Identity is its own class</strong> — single sign-on and the
+            advertising-platform logins are integrations, but neither keeps data
+            in step nor calls a service; they only establish who someone is, and
+            they cross the cutover untouched.
+            <strong>The job and the seam are independent</strong> — a
+            data-in-step edge can sit behind any seam, and it is the seam, not
+            the job, that decides whether Marlex can re-point it. That is why
+            the bought connectors (a fixed connector Marlex cannot aim
+            elsewhere) are the one class whose rollback is the owner's to flip,
+            worked in full under <a href="#view-rollback">rollback</a>.
           </p>
         </section>
 
