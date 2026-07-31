@@ -3731,10 +3731,13 @@
                     <td>Matching &amp; CV parsing</td>
                     <td class="ap-num">1.06M profiles</td>
                     <td>
-                      <span class="ap-route ap-pre">Bought · new edge</span>
+                      <span class="ap-route ap-pre"
+                        >New edge · buy-vs-build open</span
+                      >
                     </td>
                     <td>
-                      The one capability bought, not built — behind a
+                      The one capability whose buy-versus-build is still open —
+                      either a bought engine or an in-house build, behind a
                       Marlex-owned interface, with everyday search built
                       natively beside it. Parity is a written go/no-go
                       criterion.
@@ -3811,9 +3814,10 @@
                   </p>
                 </div>
                 <div class="ap-how">
-                  <b>Bounded by →</b> buying it as a service behind a
-                  Marlex-owned interface, tested on real Spanish CVs before the
-                  design freeze, with parity a written go/no-go criterion.
+                  <b>Bounded by →</b> a dedicated matching engine behind a
+                  Marlex-owned interface — bought or built in-house, that choice
+                  still open — tested on real Spanish CVs before the design
+                  freeze, with parity a written go/no-go criterion.
                 </div>
               </div>
               <div class="ap-risk">
@@ -4109,7 +4113,7 @@
             that is a different risk class, not the same one renamed — a
             hyperscale horizontal platform Marlex has already bet its whole CRM
             on, with an ecosystem measured in millions of customers, versus a
-            niche vertical package whose fate one acquisition just decided. The
+            niche vertical package whose fate one acquisition decided. The
             replacement wave this page describes is a
             <em>vertical-vendor</em> pattern. Ending the vertical-package
             dependency while keeping the platform one is the trade being made,
@@ -4944,14 +4948,13 @@
           <div class="callout">
             <span class="lbl">The one in-flight case to settle first</span>
             <p>
-              A feature is being built right now that reaches the ERP link and
-              the placement and candidate objects. It is the first live test of
-              the intake rule: built native-first behind the existing
-              interfaces, it becomes part of the rebuild; built onto the
-              package, it adds disconnection scope at the cheapest moment it
-              will ever be to redirect. Which way it goes is a decision for the
-              programme's technical governance, and the earlier it is taken the
-              less rework it costs.
+              One in-flight feature reaches the ERP link and the placement and
+              candidate objects. It is the first live test of the intake rule:
+              built native-first behind the existing interfaces, it becomes part
+              of the rebuild; built onto the package, it adds disconnection
+              scope at the cheapest moment it will ever be to redirect. Which
+              way it goes is a decision for the programme's technical
+              governance, and the earlier it is taken the less rework it costs.
             </p>
           </div>
         </section>
@@ -6527,17 +6530,17 @@
           <h2>Twelve objects carry data; two dozen are left behind</h2>
           <div class="stat-row">
             <div class="stat">
-              <span class="n">12</span
+              <span class="n">11</span
               ><span class="l"
                 >objects rebuilt and migrated (or back-filled onto a standard
                 record) — everything the business actually uses</span
               >
             </div>
             <div class="stat">
-              <span class="n">320</span
+              <span class="n">314</span
               ><span class="l"
                 >fields carry data and are rebuilt, of 1,139 non-system fields
-                examined — the other 819 are empty, formulas or plumbing</span
+                examined — the other 825 are empty, formulas or plumbing</span
               >
             </div>
             <div class="stat">
@@ -6603,7 +6606,7 @@
                 <tr>
                   <td><strong>Contact</strong></td>
                   <td class="num">1,097,122</td>
-                  <td class="num">52</td>
+                  <td class="num">51</td>
                   <td><code>Contact</code></td>
                   <td>Back-fill in place</td>
                 </tr>
@@ -6629,13 +6632,6 @@
                   <td>Migrate</td>
                 </tr>
                 <tr>
-                  <td><strong>Job_Search</strong></td>
-                  <td class="num">142,738</td>
-                  <td class="num">4</td>
-                  <td><code>Job_Search__c</code></td>
-                  <td>Migrate</td>
-                </tr>
-                <tr>
                   <td><strong>Interview</strong></td>
                   <td class="num">125,636</td>
                   <td class="num">20</td>
@@ -6652,7 +6648,7 @@
                 <tr>
                   <td><strong>Job</strong></td>
                   <td class="num">57,110</td>
-                  <td class="num">104</td>
+                  <td class="num">103</td>
                   <td><code>ATS_Job__c</code></td>
                   <td>Migrate + archive</td>
                 </tr>
@@ -6691,6 +6687,13 @@
                   </td>
                 </tr>
                 <tr>
+                  <td>Job_Search</td>
+                  <td class="num">142,738</td>
+                  <td class="num">0</td>
+                  <td><code>native saved search</code></td>
+                  <td>Rebuild capability</td>
+                </tr>
+                <tr>
                   <td>References</td>
                   <td class="num">0</td>
                   <td class="num">0</td>
@@ -6709,14 +6712,14 @@
                   <td class="num">59,672</td>
                   <td class="num">0</td>
                   <td><code>native saved search</code></td>
-                  <td>Review with the team</td>
+                  <td>Rebuild capability</td>
                 </tr>
                 <tr>
                   <td>Search_Candidate_Approval</td>
                   <td class="num">386</td>
                   <td class="num">0</td>
                   <td><code>native saved search</code></td>
-                  <td>Review with the team</td>
+                  <td>Rebuild capability</td>
                 </tr>
                 <tr class="tbl-sep">
                   <td colspan="5">
@@ -6984,7 +6987,7 @@
               <strong
                 >Contact — the candidate (standard record, back-filled)</strong
               >
-              <span class="cnt">52 fields kept · 89 dropped</span>
+              <span class="cnt">51 fields kept · 90 dropped</span>
             </summary>
             <div class="tbl-scroll">
               <table class="dtbl compact">
@@ -7139,12 +7142,6 @@
                     <td>AVTRRT__Is_Duplicate__c</td>
                     <td class="num">0.3%</td>
                     <td><code>Is_Duplicate__c</code></td>
-                    <td><span class="origin-rename">renamed</span></td>
-                  </tr>
-                  <tr>
-                    <td>AVTRRT__Job_Search__c</td>
-                    <td class="num">12.5%</td>
-                    <td><code>Job_Search__c</code></td>
                     <td><span class="origin-rename">renamed</span></td>
                   </tr>
                   <tr>
@@ -7732,7 +7729,7 @@
           <details class="obj-fields">
             <summary>
               <strong>Job process</strong>
-              <span class="cnt">104 fields kept · 242 dropped</span>
+              <span class="cnt">103 fields kept · 243 dropped</span>
             </summary>
             <div class="tbl-scroll">
               <table class="dtbl compact">
@@ -7755,12 +7752,6 @@
                     <td>AVTRRT__Billable__c</td>
                     <td class="num">100.0%</td>
                     <td><code>Billable__c</code></td>
-                    <td><span class="origin-rename">renamed</span></td>
-                  </tr>
-                  <tr>
-                    <td>AVTRRT__Candidate_Search__c</td>
-                    <td class="num">99.5%</td>
-                    <td><code>Candidate_Search__c</code></td>
                     <td><span class="origin-rename">renamed</span></td>
                   </tr>
                   <tr>
@@ -8957,50 +8948,6 @@
           </details>
           <details class="obj-fields">
             <summary>
-              <strong>Saved search / job alert</strong>
-              <span class="cnt">4 fields kept · 35 dropped</span>
-            </summary>
-            <div class="tbl-scroll">
-              <table class="dtbl compact">
-                <thead>
-                  <tr>
-                    <th>Package field</th>
-                    <th class="num">Populated</th>
-                    <th>Native field</th>
-                    <th>Origin</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>AVTRRT__Country_Code__c</td>
-                    <td class="num">65.963%</td>
-                    <td><code>Country_Code__c</code></td>
-                    <td><span class="origin-rename">renamed</span></td>
-                  </tr>
-                  <tr>
-                    <td>AVTRRT__JSON_Criteria__c</td>
-                    <td class="num">100.0%</td>
-                    <td><code>JSON_Criteria__c</code></td>
-                    <td><span class="origin-rename">renamed</span></td>
-                  </tr>
-                  <tr>
-                    <td>AVTRRT__Keywords__c</td>
-                    <td class="num">11.652%</td>
-                    <td><code>Keywords__c</code></td>
-                    <td><span class="origin-rename">renamed</span></td>
-                  </tr>
-                  <tr>
-                    <td>AVTRRT__Radius__c</td>
-                    <td class="num">65.963%</td>
-                    <td><code>Radius__c</code></td>
-                    <td><span class="origin-rename">renamed</span></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </details>
-          <details class="obj-fields">
-            <summary>
               <strong>Talent pool</strong>
               <span class="cnt">3 fields kept · 10 dropped</span>
             </summary>
@@ -9333,7 +9280,7 @@
         <section>
           <p class="section-eyebrow">Relationships</p>
           <h2>
-            How the objects connect — 130 lookups, 3 rigid links, 12 dropped
+            How the objects connect — 128 lookups, 3 rigid links, 12 dropped
           </h2>
           <p>
             The package connects almost everything with ordinary lookups, and
@@ -10213,9 +10160,8 @@
               >Open decision — buy vs. build in-house (re-opened 16 July
               2026).</strong
             >
-            A specialist-engine quote came in at roughly €44 per user per month
-            across ~450 users — on the order of €1M over five years — which
-            Marlex judged disproportionate for its search mix: an estimated
+            A specialist-engine licence was priced at a level Marlex judged
+            disproportionate for its search mix: an estimated
             <strong>~60% of searches are simple</strong> (location, role,
             licence) needing only native/keyword search, and only
             <strong>~40%</strong> want semantic ranking. That reframes the

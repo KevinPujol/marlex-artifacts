@@ -1,23 +1,23 @@
-# Marlex — Shared Artifacts
+# Marlex Salesforce artifacts — MOVED
 
-Public, browsable HTML deliverables for the Marlex Salesforce programme, served via GitHub Pages.
+> **This repository has moved.**
+>
+> The Marlex Salesforce architecture artifacts are now published from the
+> Marlex Group organisation account:
+>
+> **→ https://github.com/AdvisumHR/marlex-salesforce-architecture**
+>
+> **Live site:** https://advisumhr.github.io/marlex-salesforce-architecture/
 
-**One folder per artifact.** Each folder contains an `index.html` so it gets a clean URL
-(`…/<artifact-folder>/`). The repo-root `index.html` is a landing page linking to each artifact.
+This repository is kept as a read-only archive. All updates happen at the new
+location above. The content here is a scrubbed snapshot and is no longer
+maintained.
 
-## Artifacts
+## New locations
 
-| Folder | Artifact |
+| Old (here) | New |
 |---|---|
-| `tr-rebuild-decision-record/` | TargetRecruit Rebuild — Decision Record (assembled, client-safe) |
-| `hr-onboarding-sharing/` | HR Onboarding & Sharing-Model Refactor — Decision Record (assembled, client-safe) |
-| `integration-decision-record/` | MuleSoft — the Integration Layer · Decision Record (assembled, client-safe) |
-
-## Publishing
-
-GitHub Pages serves the `main` branch root. Pushing an updated `index.html` into an artifact
-folder redeploys it automatically within ~1 minute.
-
-> Only scrubbed, client-safe HTML belongs here — this repo is public. Raw internal pages
-> (named people, org IDs, partner accounts, internal governance IDs) stay in the private
-> working repo and must never be pushed here.
+| `tr-rebuild-decision-record/` | [`targetrecruit-rebuild-decision-record/`](https://advisumhr.github.io/marlex-salesforce-architecture/targetrecruit-rebuild-decision-record/) |
+| `integration-decision-record/` | [`mulesoft-decision-record/`](https://advisumhr.github.io/marlex-salesforce-architecture/mulesoft-decision-record/) |
+| `hr-onboarding-sharing/` | [`hr-onboarding-decision-record/`](https://advisumhr.github.io/marlex-salesforce-architecture/hr-onboarding-decision-record/) |
+| — | [`programme-plan/`](https://advisumhr.github.io/marlex-salesforce-architecture/programme-plan/) (new) |

@@ -4100,19 +4100,17 @@
           </p>
           <div class="stat-row">
             <div class="stat">
-              <span class="n">~320h</span>
+              <span class="n">2</span>
               <span class="l"
-                >first two lanes plus foundation, mid estimate (about 8.5
-                weeks)</span
+                >integration lanes in the first delivery (NET4, then
+                InfoJobs)</span
               >
             </div>
             <div class="stat">
-              <span class="n">~420h</span>
-              <span class="l">conservative estimate for the same scope</span>
-            </div>
-            <div class="stat">
-              <span class="n">~550h</span>
-              <span class="l">defensive ceiling</span>
+              <span class="n">+1</span>
+              <span class="l"
+                >shared foundation built alongside the first lanes</span
+              >
             </div>
             <div class="stat">
               <span class="n">1</span>
@@ -4120,16 +4118,16 @@
             </div>
           </div>
           <div class="tech">
-            <span class="tech-label">For the developers</span>Rough effort split
-            across the first delivery: NET4 lane (<code>sys-api-net4</code>)
-            ~105h, InfoJobs lane (<code>sys-api-infojobs</code>, with
-            SOAP-to-REST mediation) ~140h, shared foundation ~75h. Estimates are
-            P50 ~320h / P80 ~420h with a ~550h defensive ceiling, one MuleSoft
-            developer. The critical-path dependency is a named MuleSoft
-            developer plus Anypoint tenant access — which follows the licensing
-            close — not any technical unknown. Reporting and monitoring tools
-            stay off the platform entirely: they authenticate to Salesforce
-            directly through a Connected App.
+            <span class="tech-label">For the developers</span>The first delivery
+            is scoped as two lanes plus a shared foundation: the NET4 lane
+            (<code>sys-api-net4</code>), the InfoJobs lane
+            (<code>sys-api-infojobs</code>, with SOAP-to-REST mediation), and
+            the shared foundation — with InfoJobs the heavier of the two. The
+            critical-path dependency is a named MuleSoft developer plus Anypoint
+            tenant access — which follows the licensing close — not any
+            technical unknown. Reporting and monitoring tools stay off the
+            platform entirely: they authenticate to Salesforce directly through
+            a Connected App.
           </div>
         </section>
 
@@ -6375,12 +6373,12 @@
           </div>
           <div class="tech">
             <span class="tech-label">For the developers</span>The NET4 lane is
-            scoped as <code>sys-api-net4</code> in the system-API layer. Rough
-            effort for this lane is ~105 hours within the first delivery
-            proposal (which covers NET4 + InfoJobs + the shared foundation). The
-            gating dependency is a middleware developer plus tenant access, not
-            a technical blocker — nothing in the org stops the lane from being
-            built.
+            scoped as <code>sys-api-net4</code> in the system-API layer. It is
+            the lighter of the two lanes in the first delivery proposal (which
+            covers NET4 + InfoJobs + the shared foundation), and leads because
+            it has no dependencies. The gating dependency is a middleware
+            developer plus tenant access, not a technical blocker — nothing in
+            the org stops the lane from being built.
           </div>
         </section>
 
@@ -6999,10 +6997,10 @@
                 The lane needs protocol mediation the ERP lane does not:
                 InfoJobs publishes over an older SOAP-style contract, and the
                 middleware has to translate that to the modern REST-style
-                interface the rest of the layer uses. Sitting at roughly
-                <strong>140 hours</strong>, it is the largest of the first two
-                lanes — more than the ERP's ~105 hours — so it is built second,
-                once the shared foundation the ERP lane establishes is in place.
+                interface the rest of the layer uses. It is the larger of the
+                first two lanes — heavier than the ERP lane — so it is built
+                second, once the shared foundation the ERP lane establishes is
+                in place.
               </p>
             </div>
             <div class="axis">
@@ -7053,7 +7051,9 @@
 
         <section>
           <p class="section-eyebrow">The big open question</p>
-          <h2>The InfoJobs–Orbio boundary decides ±30–40 hours of this lane</h2>
+          <h2>
+            The InfoJobs–Orbio boundary decides how much this lane carries
+          </h2>
           <p>
             The largest uncertainty on this lane is not technical mediation — it
             is a scope question about a second product. Orbio is an AI candidate
@@ -7085,9 +7085,8 @@
               <p>
                 If Orbio takes over part of the intake — say, filtering before
                 applications reach Salesforce — the webhook carries less and the
-                lane gets simpler. That could shave up to
-                <strong>~30–40 hours</strong> off the estimate, but only if the
-                boundary is firm enough to build against.
+                lane gets simpler. That would trim the lane's effort, but only
+                if the boundary is firm enough to build against.
               </p>
             </div>
             <div class="card">
@@ -7118,7 +7117,7 @@
               position is that this is an open question: the boundary
               <em>and</em> the connection shape both have to be confirmed before
               the InfoJobs estimate is firm. Until then, the baseline is
-              "alongside", and the ±30–40 hours is the size of the swing.
+              "alongside", and the boundary decision is the size of the swing.
             </p>
           </div>
           
@@ -7315,13 +7314,12 @@
           <ul>
             <li>
               <strong>The Orbio boundary is unresolved.</strong> Whether the
-              pre-filter replaces, reduces or runs alongside the webhook moves
-              this lane's estimate by roughly 30–40 hours, and how Orbio
-              connects (custom operations that could be routed, or a fixed
-              commercial connector) is itself contradicted in the sources. Both
-              must be confirmed before the estimate is firm; the baseline until
-              then is that Orbio runs alongside and the webhook stays and
-              reconfigures at cutover.
+              pre-filter replaces, reduces or runs alongside the webhook changes
+              how much this lane carries, and how Orbio connects (custom
+              operations that could be routed, or a fixed commercial connector)
+              is itself contradicted in the sources. Both must be confirmed
+              before the estimate is firm; the baseline until then is that Orbio
+              runs alongside and the webhook stays and reconfigures at cutover.
             </li>
             <li>
               <strong
